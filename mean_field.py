@@ -31,12 +31,12 @@ def get_Xi(U,U_dagger,eigen_vals,params):
 	U_13 = U[0][2]
 	C_33 = U_dagger[2][2]
 	U_14 = U[0][3]
-        C_43 = U_dagger[3][2]
-        beta = params['beta']
-        nf_0 = fermi_function(eigen_vals[0],beta)
-        nf_1 = fermi_function(eigen_vals[1],beta)
-        nf_2 = fermi_function(eigen_vals[2],beta)
-        nf_3 = fermi_function(eigen_vals[3],beta)
+	C_43 = U_dagger[3][2]
+	beta = params['beta']
+	nf_0 = fermi_function(eigen_vals[0],beta)
+	nf_1 = fermi_function(eigen_vals[1],beta)
+	nf_2 = fermi_function(eigen_vals[2],beta)
+	nf_3 = fermi_function(eigen_vals[3],beta)
      
 	return (3 * params['antifm_const'] / 2) *(U_11*C_13*fermi_function(eigen_vals[0]) + U_12*C_23*fermi_function(eigen_vals[1]) + U_13*C_33*fermi_function(eigen_vals[2]) + U_14*C_43*fermi_function(eigen_vals[3]))
 def mean_field_function(params):
