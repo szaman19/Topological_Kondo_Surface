@@ -38,7 +38,7 @@ def get_Xi(U,U_dagger,eigen_vals,params):
 	nf_2 = fermi_function(eigen_vals[2],beta)
 	nf_3 = fermi_function(eigen_vals[3],beta)
      
-	return (3 * params['antifm_const'] / 2) *(U_11*C_13*fermi_function(eigen_vals[0]) + U_12*C_23*fermi_function(eigen_vals[1]) + U_13*C_33*fermi_function(eigen_vals[2]) + U_14*C_43*fermi_function(eigen_vals[3]))
+	return (3 * params['antifm_const'] / 2) *(U_11*C_13*nf_0 + U_12*C_23*nf_1 + U_13*C_33*nf_2 + U_14*C_43*nf_3)
 def mean_field_function(params):
 	disp = []
 	# disp_y = []
