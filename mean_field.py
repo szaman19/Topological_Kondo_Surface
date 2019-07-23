@@ -8,7 +8,7 @@ from multiprocessing import Pool
 
 def fermi_function(energy, mu, beta):
 	return 1 / (1 + np.exp(beta * (energy - mu)))
-def integral()
+#def integral()
 def generate_hamiltonian(kx,ky,mu_f, mu_c, epsilon):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
