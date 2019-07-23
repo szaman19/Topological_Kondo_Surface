@@ -55,11 +55,10 @@ def mean_field_function(params):
 				mu_f = 1
 				#epsilon = 2 * params['epsilon']*(math.cos(kx)+math.cos(ky))
 				
-                                params['mu_c'] = mu_c
-                                params['mu_f'] = mu_f
-
-                                params['beta'] = 100
-                                H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
+                params['mu_c'] = mu_c
+                params['mu_f'] = mu_f
+                params['beta'] = 100
+                H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
 				Xi_guess = -1 
 				H[0][2] = Xi_guess
 				H[1][3] = Xi_guess
@@ -115,7 +114,7 @@ def main():
 	params['kz_end'] = 1
 	params['antifm_const'] = -1
 	params['epsilon'] = .01
-	params
+	
 	
 	mean_field_function(params)
 main()
