@@ -57,7 +57,7 @@ def mean_field_function(params):
 				
 				params['mu_c'] = mu_c
 				params['mu_f'] = mu_f
-				params['beta'] = 100
+				params['beta'] = 1
 				H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
 				Xi_guess = -1 
 				H[0][2] = Xi_guess
@@ -106,11 +106,11 @@ def mean_field_function(params):
 
 def main():
 	params = {}
-	params['kx_start'] = -1000
-	params['ky_start'] = -1000
+	params['kx_start'] = -100
+	params['ky_start'] = -100
 	params['kz_start'] = 0
-	params['kx_end'] = 1000
-	params['ky_end'] = 1000
+	params['kx_end'] = 100
+	params['ky_end'] = 100
 	params['kz_end'] = 1
 	params['antifm_const'] = -1
 	params['epsilon'] = .01
