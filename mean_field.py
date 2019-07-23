@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from multiprocessing import Pool
 
 
-def fermi_function(energy, mu, beta):
+def fermi_function(energy,  beta, mu=0):
 	return 1 / (1 + np.exp(beta * (energy - mu)))
 #def integral()
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
@@ -31,7 +31,13 @@ def get_Xi(U,U_dagger,eigen_vals,params):
 	U_13 = U[0][2]
 	C_33 = U_dagger[2][2]
 	U_14 = U[0][3]
-	C_43 = U_dagger[3][2]
+        C_43 = U_dagger[3][2]
+        beta = params['beta']
+        nf_0 = fermi_function(eigen_vals[0],beta)
+        nf_1 = fermi_function(eigen_vals[1],beta)
+        nf_2 = fermi_function(eigen_vals[2],beta)
+        nf_3 = fermi_function(eigen_vals[3],beta)
+     
 	return (3 * params['antifm_const'] / 2) *(U_11*C_13*fermi_function(eigen_vals[0]) + U_12*C_23*fermi_function(eigen_vals[1]) + U_13*C_33*fermi_function(eigen_vals[2]) + U_14*C_43*fermi_function(eigen_vals[3]))
 def mean_field_function(params):
 	disp = []
@@ -48,11 +54,16 @@ def mean_field_function(params):
 				mu_c = 1
 				mu_f = 1
 				#epsilon = 2 * params['epsilon']*(math.cos(kx)+math.cos(ky))
-				H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
+				
+                                params['mu_c'] = mu_c
+                                params['mu_f'] = mu_f
+
+                                params['beta'] = 100
+                                H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
 				Xi_guess = -1 
 				H[0][2] = Xi_guess
 				H[1][3] = Xi_guess
-
+                                
 				H[2][0] = np.conj(Xi_guess)
 				H[3][1] = np.conj(Xi_guess)
 				Xi_act = 0
