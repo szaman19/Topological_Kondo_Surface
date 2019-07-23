@@ -9,7 +9,7 @@ from multiprocessing import Pool
 def fermi_function(energy, mu, beta):
 	return 1 / (1 + np.exp(beta * (energy - mu)))
 #def integral()
-def generate_hamiltonian(kx,ky,mu_f, mu_c, epsilon):
+def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
 	A = ky + 1j*kx
@@ -18,10 +18,10 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c, epsilon):
 
 	hamiltonian[0][1] = B
 	hamiltonian[1][0] = A
-	hamiltonian[0][0] = epsilon - mu_c
-	hamiltonian[1][1] = epsilon - mu_c 
+	hamiltonian[0][0] = mu_c
+	hamiltonian[1][1] = mu_c 
 	hamiltonian[2][2] = mu_f
-	hamiltonian[3][3] = -mu_f
+	hamiltonian[3][3] = mu_f
 	return hamiltonian
 def get_Xi(U,U_dagger,eigen_vals,params):
 	U_11 = U[0][0]
@@ -48,7 +48,7 @@ def mean_field_function(params):
 				mu_c = 1
 				mu_f = 1
 				#epsilon = 2 * params['epsilon']*(math.cos(kx)+math.cos(ky))
-				H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c, epsilon)
+				H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
 				Xi_guess = -1 
 				H[0][2] = Xi_guess
 				H[1][3] = Xi_guess
