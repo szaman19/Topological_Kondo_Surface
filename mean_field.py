@@ -47,61 +47,60 @@ def mean_field_function(params):
 	band_3 = []
 	band_4 = []
 
-	for j in range(-10,10):
-		params['antifm_const'] = j
-		for kx in range(params['kx_start'],params['kx_end']):
-			for ky in range(params['ky_start'],params['ky_end']):
-				mu_c = 1
-				mu_f = 1
-				#epsilon = 2 * params['epsilon']*(math.cos(kx)+math.cos(ky))
-				
-				params['mu_c'] = mu_c
-				params['mu_f'] = mu_f
-				params['beta'] = 1
-				H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
-				Xi_guess = -1 
+	params['antifm_const'] = j
+	for kx in range(params['kx_start'],params['kx_end']):
+		for ky in range(params['ky_start'],params['ky_end']):
+			mu_c = 1
+			mu_f = 1
+			#epsilon = 2 * params['epsilon']*(math.cos(kx)+math.cos(ky))
+			
+			params['mu_c'] = mu_c
+			params['mu_f'] = mu_f
+			params['beta'] = 1
+			H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
+			Xi_guess = -1 
+			H[0][2] = Xi_guess
+			H[1][3] = Xi_guess
+                               
+			H[2][0] = np.conj(Xi_guess)
+			H[3][1] = np.conj(Xi_guess)
+			Xi_act = 0
+			eig_vals = []
+			counter = 0
+			while(abs(Xi_guess - Xi_act) > 1e-8):
+				if(Xi_guess < Xi_act):
+					if (Xi_act >0 and Xi_guess < 0):
+						Xi_guess = -2 * Xi_guess
+					else:
+						Xi_guess = 2 * Xi_guess
+				else:
+					Xi_guess -= abs(Xi_act - Xi_guess)/2
+						
 				H[0][2] = Xi_guess
 				H[1][3] = Xi_guess
-                                
 				H[2][0] = np.conj(Xi_guess)
 				H[3][1] = np.conj(Xi_guess)
-				Xi_act = 0
-				eig_vals = []
-				counter = 0
-				while(abs(Xi_guess - Xi_act) > 1e-8):
-					if(Xi_guess < Xi_act):
-						if (Xi_act >0 and Xi_guess < 0):
-							Xi_guess = -2 * Xi_guess
-						else:
-							Xi_guess = 2 * Xi_guess
-					else:
-						Xi_guess -= abs(Xi_act - Xi_guess)/2
-							
-					H[0][2] = Xi_guess
-					H[1][3] = Xi_guess
-					H[2][0] = np.conj(Xi_guess)
-					H[3][1] = np.conj(Xi_guess)
-					eig_vals,U = LA.eig(H)
-					D = np.diag(eig_vals)
-					U_dagger = LA.inv(U)
-					Xi_act =  np.real(get_Xi(U, U_dagger,eig_vals,params))
-					counter += 1
-				if(abs(0-Xi_act) > 1e-6):
-					print(Xi_act)
-			# disp.append(kx/100)
-			# disp_y.append(ky/100)
-			# band_1.append(eig_vals[0])
-			# band_2.append(eig_vals[1])
-			# band_3.append(eig_vals[2])
-			# band_4.append(eig_vals[3])
+				eig_vals,U = LA.eig(H)
+				D = np.diag(eig_vals)
+				U_dagger = LA.inv(U)
+				Xi_act =  np.real(get_Xi(U, U_dagger,eig_vals,params))
+				counter += 1
+			if(abs(0-Xi_act) > 1e-6):
+				print(Xi_act)
+		disp.append(kx/100)
+		disp_y.append(ky/100)
+		band_1.append(eig_vals[0])
+		band_2.append(eig_vals[1])
+		band_3.append(eig_vals[2])
+		band_4.append(eig_vals[3])
 
 
-	# plt.plot(disp, band_1, label="band 1")
-	# plt.plot(disp, band_2, label="band 2")
-	# plt.plot(disp,band_3, label="band 3")
-	# plt.plot(disp,band_4, label="band 4")
-	# plt.legend()
-	# plt.show()
+	plt.plot(disp, band_1, label="band 1")
+	plt.plot(disp, band_2, label="band 2")
+	plt.plot(disp,band_3, label="band 3")
+	plt.plot(disp,band_4, label="band 4")
+	plt.legend()
+	plt.savefig("trial_1.png", format="png")
 
 
 def main():
