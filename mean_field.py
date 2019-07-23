@@ -124,7 +124,7 @@ def mean_field_function(params):
 			# H[3][1] = np.conj(Xi_guess)
 			# Xi_act = 0
 			# eig_vals = []
-			# counter = 0
+			counter = 0
 
 			# eig_vals,U = LA.eig(H)
 
