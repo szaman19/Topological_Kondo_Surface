@@ -148,6 +148,13 @@ def mean_field_function(params):
 						
 			if(abs(0-Xi_act) > 1e-6):
 				print(counter, Xi_act)
+		H = generate_hamiltonian(kx/100,ky/100, 0,0)
+		H[0][2] = Xi_act  
+		H[1][3] = Xi_act               
+		H[2][0] = Xi_act  
+		H[3][1] = Xi_act  
+
+		eig_vals = LA.eigvalsh(H)
 		Xi.append(Xi_act)
 		band_1.append(eig_vals[0])
 		band_2.append(eig_vals[1])
