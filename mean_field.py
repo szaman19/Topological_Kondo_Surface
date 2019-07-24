@@ -11,9 +11,9 @@ np.seterr(all='raise')
 def fermi_function(energy,  beta, mu=0):
 	energy = np.real(energy)
 	try:
-		if ((beta * (energy - mu)) < -11):
+		if ((beta * (energy - mu)) < -1100):
 			return 1
-		elif((beta * (energy - mu)) > 12):
+		elif((beta * (energy - mu)) > 1200):
 			return 0
 		else:
 			return 1 / (1 + np.exp(beta * (energy - mu)))
