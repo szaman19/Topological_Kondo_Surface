@@ -216,8 +216,8 @@ def mean_field_function(params):
 	plt.plot(disp,band_3, label="band 3")
 	plt.plot(disp,band_4, label="band 4")
 	plt.legend()
-	plt.show()
-	# plt.savefig("trial_1.png", format="png")
+	# plt.show()
+	plt.savefig("trial_1.png", format="png")
 
 
 def main():
