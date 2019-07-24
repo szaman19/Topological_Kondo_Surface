@@ -66,7 +66,7 @@ def get_Xi(Xi_guess, params):
 			params['mu_c'] = 0
 			params['mu_f'] = 0
 			params['beta'] = 100
-			H = generate_hamiltonian(kx/100,ky/100, 0,0)
+			H = generate_hamiltonian(kx/200,ky/200, 0,0)
 			H[0][2] = Xi_guess
 			H[1][3] = Xi_guess
 			H[2][0] = np.conj(Xi_guess)
@@ -148,19 +148,19 @@ def mean_field_function(params):
 						
 			if(abs(0-Xi_act) > 1e-6):
 				print(counter, Xi_act)
-		H = generate_hamiltonian(kx/100,ky/100, 0,0)
-		H[0][2] = Xi_act  
-		H[1][3] = Xi_act               
-		H[2][0] = np.conj(Xi_act)  
-		H[3][1] = np.conj(Xi_act) 
+			H = generate_hamiltonian(kx/100,ky/100, 0,0)
+			H[0][2] = Xi_act  
+			H[1][3] = Xi_act               
+			H[2][0] = np.conj(Xi_act)  
+			H[3][1] = np.conj(Xi_act) 
 
-		eig_vals = LA.eigvalsh(H)
-		Xi.append(Xi_act)
-		band_1.append(eig_vals[0])
-		band_2.append(eig_vals[1])
-		band_3.append(eig_vals[2])
-		band_4.append(eig_vals[3])
-		disp.append(kx/100)
+			eig_vals = LA.eigvalsh(H)
+			Xi.append(Xi_act)
+			band_1.append(eig_vals[0])
+			band_2.append(eig_vals[1])
+			band_3.append(eig_vals[2])
+			band_4.append(eig_vals[3])
+			disp.append(kx/100)
 
 
 	# X, Y = np.meshgrid(disp, disp)
