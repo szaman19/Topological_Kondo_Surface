@@ -136,7 +136,7 @@ def mean_field_function(params):
 			# U_dagger = LA.inv(U)
 			Xi_act =  get_Xi(Xi_guess, params)
 			while(abs(Xi_guess - Xi_act) > 1e-7):
-				Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_guess) 		
+				Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_act) 		
 				
 				Xi_act =  get_Xi(Xi_guess,params)
 				counter += 1
