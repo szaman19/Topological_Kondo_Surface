@@ -11,9 +11,9 @@ np.seterr(all='raise')
 def fermi_function(energy,  beta, mu=0):
 	energy = np.real(energy)
 	try:
-		if ((beta * (energy - mu)) < -1100):
+		if ((beta * (energy - mu)) < -110):
 			return 1
-		elif((beta * (energy - mu)) > 1200):
+		elif((beta * (energy - mu)) > 120):
 			return 0
 		else:
 			return 1 / (1 + np.exp(beta * (energy - mu)))
@@ -136,7 +136,7 @@ def mean_field_function(params):
 			# U_dagger = LA.inv(U)
 			Xi_act =  get_Xi(Xi_guess, params)
 			while(abs(Xi_guess - Xi_act) > 1e-7):
-				Xi_guess = .2*(Xi_act-Xi_guess) + .8*(Xi_guess) 		
+				Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_guess) 		
 				
 				Xi_act =  get_Xi(Xi_guess,params)
 				counter += 1
