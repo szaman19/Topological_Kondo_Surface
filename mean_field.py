@@ -20,8 +20,39 @@ def fermi_function(energy,  beta, mu=0):
 	except:
 		print("Exception has occured", energy)
 
-def moment_number_integral(hamiltonian, params):
-	print("Return the correct value for mu_f")
+def calibtrate_moment(Xi, params):
+	# print("Return the correct value for mu_f")
+	num = 0
+	for kx in range(-100,100):
+		for ky in range(-100,100):
+			H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],0)
+			eig_vals,U = LA.eig(H)
+			U_dagger = LA.inv(U)
+			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
+	params['mu_f'] = 0
+	while(abs(num-9) > 1E-8):
+		if(num > 9):
+			params['mu_f'] -= .1
+		else:
+			params['mu_f'] +=.1
+		num = 0
+		for kx in range(-100,100):
+			for ky in range(-100,100):
+				H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],0)
+				eig_vals,U = LA.eig(H)
+				U_dagger = LA.inv(U)
+				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
+
+def moment_number_integral(U,U_dagger, eigen_vals, mu):
+	return_val = 0
+	beta = 1000
+	for i in range(2,4):
+		for k in range(4):
+			return_val += U[k][i] * U_dagger[i][k] * fermi_function(eigen_vals[0],beta,mu)
+	return return_val 
+
+
+
 
 def self_consistent(kx, ky, params):
 	print("working on it")
@@ -69,22 +100,21 @@ def integral_helper(U,U_dagger,eigen_vals,params):
 	nf_2 = fermi_function(eigen_vals[2],beta)
 	nf_3 = fermi_function(eigen_vals[3],beta)
 	return (U_11*C_13*nf_0 + U_12*C_23*nf_1 + U_13*C_33*nf_2 + U_14*C_43*nf_3)
-def get_Xi(Xi_guess, params):
+def get_Xi(kx,ky,Xi_guess, params):
 	Xi_act = 0
-	for kx in range(-30,30):
-		for ky in range(-30,30):
-			params['mu_c'] = 0
-			params['mu_f'] = 0
-			# params['beta'] = 100
-			H = generate_hamiltonian(kx/20,ky/20, 0,0)
-			H[0][2] = Xi_guess
-			H[1][3] = Xi_guess
-			H[2][0] = np.conj(Xi_guess)
-			H[3][1] = np.conj(Xi_guess)
-			eig_vals,U = LA.eig(H)
-			D = np.diag(eig_vals)
-			U_dagger = LA.inv(U)
-			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
+	
+	params['mu_c'] = 0
+	# params['mu_f'] = 0
+	# params['beta'] = 100
+	H = generate_hamiltonian(kx,ky, params['mu_f'],0)
+	H[0][2] = Xi_guess
+	H[1][3] = Xi_guess
+	H[2][0] = np.conj(Xi_guess)
+	H[3][1] = np.conj(Xi_guess)
+	eig_vals,U = LA.eig(H)
+	D = np.diag(eig_vals)
+	U_dagger = LA.inv(U)
+	Xi_act =  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
 	return (3 * params['antifm_const'] / 2) * Xi_act
 
 
@@ -134,18 +164,21 @@ def mean_field_function(params):
 
 			# D = np.diag(eig_vals)
 			# U_dagger = LA.inv(U)
-			Xi_act =  get_Xi(Xi_guess, params)
+			Xi_act =  get_Xi(kx,ky,Xi_guess, params)
 			while(abs(Xi_guess - Xi_act) > 1e-7):
 				Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_act) 		
 				
-				Xi_act =  get_Xi(Xi_guess,params)
+				calibtrate_moment(Xi_guess, params)
+
+				Xi_act =  get_Xi(kx,ky,Xi_guess,params)
+
 				counter += 1
-				if (counter % 10 ==0):
-					print(counter , Xi_act, Xi_guess)
+				# if (counter % 10 ==0):
+				# 	print(counter , Xi_act, Xi_guess)
 						
 			if(abs(0-Xi_act) > 1e-6):
 				print(counter, Xi_act)
-			H = generate_hamiltonian(kx/100,ky/100, 0,0)
+			H = generate_hamiltonian(kx/100,ky/100, params['mu_f'],0)
 			H[0][2] = Xi_act  
 			H[1][3] = Xi_act               
 			H[2][0] = np.conj(Xi_act)  
@@ -177,13 +210,14 @@ def mean_field_function(params):
 	# ax.set_xlabel('x')
 	# ax.set_ylabel('y')
 	# ax.set_zlabel('z')
-	plt.plot(disp, Xi, label="Order parameter")
-	# plt.plot(disp, band_2, label="band 2")
-	# plt.plot(disp,band_3, label="band 3")
-	# plt.plot(disp,band_4, label="band 4")
+	# plt.plot(disp, Xi, label="Order parameter")
+	plt.plot(disp, band_1, label="band 1")
+	plt.plot(disp, band_2, label="band 2")
+	plt.plot(disp,band_3, label="band 3")
+	plt.plot(disp,band_4, label="band 4")
 	plt.legend()
-	# plt.show()
-	plt.savefig("trial_1.png", format="png")
+	plt.show()
+	# plt.savefig("trial_1.png", format="png")
 
 
 def main():
@@ -197,6 +231,7 @@ def main():
 	params['antifm_const'] = -1
 	params['epsilon'] = .01
 	params['beta'] = 1000
+	params['mu_f'] = 0
 	
 	
 	mean_field_function(params)
