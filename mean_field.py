@@ -32,9 +32,17 @@ def calibtrate_moment(Xi, params):
 	params['mu_f'] = 0
 	while(abs(num-9) > 1E-8):
 		if(num > 9):
-			params['mu_f'] -= .1
+			params['mu_f_prev_prev'] = params['mu_f_prev']
+			params['mu_f_prev'] = params['mu_f']
+			if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
+				params['mu_f_delta'] /= 2
+			params['mu_f'] -= params['mu_f_delta']
 		else:
-			params['mu_f'] +=.1
+			params['mu_f_prev_prev'] = params['mu_f_prev']
+			params['mu_f_prev'] = params['mu_f']
+			if(params['mu_f_prev_prev'] == params['mu_f'] + params['mu_f_delta']):
+				params['mu_f_delta'] /= 2
+			params['mu_f'] +=params['mu_f_delta']
 		num = 0
 		for kx in range(-100,100):
 			for ky in range(-100,100):
@@ -233,6 +241,9 @@ def main():
 	params['epsilon'] = .01
 	params['beta'] = 1000
 	params['mu_f'] = 0
+	params['mu_f_prev'] = 0 
+	params['mu_f_prev_prev'] = 0
+	params['mu_f_delta'] = .2
 	
 	
 	mean_field_function(params)
