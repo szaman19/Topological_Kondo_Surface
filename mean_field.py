@@ -6,9 +6,19 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from multiprocessing import Pool
 
+np.seterr(all='raise')
 
 def fermi_function(energy,  beta, mu=0):
-	return 1 / (1 + np.exp(beta * (energy - mu)))
+	energy = np.real(energy)
+	try:
+		if ((beta * (energy - mu)) < -11):
+			return 1
+		elif((beta * (energy - mu)) > 12):
+			return 0
+		else:
+			return 1 / (1 + np.exp(beta * (energy - mu)))
+	except:
+		print("Exception has occured", energy)
 
 def moment_number_integral(hamiltonian, params):
 	print("Return the correct value for mu_f")
@@ -61,12 +71,12 @@ def integral_helper(U,U_dagger,eigen_vals,params):
 	return (U_11*C_13*nf_0 + U_12*C_23*nf_1 + U_13*C_33*nf_2 + U_14*C_43*nf_3)
 def get_Xi(Xi_guess, params):
 	Xi_act = 0
-	for kx in range(-300,300):
-		for ky in range(-300,300):
+	for kx in range(-30,30):
+		for ky in range(-30,30):
 			params['mu_c'] = 0
 			params['mu_f'] = 0
-			params['beta'] = 100
-			H = generate_hamiltonian(kx/200,ky/200, 0,0)
+			# params['beta'] = 100
+			H = generate_hamiltonian(kx/20,ky/20, 0,0)
 			H[0][2] = Xi_guess
 			H[1][3] = Xi_guess
 			H[2][0] = np.conj(Xi_guess)
@@ -110,12 +120,6 @@ def mean_field_function(params):
 		for ky in range(params['ky_start'],params['ky_end']):
 			mu_c = 0
 			mu_f = 0
-			#epsilon = 2 * params['epsilon']*(math.cos(kx)+math.cos(ky))
-			
-			# params['mu_c'] = mu_c
-			# params['mu_f'] = mu_f
-			# params['beta'] = 100
-			# H = generate_hamiltonian(kx/100,ky/100, mu_f,mu_c)
 			Xi_guess = -1 
 			# H[0][2] = Xi_guess
 			# H[1][3] = Xi_guess
@@ -133,17 +137,10 @@ def mean_field_function(params):
 			Xi_act =  get_Xi(Xi_guess, params)
 			while(abs(Xi_guess - Xi_act) > 1e-7):
 				Xi_guess = .01*(Xi_act-Xi_guess) + (Xi_act) 		
-				# H[0][2] = Xi_guess
-				# H[1][3] = Xi_guess
-				# H[2][0] = np.conj(Xi_guess)
-				# H[3][1] = np.conj(Xi_guess)
-				# eig_vals,U = LA.eigh(H)
-
-				# D = np.diag(eig_vals)
-				# U_dagger = LA.inv(U)
+				
 				Xi_act =  get_Xi(Xi_guess,params)
 				counter += 1
-				if (counter % 1000 ==0):
+				if (counter % 10 ==0):
 					print(counter , Xi_act, Xi_guess)
 						
 			if(abs(0-Xi_act) > 1e-6):
@@ -156,6 +153,8 @@ def mean_field_function(params):
 
 			eig_vals = LA.eigvalsh(H)
 			Xi.append(Xi_act)
+			
+			print("kx: ",kx, "ky: ",ky, "Xi: ",Xi_act)
 			band_1.append(eig_vals[0])
 			band_2.append(eig_vals[1])
 			band_3.append(eig_vals[2])
@@ -197,7 +196,7 @@ def main():
 	params['kz_end'] = 1
 	params['antifm_const'] = -1
 	params['epsilon'] = .01
-	params['beta'] = 100
+	params['beta'] = 1000
 	
 	
 	mean_field_function(params)
