@@ -151,8 +151,8 @@ def mean_field_function(params):
 		H = generate_hamiltonian(kx/100,ky/100, 0,0)
 		H[0][2] = Xi_act  
 		H[1][3] = Xi_act               
-		H[2][0] = Xi_act  
-		H[3][1] = Xi_act  
+		H[2][0] = np.conj(Xi_act)  
+		H[3][1] = np.conj(Xi_act) 
 
 		eig_vals = LA.eigvalsh(H)
 		Xi.append(Xi_act)
@@ -183,8 +183,8 @@ def mean_field_function(params):
 	# plt.plot(disp,band_3, label="band 3")
 	# plt.plot(disp,band_4, label="band 4")
 	plt.legend()
-	plt.show()
-	# plt.savefig("trial_1.png", format="png")
+	# plt.show()
+	plt.savefig("trial_1.png", format="png")
 
 
 def main():
