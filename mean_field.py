@@ -92,7 +92,7 @@ def self_consistent(params):
 			Xi_act =  get_Xi(Xi_guess,params)
 
 			counter += 1
-			if (counter % 10000 ==0):
+			if (counter % 100 ==0):
 				print(counter , Xi_act, Xi_guess)					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
@@ -118,8 +118,13 @@ def get_Xi(Xi_guess, params):
 			H[2][0] = np.conj(Xi_guess)
 			H[3][1] = np.conj(Xi_guess)
 			eig_vals,U = LA.eig(H)
+			thresh = 1e-16
+			U.real[abs(U.real)<thresh] = 0.0
+			U.imag[abs(U.imag) < thresh] = 0.0
 			D = np.diag(eig_vals)
 			U_dagger = LA.inv(U)
+			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
+			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
 	return (3 * params['antifm_const'] / 2) * Xi_act
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
