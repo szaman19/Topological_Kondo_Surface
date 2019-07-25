@@ -23,13 +23,13 @@ def fermi_function(energy,  beta, mu=0):
 def calibtrate_moment(Xi, params):
 	# print("Return the correct value for mu_f")
 	num = 0
-	for kx in range(-200,200):
-		for ky in range(-200,200):
-			H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],params['mu_c'])
+	for kx in range(-20,20):
+		for ky in range(-20,20):
+			H = generate_hamiltonian(kx/10,ky/10,params['mu_f'],params['mu_c'])
 			eig_vals,U = LA.eig(H)
 			U_dagger = LA.inv(U)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	num /= 10000
+	num /= 100
 	# params['mu_f'] = 0
 	while(abs(num-9) > 1E-8):
 		if(num > 9):
@@ -45,13 +45,13 @@ def calibtrate_moment(Xi, params):
 				params['mu_f_delta'] /= 2
 			params['mu_f'] +=params['mu_f_delta']
 		num = 0
-		for kx in range(-200,200):
-			for ky in range(-200,200):
-				H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],params['mu_c'])
+		for kx in range(-20,20):
+			for ky in range(-20,20):
+				H = generate_hamiltonian(kx/10,ky/10,params['mu_f'],params['mu_c'])
 				eig_vals,U = LA.eig(H)
 				U_dagger = LA.inv(U)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-		num /= 10000
+		num /= 100
 		print(num)
 	params['mu_f_delta'] = .2
 
