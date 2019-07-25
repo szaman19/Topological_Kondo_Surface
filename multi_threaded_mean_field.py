@@ -221,9 +221,23 @@ def main():
 
 	#self_consistent(j, params)
 
+	outputs = []
 	for j in range(10):
 		pool = Pool(processes=10)
-		results = [pool.apply(self_consistent, args=(j+x*.1,params)) for x in range(10)]
-		print(results)
+		results = [pool.apply_async(self_consistent, args=(j+x*.1,params)) for x in range(10)]
+		output = [p.get() for p in results]
+		print(output)
+		outputs.append(output)
+	log = open("output.txt", 'w')
+	for row in outputs:
+		for each in row:
+			# string = 
+			log.write(str(each))
+			log.write(",")
+		log.write("\n")
+
+	log.close()
+
+
 
 main()
