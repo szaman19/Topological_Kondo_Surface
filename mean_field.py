@@ -87,15 +87,15 @@ def self_consistent(params):
 		counter = 0
 		Xi_act =  get_Xi(Xi_guess, params)
 		while(abs(Xi_guess - Xi_act) > 1e-7):
-			Xi_guess = .05*(Xi_act) + .95*(Xi_act) 		
+			Xi_guess = .01*(Xi_act) + .99*(Xi_act) 		
 			
 			calibtrate_moment(Xi_guess, params)
 
 			Xi_act =  get_Xi(Xi_guess,params)
 
 			counter += 1
-			if (counter % 10 ==0):
-				print(counter , abs(Xi_act- Xi_guess))					
+			
+			print(counter , abs(Xi_act- Xi_guess))					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
 		anti_f.append(j)
@@ -120,7 +120,7 @@ def get_Xi(Xi_guess, params):
 			H[2][0] = np.conj(Xi_guess)
 			H[3][1] = np.conj(Xi_guess)
 			eig_vals,U = LA.eig(H)
-			thresh = 1e-16
+			thresh = 1e-9
 			U.real[abs(U.real)<thresh] = 0.0
 			U.imag[abs(U.imag) < thresh] = 0.0
 			D = np.diag(eig_vals)
