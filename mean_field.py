@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from multiprocessing import Pool
 
-np.seterr(all='raise')
+# np.seterr(all='raise')
 
 def fermi_function(energy,  beta, mu=0):
 	energy = np.real(energy)
@@ -64,12 +64,8 @@ def moment_number_integral(U,U_dagger, eigen_vals, mu):
 
 
 
-def self_consistent(kx, ky, params):
-	print("working on it")
-	for j in range(10):
-		j = -1 * j
-
-		''' 
+def self_consistent(params):
+	''' 
 		For some J, we will find xi
 		for a range of k
 		start loop:
@@ -79,8 +75,53 @@ def self_consistent(kx, ky, params):
 			calculate the order parameter and compare with xi
 			update xi_guess
 		
-		'''
+	'''
+	anti_f = []
+	Xi_list= []
+	for j in range(10,100):
+		j = -1 * j / 10
+		params['antifm_const'] = j
+		Xi_guess = -1 
+		counter = 0
+		Xi_act =  get_Xi(Xi_guess, params)
+		while(abs(Xi_guess - Xi_act) > 1e-7):
+			Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_act) 		
+			
+			calibtrate_moment(Xi_guess, params)
 
+			Xi_act =  get_Xi(Xi_guess,params)
+
+			counter += 1
+			# if (counter % 10 ==0):
+			# 	print(counter , Xi_act, Xi_guess)					
+		if(abs(0-Xi_act) > 1e-6):
+			print(j, Xi_act)
+		anti_f.append(j)
+		Xi_list.append(Xi_act)
+	plt.plot(anti_f, Xi_list, label="Phase Diagrams")
+	plt.savefig("Phase Diagram ", format="png")
+
+
+
+
+
+def get_Xi(Xi_guess, params):
+	Xi_act = 0
+	
+	for kx in range(-300,300):
+		for ky in range(-300,300):
+			kx /= 100
+			ky /= 100
+			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
+			H[0][2] = Xi_guess
+			H[1][3] = Xi_guess
+			H[2][0] = np.conj(Xi_guess)
+			H[3][1] = np.conj(Xi_guess)
+			eig_vals,U = LA.eig(H)
+			D = np.diag(eig_vals)
+			U_dagger = LA.inv(U)
+			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
+	return (3 * params['antifm_const'] / 2) * Xi_act
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
@@ -110,22 +151,22 @@ def integral_helper(U,U_dagger,eigen_vals,params):
 	nf_2 = fermi_function(eigen_vals[2],beta)
 	nf_3 = fermi_function(eigen_vals[3],beta)
 	return (U_11*C_13*nf_0 + U_12*C_23*nf_1 + U_13*C_33*nf_2 + U_14*C_43*nf_3)
-def get_Xi(kx,ky,Xi_guess, params):
-	Xi_act = 0
+# def get_Xi(kx,ky,Xi_guess, params):
+# 	Xi_act = 0
 	
-	params['mu_c'] = 0
-	# params['mu_f'] = 0
-	# params['beta'] = 100
-	H = generate_hamiltonian(kx,ky, params['mu_f'],0)
-	H[0][2] = Xi_guess
-	H[1][3] = Xi_guess
-	H[2][0] = np.conj(Xi_guess)
-	H[3][1] = np.conj(Xi_guess)
-	eig_vals,U = LA.eig(H)
-	D = np.diag(eig_vals)
-	U_dagger = LA.inv(U)
-	Xi_act =  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return (3 * params['antifm_const'] / 2) * Xi_act
+# 	params['mu_c'] = 0
+# 	# params['mu_f'] = 0
+# 	# params['beta'] = 100
+# 	H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
+# 	H[0][2] = Xi_guess
+# 	H[1][3] = Xi_guess
+# 	H[2][0] = np.conj(Xi_guess)
+# 	H[3][1] = np.conj(Xi_guess)
+# 	eig_vals,U = LA.eig(H)
+# 	D = np.diag(eig_vals)
+# 	U_dagger = LA.inv(U)
+# 	Xi_act =  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
+# 	return (3 * params['antifm_const'] / 2) * Xi_act
 
 
 
@@ -147,62 +188,62 @@ def get_Xi_helper(U,U_dagger,eigen_vals,params):
 	nf_3 = fermi_function(eigen_vals[3],beta)
      
 	return (U_13*C_11*nf_0 + C_12*U_23*nf_1 + C_13*U_33*nf_2 + C_14*U_43*nf_3)
-def mean_field_function(params):
-	disp = []
-	Xi = []
-	band_1 = []
-	band_2 = []
-	band_3 = []
-	band_4 = []
+# def mean_field_function(params):
+# 	disp = []
+# 	Xi = []
+# 	band_1 = []
+# 	band_2 = []
+# 	band_3 = []
+# 	band_4 = []
 
-	#params['antifm_const'] = j
-	for kx in range(params['kx_start'],params['kx_end']):
-		for ky in range(params['ky_start'],params['ky_end']):
-			mu_c = 0
-			mu_f = 0
-			Xi_guess = -1 
-			# H[0][2] = Xi_guess
-			# H[1][3] = Xi_guess
+# 	#params['antifm_const'] = j
+# 	for kx in range(params['kx_start'],params['kx_end']):
+# 		for ky in range(params['ky_start'],params['ky_end']):
+# 			mu_c = 0
+# 			mu_f = 0
+# 			Xi_guess = -1 
+# 			# H[0][2] = Xi_guess
+# 			# H[1][3] = Xi_guess
                                
-			# H[2][0] = np.conj(Xi_guess)
-			# H[3][1] = np.conj(Xi_guess)
-			# Xi_act = 0
-			# eig_vals = []
-			counter = 0
+# 			# H[2][0] = np.conj(Xi_guess)
+# 			# H[3][1] = np.conj(Xi_guess)
+# 			# Xi_act = 0
+# 			# eig_vals = []
+# 			counter = 0
 
-			# eig_vals,U = LA.eig(H)
+# 			# eig_vals,U = LA.eig(H)
 
-			# D = np.diag(eig_vals)
-			# U_dagger = LA.inv(U)
-			Xi_act =  get_Xi(kx,ky,Xi_guess, params)
-			while(abs(Xi_guess - Xi_act) > 1e-7):
-				Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_act) 		
+# 			# D = np.diag(eig_vals)
+# 			# U_dagger = LA.inv(U)
+# 			Xi_act =  get_Xi(kx,ky,Xi_guess, params)
+# 			while(abs(Xi_guess - Xi_act) > 1e-7):
+# 				Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_act) 		
 				
-				calibtrate_moment(Xi_guess, params)
+# 				calibtrate_moment(Xi_guess, params)
 
-				Xi_act =  get_Xi(kx,ky,Xi_guess,params)
+# 				Xi_act =  get_Xi(kx,ky,Xi_guess,params)
 
-				counter += 1
-				# if (counter % 10 ==0):
-				# 	print(counter , Xi_act, Xi_guess)
+# 				counter += 1
+# 				# if (counter % 10 ==0):
+# 				# 	print(counter , Xi_act, Xi_guess)
 						
-			if(abs(0-Xi_act) > 1e-6):
-				print(counter, Xi_act)
-			H = generate_hamiltonian(kx/100,ky/100, params['mu_f'],0)
-			H[0][2] = Xi_act  
-			H[1][3] = Xi_act               
-			H[2][0] = np.conj(Xi_act)  
-			H[3][1] = np.conj(Xi_act) 
+# 			if(abs(0-Xi_act) > 1e-6):
+# 				print(counter, Xi_act)
+# 			H = generate_hamiltonian(kx/100,ky/100, params['mu_f'],0)
+# 			H[0][2] = Xi_act  
+# 			H[1][3] = Xi_act               
+# 			H[2][0] = np.conj(Xi_act)  
+# 			H[3][1] = np.conj(Xi_act) 
 
-			eig_vals = LA.eigvalsh(H)
-			Xi.append(Xi_act)
+# 			eig_vals = LA.eigvalsh(H)
+# 			Xi.append(Xi_act)
 			
-			print("kx: ",kx, "ky: ",ky, "Xi: ",Xi_act)
-			band_1.append(eig_vals[0])
-			band_2.append(eig_vals[1])
-			band_3.append(eig_vals[2])
-			band_4.append(eig_vals[3])
-			disp.append(kx/100)
+# 			print("kx: ",kx, "ky: ",ky, "Xi: ",Xi_act)
+# 			band_1.append(eig_vals[0])
+# 			band_2.append(eig_vals[1])
+# 			band_3.append(eig_vals[2])
+# 			band_4.append(eig_vals[3])
+# 			disp.append(kx/100)
 
 
 	# X, Y = np.meshgrid(disp, disp)
@@ -221,13 +262,13 @@ def mean_field_function(params):
 	# ax.set_ylabel('y')
 	# ax.set_zlabel('z')
 	# plt.plot(disp, Xi, label="Order parameter")
-	plt.plot(disp, band_1, label="band 1")
-	plt.plot(disp, band_2, label="band 2")
-	plt.plot(disp,band_3, label="band 3")
-	plt.plot(disp,band_4, label="band 4")
-	plt.legend()
-	# plt.show()
-	plt.savefig("trial_1.png", format="png")
+	# plt.plot(disp, band_1, label="band 1")
+	# plt.plot(disp, band_2, label="band 2")
+	# plt.plot(disp,band_3, label="band 3")
+	# plt.plot(disp,band_4, label="band 4")
+	# plt.legend()
+	# # plt.show()
+	# plt.savefig("trial_1.png", format="png")
 
 
 def main():
@@ -245,7 +286,8 @@ def main():
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
+	params['mu_c'] = .2
 	
 	
-	mean_field_function(params)
+	self_consistent(params)
 main()
