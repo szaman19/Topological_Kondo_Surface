@@ -223,7 +223,7 @@ def main():
 
 	for j in range(10):
 		pool = Pool(processes=10)
-		results = [pool.apply(trial, args=(j+x*.1,params)) for x in range(10)]
+		results = [pool.apply(self_consistent, args=(j+x*.1,params)) for x in range(10)]
 		print(results)
 
 main()
