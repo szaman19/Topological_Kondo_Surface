@@ -25,10 +25,11 @@ def calibtrate_moment(Xi, params):
 	num = 0
 	for kx in range(-200,200):
 		for ky in range(-200,200):
-			H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],0)
+			H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],params['mu_c'])
 			eig_vals,U = LA.eig(H)
 			U_dagger = LA.inv(U)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
+	num /= 10000
 	# params['mu_f'] = 0
 	while(abs(num-9) > 1E-8):
 		if(num > 9):
@@ -46,10 +47,11 @@ def calibtrate_moment(Xi, params):
 		num = 0
 		for kx in range(-200,200):
 			for ky in range(-200,200):
-				H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],0)
+				H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],params['mu_c'])
 				eig_vals,U = LA.eig(H)
 				U_dagger = LA.inv(U)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
+		num /= 10000
 		print(num)
 	params['mu_f_delta'] = .2
 
@@ -126,7 +128,7 @@ def get_Xi(Xi_guess, params):
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return (3 * params['antifm_const'] / 2) * Xi_act
+	return (3 * params['antifm_const'] / 2) * Xi_act / 100
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
