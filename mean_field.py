@@ -80,22 +80,22 @@ def self_consistent(params):
 	'''
 	anti_f = []
 	Xi_list= []
-	for j in range(10,100):
+	for j in range(10,20):
 		j = -1 * j / 10
 		params['antifm_const'] = j
 		Xi_guess = params['Xi_guess'] 
 		counter = 0
 		Xi_act =  get_Xi(Xi_guess, params)
 		while(abs(Xi_guess - Xi_act) > 1e-7):
-			Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_act) 		
+			Xi_guess = .1*(Xi_act) + .95*(Xi_act) 		
 			
 			calibtrate_moment(Xi_guess, params)
 
 			Xi_act =  get_Xi(Xi_guess,params)
 
 			counter += 1
-			if (counter % 100 ==0):
-				print(counter , Xi_act, Xi_guess)					
+			if (counter % 10 ==0):
+				print(counter , abs(Xi_act- Xi_guess))					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
 		anti_f.append(j)
