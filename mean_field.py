@@ -23,8 +23,8 @@ def fermi_function(energy,  beta, mu=0):
 def calibtrate_moment(Xi, params):
 	# print("Return the correct value for mu_f")
 	num = 0
-	for kx in range(-100,100):
-		for ky in range(-100,100):
+	for kx in range(-300,300):
+		for ky in range(-300,300):
 			H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],0)
 			eig_vals,U = LA.eig(H)
 			U_dagger = LA.inv(U)
@@ -44,8 +44,8 @@ def calibtrate_moment(Xi, params):
 				params['mu_f_delta'] /= 2
 			params['mu_f'] +=params['mu_f_delta']
 		num = 0
-		for kx in range(-100,100):
-			for ky in range(-100,100):
+		for kx in range(-300,300):
+			for ky in range(-300,300):
 				H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],0)
 				eig_vals,U = LA.eig(H)
 				U_dagger = LA.inv(U)
@@ -92,8 +92,8 @@ def self_consistent(params):
 			Xi_act =  get_Xi(Xi_guess,params)
 
 			counter += 1
-			# if (counter % 10 ==0):
-			# 	print(counter , Xi_act, Xi_guess)					
+			if (counter % 10000 ==0):
+				print(counter , Xi_act, Xi_guess)					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
 		anti_f.append(j)
