@@ -95,7 +95,7 @@ def self_consistent(params):
 
 			counter += 1
 			
-			print(counter , abs(Xi_act- Xi_guess))					
+			print(counter ,"Calculated: ", Xi_act, "Guess:", Xi_guess, "Abs differnce: ", abs(Xi_act- Xi_guess))					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
 		anti_f.append(j)
