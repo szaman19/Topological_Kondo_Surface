@@ -108,10 +108,10 @@ def self_consistent(params):
 def get_Xi(Xi_guess, params):
 	Xi_act = 0
 	
-	for kx in range(-200,200):
-		for ky in range(-200,200):
-			kx /= 100
-			ky /= 100
+	for kx in range(-20,20):
+		for ky in range(-20,20):
+			kx /= 10
+			ky /= 10
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
 			H[0][2] = Xi_guess
 			H[1][3] = Xi_guess
