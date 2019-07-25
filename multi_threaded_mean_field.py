@@ -23,13 +23,13 @@ def fermi_function(energy,  beta, mu=0):
 def calibtrate_moment(Xi, params):
 	# print("Return the correct value for mu_f")
 	num = 0
-	for kx in range(-200,200):
-		for ky in range(-200,200):
-			H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],params['mu_c'])
+	for kx in range(-20,20):
+		for ky in range(-20,20):
+			H = generate_hamiltonian(kx/10,ky/10,params['mu_f'],params['mu_c'])
 			eig_vals,U = LA.eig(H)
 			U_dagger = LA.inv(U)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	num /= 10000
+	num /= 100
 	# params['mu_f'] = 0
 	while(abs(num-9) > 1E-8):
 		if(num > 9):
@@ -45,13 +45,13 @@ def calibtrate_moment(Xi, params):
 				params['mu_f_delta'] /= 2
 			params['mu_f'] +=params['mu_f_delta']
 		num = 0
-		for kx in range(-200,200):
-			for ky in range(-200,200):
-				H = generate_hamiltonian(kx/100,ky/100,params['mu_f'],params['mu_c'])
+		for kx in range(-20,20):
+			for ky in range(-20,20):
+				H = generate_hamiltonian(kx/10,ky/10,params['mu_f'],params['mu_c'])
 				eig_vals,U = LA.eig(H)
 				U_dagger = LA.inv(U)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-		num /= 10000
+		num /= 100
 		print(num)
 	params['mu_f_delta'] = .2
 
@@ -87,8 +87,8 @@ def self_consistent(j,parameters):
 	Xi_guess = params['Xi_guess'] 
 	counter = 0
 	Xi_act =  get_Xi(Xi_guess, params)
-	while(abs(Xi_guess - Xi_act) > 1e-7):
-		Xi_guess = .2*(Xi_act-Xi_guess) + .9*(Xi_guess) 		
+	while(abs(Xi_guess - Xi_act) > 1e-9):
+		Xi_guess = .01*(Xi_act) + .99*(Xi_guess) 		
 			
 		calibtrate_moment(Xi_guess, params)
 
@@ -160,23 +160,6 @@ def integral_helper(U,U_dagger,eigen_vals,params):
 	nf_2 = fermi_function(eigen_vals[2],beta)
 	nf_3 = fermi_function(eigen_vals[3],beta)
 	return (U_11*C_13*nf_0 + U_12*C_23*nf_1 + U_13*C_33*nf_2 + U_14*C_43*nf_3)
-# def get_Xi(kx,ky,Xi_guess, params):
-# 	Xi_act = 0
-	
-# 	params['mu_c'] = 0
-# 	# params['mu_f'] = 0
-# 	# params['beta'] = 100
-# 	H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
-# 	H[0][2] = Xi_guess
-# 	H[1][3] = Xi_guess
-# 	H[2][0] = np.conj(Xi_guess)
-# 	H[3][1] = np.conj(Xi_guess)
-# 	eig_vals,U = LA.eig(H)
-# 	D = np.diag(eig_vals)
-# 	U_dagger = LA.inv(U)
-# 	Xi_act =  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-# 	return (3 * params['antifm_const'] / 2) * Xi_act
-
 
 
 def get_Xi_helper(U,U_dagger,eigen_vals,params):
@@ -216,15 +199,15 @@ def main():
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .2
-	params['Xi_guess'] = -1
+	params['Xi_guess'] = -.1
 	params['cutoff'] = 200
 
 	#self_consistent(j, params)
 
 	outputs = []
-	for j in range(10):
+	for j in range(20):
 		pool = Pool(processes=10)
-		results = [pool.apply_async(self_consistent, args=(j+x*.1,params)) for x in range(10)]
+		results = [pool.apply_async(self_consistent, args=((j/10)+x*.1,params)) for x in range(10)]
 		output = [p.get() for p in results]
 		print(output)
 		outputs.append(output)
