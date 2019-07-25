@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from multiprocessing import Pool
 
-# np.seterr(all='raise')
+np.seterr(all='raise')
 
 def fermi_function(energy,  beta, mu=0):
 	energy = np.real(energy)
