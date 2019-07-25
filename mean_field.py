@@ -86,7 +86,7 @@ def self_consistent(params):
 		Xi_guess = params['Xi_guess'] 
 		counter = 0
 		Xi_act =  get_Xi(Xi_guess, params)
-		while(abs(Xi_guess - Xi_act) > 1e-7):
+		while(abs(Xi_guess - Xi_act) > 1e-9):
 			Xi_guess = .01*(Xi_act) + .99*(Xi_guess) 		
 			
 			calibtrate_moment(Xi_guess, params)
@@ -94,14 +94,14 @@ def self_consistent(params):
 			Xi_act =  get_Xi(Xi_guess,params)
 
 			counter += 1
-			
-			print(counter ,"Calculated: ", Xi_act, "Guess:", Xi_guess, " - ", abs(Xi_act- Xi_guess))					
+			if (counter %10 = 0):
+				print(counter ,"Calculated: ", Xi_act, "Guess:", Xi_guess, " - ", abs(Xi_act- Xi_guess))					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
-		anti_f.append(j)
-		Xi_list.append(Xi_act)
+		anti_f.append(abs(j))
+		Xi_list.append(abs(Xi_act))
 	plt.plot(anti_f, Xi_list, label="Phase Diagrams")
-	plt.savefig("Phase Diagram ", format="png")
+	plt.savefig("Phase Diagram_retry.png", format="png")
 
 
 
@@ -294,7 +294,7 @@ def main():
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .2
-	params['Xi_guess'] = -1
+	params['Xi_guess'] = -.1
 	params['cutoff'] = 200
 	self_consistent(params)
 main()
