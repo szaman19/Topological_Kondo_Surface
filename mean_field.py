@@ -29,7 +29,7 @@ def calibtrate_moment(Xi, params):
 			eig_vals,U = LA.eig(H)
 			U_dagger = LA.inv(U)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	params['mu_f'] = 0
+	# params['mu_f'] = 0
 	while(abs(num-9) > 1E-8):
 		if(num > 9):
 			params['mu_f_prev_prev'] = params['mu_f_prev']
