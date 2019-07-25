@@ -94,7 +94,7 @@ def self_consistent(params):
 			Xi_act =  get_Xi(Xi_guess,params)
 
 			counter += 1
-			if (counter %10 = 0):
+			if (counter %10 == 0):
 				print(counter ,"Calculated: ", Xi_act, "Guess:", Xi_guess, " - ", abs(Xi_act- Xi_guess))					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
