@@ -94,7 +94,7 @@ def self_consistent(params):
 		counter = 0
 		Xi_act =  get_Xi(Xi_guess, params)
 		while(abs(Xi_guess - Xi_act) > 1e-8):
-			Xi_guess = .01*(Xi_act) + .99*(Xi_guess) 		
+			Xi_guess = .01*(Xi_act) + .98*(Xi_guess) 		
 			
 			calibtrate_moment(Xi_guess, params)
 
@@ -110,8 +110,6 @@ def self_consistent(params):
 		Xi_list.append(abs(Xi_act))
 	plt.plot(anti_f, Xi_list, label="Phase Diagrams")
 	plt.savefig("Phase Diagram_retry.png", format="png")
-
-
 
 
 
@@ -205,8 +203,8 @@ def main():
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .2
-	params['Xi_guess'] = -1e-6
-	params['cutoff'] = 30
+	params['Xi_guess'] = -1e-7
+	params['cutoff'] = 40
 	params['cutoff_norm'] = 10
 	self_consistent(params)
 main()
