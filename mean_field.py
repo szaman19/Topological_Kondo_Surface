@@ -92,7 +92,7 @@ def self_consistent(params):
 	out = open('xi_out.txt','w')
 	out.write("Starting mean field calc \n")
 	out.close()
-	for j in range(0,200):
+	for j in range(0,270):
 		out = open('xi_out.txt','a')
 		j = -1 * j / 100
 		params['antifm_const'] = j
