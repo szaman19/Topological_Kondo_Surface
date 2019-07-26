@@ -35,8 +35,8 @@ def calibtrate_moment(Xi, params):
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 	num = num * (1 / (norm * norm))*(k_range * 2)
 	# params['mu_f'] = 0
-	while(abs(num-1) > 1E-8):
-		if(num > 1):
+	while(abs(num-16) > 1E-8):
+		if(num > 16):
 			params['mu_f_prev_prev'] = params['mu_f_prev']
 			params['mu_f_prev'] = params['mu_f']
 			if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
@@ -91,7 +91,7 @@ def self_consistent(params):
 	out = open('xi_out.txt','w')
 	out.write("Starting mean field calc \n")
 	out.close()
-	for j in range(10,200):
+	for j in range(0,200):
 		out = open('xi_out.txt','a')
 		j = -1 * j / 100
 		params['antifm_const'] = j
@@ -99,7 +99,7 @@ def self_consistent(params):
 		counter = 0
 		Xi_act =  get_Xi(Xi_guess, params)
 		while(abs(Xi_guess - Xi_act) > 1e-7):
-			Xi_guess = .01*(Xi_act) + .98*(Xi_guess) 		
+			Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
 			
 			calibtrate_moment(Xi_guess, params)
 
@@ -212,7 +212,7 @@ def main():
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .35
-	params['Xi_guess'] = -1e-8
+	params['Xi_guess'] = -1
 	params['cutoff'] = 80
 	params['cutoff_norm'] = 20
 	self_consistent(params)
