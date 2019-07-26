@@ -121,7 +121,7 @@ def self_consistent(params):
 		out.write('\n')
 		out.close()
 	plt.plot(anti_f, Xi_list, label="Phase Diagrams")
-	plt.savefig("Phase Diagram_.png", format="png")
+	plt.savefig("Phase Diagram.png", format="png")
 
 
 
@@ -134,20 +134,20 @@ def get_Xi(Xi_guess, params):
 			kx /= norm
 			ky /= norm
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
-			H[0][2] = Xi_guess
-			H[1][3] = Xi_guess
-			H[2][0] = np.conj(Xi_guess)
-			H[3][1] = np.conj(Xi_guess)
+			H[0][2] = (3 * params['antifm_const'] / 2) *Xi_guess
+			H[1][3] = (3 * params['antifm_const'] / 2) *Xi_guess
+			H[2][0] = (3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
+			H[3][1] = (3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
 			thresh = 1e-16
 			U.real[abs(U.real)<thresh] = 0.0
 			U.imag[abs(U.imag) < thresh] = 0.0
-			D = np.diag(eig_vals)
+			# D = np.diag(eig_vals)
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return (3 * params['antifm_const'] / 2) * Xi_act / (norm * norm) * (k_range **2)
+	return  Xi_act / (norm * norm) * (k_range **2)
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
