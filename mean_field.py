@@ -80,8 +80,8 @@ def self_consistent(params):
 	'''
 	anti_f = []
 	Xi_list= []
-	for j in range(10,20):
-		j = -1 * j / 10
+	for j in range(10,200):
+		j = -1 * j / 100
 		params['antifm_const'] = j
 		Xi_guess = params['Xi_guess'] 
 		counter = 0
