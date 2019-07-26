@@ -59,8 +59,9 @@ def calibtrate_moment(Xi, params):
 				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 		num = num * (1 / (norm * norm))*(k_range * 2)
-		print(num)
-	print("Mu Moment", params['mu_f'])
+		print(num, params['mu_f'])
+	# if(num)
+	# print("Mu Moment", params['mu_f'])
 	params['mu_f_delta'] = .2
 
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
