@@ -222,7 +222,7 @@ def main():
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .2
-	params['Xi_guess'] = -.1
+	params['Xi_guess'] = -1e-6
 	params['cutoff'] = 30
 	params['cutoff_norm'] = 10
 	self_consistent(params)
