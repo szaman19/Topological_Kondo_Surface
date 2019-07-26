@@ -112,7 +112,8 @@ def self_consistent(params):
 				print(j,counter ,"Calculated: ", Xi_act, "Guess:", Xi_guess, " - ", abs(Xi_act- Xi_guess))					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
-		# params['Xi_guess'] = Xi_act
+		if (-1*j > .5):
+			params['Xi_guess'] = Xi_act
 		anti_f.append(abs(j))
 		Xi_list.append(abs(Xi_act))
 		string = 'J = {} , Xi = {}'.format(j, Xi_act)
