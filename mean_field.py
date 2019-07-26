@@ -67,6 +67,7 @@ def calibtrate_moment(Xi, params):
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	return_val = 0
 	beta = 1000
+	# print(eigen_vals)
 	for j in range(2,4):
 		for i in range(4):
 			return_val += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
@@ -156,10 +157,10 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c):
 
 	hamiltonian[0][1] = B
 	hamiltonian[1][0] = A
-	hamiltonian[0][0] = mu_c
-	hamiltonian[1][1] = mu_c 
-	hamiltonian[2][2] = mu_f
-	hamiltonian[3][3] = mu_f
+	hamiltonian[0][0] = -mu_c
+	hamiltonian[1][1] = -mu_c 
+	hamiltonian[2][2] = -mu_f
+	hamiltonian[3][3] = -mu_f
 	return hamiltonian
 def integral_helper(U,U_dagger,eigen_vals,params):
 	U_11 = U[0][0]
@@ -209,7 +210,7 @@ def main():
 	params['antifm_const'] = -1
 	params['epsilon'] = .01
 	params['beta'] = 1000
-	params['mu_f'] = 4
+	params['mu_f'] = 6
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
