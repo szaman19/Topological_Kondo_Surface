@@ -35,8 +35,8 @@ def calibtrate_moment(Xi, params):
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 	num = num * (1 / (norm * norm))*(k_range * 2)
 	# params['mu_f'] = 0
-	while(abs(num-16) > 1E-8):
-		if(num > 16):
+	while(abs(num-36) > 1E-8):
+		if(num > 36):
 			params['mu_f_prev_prev'] = params['mu_f_prev']
 			params['mu_f_prev'] = params['mu_f']
 			if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
@@ -115,6 +115,7 @@ def self_consistent(params):
 		anti_f.append(abs(j))
 		Xi_list.append(Xi_act)
 		string = 'J = {} , Xi = {}'.format(j, Xi_act)
+		print(string)
 		out.write(string)
 		out.write('\n')
 		out.close()
