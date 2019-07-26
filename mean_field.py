@@ -30,8 +30,8 @@ def calibtrate_moment(Xi, params):
 			kx /= norm
 			ky /= norm
 			H = generate_hamiltonian(kx,ky,params['mu_f'],params['mu_c'])
-			eig_vals,U = LA.eig(H)
-			U_dagger = LA.inv(U)
+			eig_vals,U_dagger = LA.eig(H)
+			U = LA.inv(U_dagger)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 	num = num * (1 / (norm * norm))*(k_range * 2)
 	# params['mu_f'] = 0
@@ -55,8 +55,8 @@ def calibtrate_moment(Xi, params):
 				kx /= norm
 				ky /= norm
 				H = generate_hamiltonian(kx,ky,params['mu_f'],params['mu_c'])
-				eig_vals,U = LA.eig(H)
-				U_dagger = LA.inv(U)
+				eig_vals,U_dagger = LA.eig(H)
+				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 		num = num * (1 / (norm * norm))*(k_range * 2)
 		print(num)
@@ -135,12 +135,12 @@ def get_Xi(Xi_guess, params):
 			H[1][3] = Xi_guess
 			H[2][0] = np.conj(Xi_guess)
 			H[3][1] = np.conj(Xi_guess)
-			eig_vals,U = LA.eig(H)
+			eig_vals,U_dagger = LA.eig(H)
+			U = LA.inv(U_dagger)
 			thresh = 1e-16
 			U.real[abs(U.real)<thresh] = 0.0
 			U.imag[abs(U.imag) < thresh] = 0.0
 			D = np.diag(eig_vals)
-			U_dagger = LA.inv(U)
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
