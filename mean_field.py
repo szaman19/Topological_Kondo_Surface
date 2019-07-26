@@ -98,6 +98,7 @@ def self_consistent(params):
 				print(counter ,"Calculated: ", Xi_act, "Guess:", Xi_guess, " - ", abs(Xi_act- Xi_guess))					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
+		params['Xi_guess'] = Xi_act
 		anti_f.append(abs(j))
 		Xi_list.append(abs(Xi_act))
 	plt.plot(anti_f, Xi_list, label="Phase Diagrams")
