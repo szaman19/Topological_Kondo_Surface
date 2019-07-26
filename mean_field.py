@@ -212,7 +212,7 @@ def main():
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
-	params['mu_c'] = .35
+	params['mu_c'] = .2
 	params['Xi_guess'] = -1
 	params['cutoff'] = 80
 	params['cutoff_norm'] = 20
