@@ -97,7 +97,7 @@ def self_consistent(params):
 		Xi_guess = params['Xi_guess'] 
 		counter = 0
 		Xi_act =  get_Xi(Xi_guess, params)
-		while(abs(Xi_guess - Xi_act) > 1se-8):
+		while(abs(Xi_guess - Xi_act) > 1e-8):
 			Xi_guess = .01*(Xi_act) + .98*(Xi_guess) 		
 			
 			calibtrate_moment(Xi_guess, params)
