@@ -147,7 +147,7 @@ def get_Xi(Xi_guess, params):
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return  Xi_act / (norm * norm) * (k_range **2)
+	return  Xi_act / (norm ** 4) * (k_range **2)
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
