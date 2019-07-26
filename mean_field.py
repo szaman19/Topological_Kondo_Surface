@@ -210,8 +210,8 @@ def main():
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .35
-	params['Xi_guess'] = -1e-7
-	params['cutoff'] = 60
+	params['Xi_guess'] = -1e-8
+	params['cutoff'] = 80
 	params['cutoff_norm'] = 20
 	self_consistent(params)
 main()
