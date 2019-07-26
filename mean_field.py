@@ -67,9 +67,9 @@ def calibtrate_moment(Xi, params):
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	return_val = 0
 	beta = 1000
-	for i in range(2,4):
-		for k in range(4):
-			return_val += U[k][i] * U_dagger[i][k] * fermi_function(eigen_vals[k],beta,mu)
+	for j in range(2,4):
+		for i in range(4):
+			return_val += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
 	return return_val 
 
 
@@ -209,7 +209,7 @@ def main():
 	params['antifm_const'] = -1
 	params['epsilon'] = .01
 	params['beta'] = 1000
-	params['mu_f'] = 0
+	params['mu_f'] = 4
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
