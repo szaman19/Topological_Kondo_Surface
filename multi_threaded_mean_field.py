@@ -205,13 +205,14 @@ def main():
 	params['antifm_const'] = -1
 	params['epsilon'] = .01
 	params['beta'] = 1000
-	params['mu_f'] = 0
+	params['mu_f'] = .4
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .2
-	params['Xi_guess'] = -.1
-	params['cutoff'] = 200
+	params['Xi_guess'] = -1
+	params['cutoff'] = 20
+	params['cutoff_norm'] = 20
 
 	#self_consistent(j, params)
 
