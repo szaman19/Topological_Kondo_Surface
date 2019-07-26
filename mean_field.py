@@ -33,10 +33,10 @@ def calibtrate_moment(Xi, params):
 			eig_vals,U = LA.eig(H)
 			U_dagger = LA.inv(U)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	num /= (norm * norm)
+	num = num * (1 / (norm * norm))*(k_range * 2)
 	# params['mu_f'] = 0
-	while(abs(num-16) > 1E-8):
-		if(num > 16):
+	while(abs(num-25) > 1E-8):
+		if(num > 25):
 			params['mu_f_prev_prev'] = params['mu_f_prev']
 			params['mu_f_prev'] = params['mu_f']
 			if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
@@ -58,7 +58,7 @@ def calibtrate_moment(Xi, params):
 				eig_vals,U = LA.eig(H)
 				U_dagger = LA.inv(U)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-		num /= (norm * norm)
+		num = num * (1 / (norm * norm))*(k_range * 2)
 		print(num)
 	params['mu_f_delta'] = .2
 
@@ -97,7 +97,7 @@ def self_consistent(params):
 		Xi_guess = params['Xi_guess'] 
 		counter = 0
 		Xi_act =  get_Xi(Xi_guess, params)
-		while(abs(Xi_guess - Xi_act) > 1e-8):
+		while(abs(Xi_guess - Xi_act) > 1se-8):
 			Xi_guess = .01*(Xi_act) + .98*(Xi_guess) 		
 			
 			calibtrate_moment(Xi_guess, params)
@@ -142,7 +142,7 @@ def get_Xi(Xi_guess, params):
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return (3 * params['antifm_const'] / 2) * Xi_act / (norm * norm)
+	return (3 * params['antifm_const'] / 2) * Xi_act / (norm * norm) * (2 * k_range)
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
