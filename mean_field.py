@@ -93,7 +93,7 @@ def self_consistent(params):
 	out = open('xi_out.txt','w')
 	out.write("Starting mean field calc \n")
 	out.close()
-	for j in range(50,270):
+	for j in range(0,270):
 		out = open('xi_out.txt','a')
 		j = -1 * j / 100
 		params['antifm_const'] = j
@@ -112,9 +112,9 @@ def self_consistent(params):
 				print(j,counter ,"Calculated: ", Xi_act, "Guess:", Xi_guess, " - ", abs(Xi_act- Xi_guess))					
 		if(abs(0-Xi_act) > 1e-6):
 			print(j, Xi_act)
-		params['Xi_guess'] = Xi_act
+		# params['Xi_guess'] = Xi_act
 		anti_f.append(abs(j))
-		Xi_list.append(Xi_act)
+		Xi_list.append(abs(Xi_act))
 		string = 'J = {} , Xi = {}'.format(j, Xi_act)
 		print(string)
 		out.write(string)
@@ -216,7 +216,7 @@ def main():
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .2
 	params['Xi_guess'] = -1
-	params['cutoff'] = 10
-	params['cutoff_norm'] = 10
+	params['cutoff'] = 20
+	params['cutoff_norm'] = 20
 	self_consistent(params)
 main()
