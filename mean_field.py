@@ -35,8 +35,8 @@ def calibtrate_moment(Xi, params):
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 	num = num * (1 / (norm * norm))*(k_range * 2)
 	# params['mu_f'] = 0
-	while(abs(num-25) > 1E-8):
-		if(num > 25):
+	while(abs(num-1) > 1E-8):
+		if(num > 1):
 			params['mu_f_prev_prev'] = params['mu_f_prev']
 			params['mu_f_prev'] = params['mu_f']
 			if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
