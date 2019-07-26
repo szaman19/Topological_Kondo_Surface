@@ -60,6 +60,7 @@ def calibtrate_moment(Xi, params):
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 		num = num * (1 / (norm * norm))*(k_range * 2)
 		print(num)
+	print("Mu Moment", params['mu_f'])
 	params['mu_f_delta'] = .2
 
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
@@ -88,7 +89,7 @@ def self_consistent(params):
 	anti_f = []
 	Xi_list= []
 	out = open('xi_out.txt','w')
-	out.write("Starting mean field calc")
+	out.write("Starting mean field calc \n")
 	out.close()
 	for j in range(10,200):
 		out = open('xi_out.txt','a')
@@ -97,7 +98,7 @@ def self_consistent(params):
 		Xi_guess = params['Xi_guess'] 
 		counter = 0
 		Xi_act =  get_Xi(Xi_guess, params)
-		while(abs(Xi_guess - Xi_act) > 1e-8):
+		while(abs(Xi_guess - Xi_act) > 1e-7):
 			Xi_guess = .01*(Xi_act) + .98*(Xi_guess) 		
 			
 			calibtrate_moment(Xi_guess, params)
@@ -114,6 +115,7 @@ def self_consistent(params):
 		Xi_list.append(Xi_act)
 		string = 'J = {} , Xi = {}'.format(j, Xi_act)
 		out.write(string)
+		out.write('\n')
 		out.close()
 	plt.plot(anti_f, Xi_list, label="Phase Diagrams")
 	plt.savefig("Phase Diagram_.png", format="png")
