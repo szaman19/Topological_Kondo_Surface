@@ -210,7 +210,7 @@ def main():
 	params['antifm_const'] = -1
 	params['epsilon'] = .01
 	params['beta'] = 1000
-	params['mu_f'] = 6
+	params['mu_f'] = .4
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = .2
