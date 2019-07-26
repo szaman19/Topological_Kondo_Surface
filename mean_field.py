@@ -90,11 +90,11 @@ def self_consistent(params):
 	'''
 	anti_f = []
 	Xi_list= []
-	out = open('xi_out.txt','w')
+	out = open('xi_out_2.txt','w')
 	out.write("Starting mean field calc \n")
 	out.close()
 	for j in range(0,270):
-		out = open('xi_out.txt','a')
+		out = open('xi_out_2.txt','a')
 		j = -1 * j / 100
 		params['antifm_const'] = j
 		Xi_guess = params['Xi_guess'] 
@@ -115,14 +115,14 @@ def self_consistent(params):
 		if (-1*j > .5):
 			params['Xi_guess'] = Xi_act
 		anti_f.append(abs(j))
-		Xi_list.append(abs(Xi_act))
-		string = 'J = {} , Xi = {}'.format(j, Xi_act)
+		Xi_list.append(abs(Xi_act * j * 3 /2))
+		string = 'J = {} , Xi = {}'.format(j, Xi_act * (j * 3 /2))
 		print(string)
 		out.write(string)
 		out.write('\n')
 		out.close()
 	plt.plot(anti_f, Xi_list, label="Phase Diagrams")
-	plt.savefig("Phase Diagram.png", format="png")
+	plt.savefig("Phase Diagram_2.png", format="png")
 
 
 
