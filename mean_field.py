@@ -69,7 +69,7 @@ def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	beta = 1000
 	for i in range(2,4):
 		for k in range(4):
-			return_val += U[k][i] * U_dagger[i][k] * fermi_function(eigen_vals[0],beta,mu)
+			return_val += U[k][i] * U_dagger[i][k] * fermi_function(eigen_vals[i],beta,mu)
 	return return_val 
 
 
