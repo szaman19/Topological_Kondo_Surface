@@ -233,6 +233,4 @@ def main():
 
 	log.close()
 
-
-
 main()

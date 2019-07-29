@@ -35,8 +35,8 @@ def calibtrate_moment(Xi, params):
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 	num = num * (1 / (norm * norm))*(k_range **2)
 	# params['mu_f'] = 0
-	while(abs(num-36) > 1E-8):
-		if(num > 36):
+	while(abs(num-1) > 1E-8):
+		if(num > 1):
 			params['mu_f_prev_prev'] = params['mu_f_prev']
 			params['mu_f_prev'] = params['mu_f']
 			if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
@@ -93,9 +93,9 @@ def self_consistent(params):
 	out = open('xi_out_2.txt','w')
 	out.write("Starting mean field calc \n")
 	out.close()
-	for j in range(0,270):
+	for j in range(0,50):
 		out = open('xi_out_2.txt','a')
-		j = -1 * j / 100
+		j = 1 * j / 100
 		params['antifm_const'] = j
 		Xi_guess = params['Xi_guess'] 
 		counter = 0
@@ -135,10 +135,10 @@ def get_Xi(Xi_guess, params):
 			kx /= norm
 			ky /= norm
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
-			H[0][2] = (3 * params['antifm_const'] / 2) *Xi_guess
-			H[1][3] = (3 * params['antifm_const'] / 2) *Xi_guess
-			H[2][0] = (3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
-			H[3][1] = (3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
+			H[0][2] = (-3 * params['antifm_const'] / 2) *Xi_guess
+			H[1][3] = (-3 * params['antifm_const'] / 2) *Xi_guess
+			H[2][0] = (-3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
+			H[3][1] = (-3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
 			thresh = 1e-16
@@ -148,7 +148,7 @@ def get_Xi(Xi_guess, params):
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return  Xi_act / (norm ** 4) * (k_range **2)
+	return  Xi_act / (norm ** 2) * (k_range **2)
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
@@ -217,7 +217,7 @@ def main():
 	params['mu_f_delta'] = .2
 	params['mu_c'] = .2
 	params['Xi_guess'] = -1
-	params['cutoff'] = 20
-	params['cutoff_norm'] = 20
+	params['cutoff'] = 500
+	params['cutoff_norm'] = 100
 	self_consistent(params)
 main()
