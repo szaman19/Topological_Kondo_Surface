@@ -193,8 +193,8 @@ def main():
 	params['mu_f_delta'] = 1
 	params['mu_c'] = .2
 	params['Xi_guess'] = 1
-	params['cutoff'] = 500
-	params['cutoff_norm'] = 100
+	params['cutoff'] = 100
+	params['cutoff_norm'] = 20
 
 	#self_consistent(j, params)
 
