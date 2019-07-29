@@ -147,6 +147,8 @@ def get_Xi(Xi_guess, params):
 			# D = np.diag(eig_vals)
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
+			if(np.real(get_Xi_helper(U, U_dagger,eig_vals,params)) > 10):
+				print(k, eig_vals[0],eig_vals[1],eig_vals[2],eig_vals[3])
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
 	return  Xi_act / (norm ** 2) * (k_range **2)
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
@@ -208,7 +210,6 @@ def main():
 	params['kx_end'] = 100
 	params['ky_end'] = 1
 	params['kz_end'] = 1
-	params['antifm_const'] = -1
 	params['epsilon'] = .01
 	params['beta'] = 1000
 	params['mu_f'] = .4
@@ -216,7 +217,7 @@ def main():
 	params['mu_f_prev_prev'] = 0
 	params['mu_f_delta'] = 1
 	params['mu_c'] = .2
-	params['Xi_guess'] = -1
+	params['Xi_guess'] = 1
 	params['cutoff'] = 50
 	params['cutoff_norm'] = 10
 	self_consistent(params)
