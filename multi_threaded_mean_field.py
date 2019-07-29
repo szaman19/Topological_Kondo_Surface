@@ -103,7 +103,7 @@ def self_consistent(j,parameters):
 		calibtrate_moment(Xi_guess, params)
 		Xi_act =  get_Xi(Xi_guess,params)
 		counter += 1
-		if (counter % 100 ==0):
+		if (counter % 10 ==0):
 			print(j, counter , Xi_act, Xi_guess)					
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
