@@ -132,6 +132,8 @@ def get_Xi(Xi_guess, params):
 	norm = params['cutoff_norm']
 	for kx in range(-1*k_range,k_range):
 		for ky in range(-1*k_range,k_range):
+			kx += 1
+			ky += 1
 			kx /= norm
 			ky /= norm
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
@@ -160,8 +162,8 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c):
 
 	hamiltonian[0][1] = B
 	hamiltonian[1][0] = A
-	hamiltonian[0][0] = -mu_c
-	hamiltonian[1][1] = -mu_c 
+	hamiltonian[0][0] = mu_c
+	hamiltonian[1][1] = mu_c 
 	hamiltonian[2][2] = -mu_f
 	hamiltonian[3][3] = -mu_f
 	return hamiltonian
