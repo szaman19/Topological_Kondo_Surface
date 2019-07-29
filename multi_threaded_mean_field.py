@@ -35,8 +35,8 @@ def calibtrate_moment(Xi, params):
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 	num = num * (1 / (norm * norm))*(k_range **2)
 	# params['mu_f'] = 0
-	while(abs(num-36) > 1E-8):
-		if(num > 36):
+	while(abs(num-1) > 1E-8):
+		if(num > 1):
 			params['mu_f_prev_prev'] = params['mu_f_prev']
 			params['mu_f_prev'] = params['mu_f']
 			if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
@@ -62,7 +62,7 @@ def calibtrate_moment(Xi, params):
 		print(num, params['mu_f'])
 	# if(num)
 	# print("Mu Moment", params['mu_f'])
-	params['mu_f_delta'] = .2
+	params['mu_f_delta'] = 1
 
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	return_val = 0
@@ -95,29 +95,19 @@ def self_consistent(j,parameters):
 	
 	params['antifm_const'] = j
 	Xi_guess = params['Xi_guess'] 
+	calibtrate_moment(Xi_guess, params)
 	counter = 0
 	Xi_act =  get_Xi(Xi_guess, params)
 	while(abs(Xi_guess - Xi_act) > 1e-7):
-		Xi_guess = .01*(Xi_act) + .99*(Xi_guess) 		
-			
+		Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
 		calibtrate_moment(Xi_guess, params)
-
 		Xi_act =  get_Xi(Xi_guess,params)
-
 		counter += 1
 		if (counter % 100 ==0):
 			print(j, counter , Xi_act, Xi_guess)					
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
 	return (j,Xi_act * (j * 3/2))
-	# anti_f.append(j)
-	# Xi_list.append(Xi_act)
-	# plt.plot(anti_f, Xi_list, label="Phase Diagrams")
-	# plt.savefig("Phase Diagram ", format="png")
-
-
-
-
 
 def get_Xi(Xi_guess, params):
 	Xi_act = 0
@@ -128,10 +118,10 @@ def get_Xi(Xi_guess, params):
 			kx /= norm
 			ky /= norm
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
-			H[0][2] = (3 * params['antifm_const'] / 2) *Xi_guess
-			H[1][3] = (3 * params['antifm_const'] / 2) *Xi_guess
-			H[2][0] = (3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
-			H[3][1] = (3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
+			H[0][2] = (-3 * params['antifm_const'] / 2) *Xi_guess
+			H[1][3] = (-3 * params['antifm_const'] / 2) *Xi_guess
+			H[2][0] = (-3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
+			H[3][1] = (-3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
 			thresh = 1e-16
@@ -147,7 +137,6 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	hamiltonian = np.zeros(dims, dtype=complex)
 	A = ky + 1j*kx
 	B = ky - 1j*kx
-
 
 	hamiltonian[0][1] = B
 	hamiltonian[1][0] = A
@@ -196,28 +185,21 @@ def trial(j, params):
 	return (j,params['Xi_guess'])
 def main():
 	params = {}
-	params['kx_start'] = -100
-	params['ky_start'] = 0
-	params['kz_start'] = 0
-	params['kx_end'] = 100
-	params['ky_end'] = 1
-	params['kz_end'] = 1
-	params['antifm_const'] = -1
 	params['epsilon'] = .01
 	params['beta'] = 1000
 	params['mu_f'] = .4
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
-	params['mu_f_delta'] = .2
+	params['mu_f_delta'] = 1
 	params['mu_c'] = .2
-	params['Xi_guess'] = -1
-	params['cutoff'] = 20
-	params['cutoff_norm'] = 20
+	params['Xi_guess'] = 1
+	params['cutoff'] = 500
+	params['cutoff_norm'] = 100
 
 	#self_consistent(j, params)
 
 	outputs = []
-	for j in range(20):
+	for j in range(5):
 		pool = Pool(processes=10)
 		results = [pool.apply_async(self_consistent, args=((j/10)+x*.1,params)) for x in range(10)]
 		output = [p.get() for p in results]
@@ -230,7 +212,6 @@ def main():
 			log.write(str(each))
 			log.write(",")
 		log.write("\n")
-
 	log.close()
 
 main()
