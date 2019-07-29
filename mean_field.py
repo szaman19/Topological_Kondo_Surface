@@ -62,7 +62,7 @@ def calibtrate_moment(Xi, params):
 		print(num, params['mu_f'])
 	# if(num)
 	# print("Mu Moment", params['mu_f'])
-	params['mu_f_delta'] = .2
+	params['mu_f_delta'] = 1
 
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	return_val = 0
@@ -214,10 +214,10 @@ def main():
 	params['mu_f'] = .4
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
-	params['mu_f_delta'] = .2
+	params['mu_f_delta'] = 1
 	params['mu_c'] = .2
 	params['Xi_guess'] = -1
-	params['cutoff'] = 500
-	params['cutoff_norm'] = 100
+	params['cutoff'] = 50
+	params['cutoff_norm'] = 10
 	self_consistent(params)
 main()
