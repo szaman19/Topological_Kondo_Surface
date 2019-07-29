@@ -93,7 +93,7 @@ def self_consistent(params):
 	out = open('xi_out_2.txt','w')
 	out.write("Starting mean field calc \n")
 	out.close()
-	for j in range(0,50):
+	for j in range(1,50):
 		out = open('xi_out_2.txt','a')
 		j = 1 * j / 100
 		params['antifm_const'] = j
@@ -132,8 +132,7 @@ def get_Xi(Xi_guess, params):
 	norm = params['cutoff_norm']
 	for kx in range(-1*k_range,k_range):
 		for ky in range(-1*k_range,k_range):
-			kx += 1
-			ky += 1
+
 			kx /= norm
 			ky /= norm
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
@@ -149,7 +148,7 @@ def get_Xi(Xi_guess, params):
 			# D = np.diag(eig_vals)
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
-			if(np.real(get_Xi_helper(U, U_dagger,eig_vals,params)) > 10):
+			if(np.real(get_Xi_helper(U, U_dagger,eig_vals,params)) > 1):
 				print(k, eig_vals[0],eig_vals[1],eig_vals[2],eig_vals[3])
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
 	return  Xi_act / (norm ** 2) * (k_range **2)
