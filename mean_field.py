@@ -99,11 +99,11 @@ def self_consistent(params):
 		params['antifm_const'] = j
 		Xi_guess = params['Xi_guess'] 
 		counter = 0
+		calibtrate_moment(Xi_guess, params)
 		Xi_act =  get_Xi(Xi_guess, params)
 		while(abs(Xi_guess - Xi_act) > 1e-7):
 			Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
 			
-			calibtrate_moment(Xi_guess, params)
 
 			Xi_act =  get_Xi(Xi_guess,params)
 
@@ -151,7 +151,7 @@ def get_Xi(Xi_guess, params):
 			if(np.real(get_Xi_helper(U, U_dagger,eig_vals,params)) > 1):
 				print(k, eig_vals[0],eig_vals[1],eig_vals[2],eig_vals[3])
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return  Xi_act / (norm ** 2) * (k_range **2)
+	return  Xi_act / (norm ** 4) * (k_range **2)
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
