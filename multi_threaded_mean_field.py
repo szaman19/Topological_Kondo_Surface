@@ -33,7 +33,7 @@ def calibtrate_moment(Xi, params):
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	num = num * (1 / (norm * norm))*(k_range **2)
+	num = num * (1 /(N ** 2) * (np.pi **2))*(delta** 2)
 	# params['mu_f'] = 0
 	while(abs(num-1) > 1E-8):
 		if(num > 1):
@@ -198,7 +198,7 @@ def main():
 	params['mu_c'] = .2
 	params['Xi_guess'] = 1
 	params['delta'] = 5
-	params['mesh_lines'] = 500
+	params['mesh_lines'] = 100
 
 	#self_consistent(j, params)
 
