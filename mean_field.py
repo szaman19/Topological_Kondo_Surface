@@ -34,7 +34,7 @@ def calibtrate_moment(Xi, params):
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	num = num * (1 /(n ** 2) * (np.pi **2))*(delta** 2)
+	num = num * (1 /(N ** 2) * (np.pi **2))*(delta** 2)
 	# params['mu_f'] = 0
 	while(abs(num-1) > 1E-8):
 		if(num > 1):
@@ -60,7 +60,7 @@ def calibtrate_moment(Xi, params):
 				eig_vals,U_dagger = LA.eig(H)
 				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-		num = num * (1 /(n ** 2) * (np.pi **2))*(delta** 2)
+		num = num * (1 /(N ** 2) * (np.pi **2))*(delta** 2)
 		print(num, params['mu_f'])
 
 	params['mu_f_delta'] = 1
@@ -163,7 +163,7 @@ def get_Xi(Xi_guess, anti_f, params):
 			
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
 	
-	return  (Xi_act * (delta **2) * 3 * anti_f)/ (2 * (n ** 2) * (np.pi **2))
+	return  (Xi_act * (delta **2) * 3 * anti_f)/ (2 * (N ** 2) * (np.pi **2))
 
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
