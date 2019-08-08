@@ -204,7 +204,7 @@ def main():
 	outputs = []
 	for j in range(10):
 		pool = Pool(processes=10)
-		results = [pool.apply_async(self_consistent, args=((j/100)+x*.01,params)) for x in range(10)]
+		results = [pool.apply_async(self_consistent, args=((j/10)+x*.01,params)) for x in range(10)]
 		output = [p.get() for p in results]
 		print(output)
 		outputs.append(output)
