@@ -23,12 +23,12 @@ def fermi_function(energy,  beta, mu=0):
 def calibtrate_moment(Xi, params):
 	# print("Return the correct value for mu_f")
 	num = 0
-	k_range = params['cutoff']
-	norm = params['cutoff_norm']
-	for kx in range(-1*k_range,k_range):
-		for ky in range(-1*k_range,k_range):
-			kx /= norm
-			ky /= norm
+	delta = params['delta']
+	N = params['mesh_lines']
+	for i in range(N):
+		for j in range(N):
+			kx = -delta + 2 * (delta * i / N)
+			ky = -delta + 2 * (delta * j / N)
 			H = generate_hamiltonian(kx,ky,params['mu_f'],params['mu_c'])
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
@@ -50,15 +50,16 @@ def calibtrate_moment(Xi, params):
 			params['mu_f'] +=params['mu_f_delta']
 		num = 0
 
-		for kx in range(-1*k_range,k_range):
-			for ky in range(-1*k_range,k_range):
-				kx /= norm
-				ky /= norm
+		for i in range(N):
+			for j in range(N):
+				kx = -delta + 2 * (delta * i / N)
+				ky = -delta + 2 * (delta * j / N)
+
 				H = generate_hamiltonian(kx,ky,params['mu_f'],params['mu_c'])
 				eig_vals,U_dagger = LA.eig(H)
 				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-		num = num * (1 / (norm * norm))*(k_range ** 2)
+		num = num * (1 /(N ** 2) * (np.pi **2))*(delta** 2)
 		print(num, params['mu_f'])
 	# if(num)
 	# print("Mu Moment", params['mu_f'])
@@ -101,27 +102,30 @@ def self_consistent(j,parameters):
 	while(abs(Xi_guess - Xi_act) > 1e-7):
 		Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
 		calibtrate_moment(Xi_guess, params)
-		Xi_act =  get_Xi(Xi_guess,params)
+		Xi_act =  get_Xi(Xi_guess, params)
 		counter += 1
 		if (counter % 10 ==0):
 			print(j, counter , Xi_act, Xi_guess)					
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
-	return (j,Xi_act * (j * 3/2))
+	return (j,Xi_act)
 
 def get_Xi(Xi_guess, params):
 	Xi_act = 0
 	k_range = params['cutoff']
 	norm = params['cutoff_norm']
-	for kx in range(-1*k_range,k_range):
-		for ky in range(-1*k_range,k_range):
-			kx /= norm
-			ky /= norm
+	delta = params['delta']
+	N = params['mesh_lines']
+	anti_f = params['antifm_const']
+	for i in range(N):
+		for j in range(N):
+			kx = -delta + 2 * (delta * i / N)
+			ky = -delta + 2 * (delta * j / N)
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
-			H[0][2] = (-3 * params['antifm_const'] / 2) *Xi_guess
-			H[1][3] = (-3 * params['antifm_const'] / 2) *Xi_guess
-			H[2][0] = (-3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
-			H[3][1] = (-3 * params['antifm_const'] / 2) *np.conj(Xi_guess)
+			H[0][2] = -Xi_guess
+			H[1][3] = -Xi_guess
+			H[2][0] = -np.conj(Xi_guess)
+			H[3][1] = -np.conj(Xi_guess)
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
 			thresh = 1e-16
@@ -131,7 +135,7 @@ def get_Xi(Xi_guess, params):
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return  Xi_act / (norm ** 4) * (k_range **2)
+	return  (Xi_act * (delta **2) * 3 * anti_f)/ (2 * (N ** 2) * (np.pi **2))
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
@@ -185,16 +189,16 @@ def trial(j, params):
 	return (j,params['Xi_guess'])
 def main():
 	params = {}
-	params['epsilon'] = .01
+
 	params['beta'] = 1000
 	params['mu_f'] = .4
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
-	params['mu_f_delta'] = 1
+	params['mu_f_delta'] = .1
 	params['mu_c'] = .2
 	params['Xi_guess'] = 1
-	params['cutoff'] = 100
-	params['cutoff_norm'] = 20
+	params['delta'] = 5
+	params['mesh_lines'] = 500
 
 	#self_consistent(j, params)
 
