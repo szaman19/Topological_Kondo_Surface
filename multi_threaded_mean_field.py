@@ -99,7 +99,7 @@ def self_consistent(j,parameters):
 	calibtrate_moment(Xi_guess, params)
 	counter = 0
 	Xi_act =  get_Xi(Xi_guess, params)
-	while(abs(Xi_guess - Xi_act) > 1e-7):
+	while(abs(Xi_guess - Xi_act) > 5e-7):
 		Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
 		calibtrate_moment(Xi_guess, params)
 		Xi_act =  get_Xi(Xi_guess, params)
@@ -108,7 +108,7 @@ def self_consistent(j,parameters):
 			print(j, counter , Xi_act, Xi_guess)					
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
-	return (j,Xi_act)
+	return (j,Xi_act, params['mu_f'])
 
 def get_Xi(Xi_guess, params):
 	Xi_act = 0
@@ -202,13 +202,13 @@ def main():
 	#self_consistent(j, params)
 
 	outputs = []
-	for j in range(5):
+	for j in range(1):
 		pool = Pool(processes=10)
 		results = [pool.apply_async(self_consistent, args=((j/10)+x*.1,params)) for x in range(10)]
 		output = [p.get() for p in results]
 		print(output)
 		outputs.append(output)
-	log = open("output.txt", 'w')
+	log = open("output_2.txt", 'w')
 	for row in outputs:
 		for each in row:
 			# string = 
