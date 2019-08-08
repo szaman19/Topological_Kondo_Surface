@@ -63,7 +63,7 @@ def calibtrate_moment(Xi, params):
 		num = num * (1 /(N ** 2) * (np.pi **2))*(delta** 2)
 		print(num, params['mu_f'])
 
-	params['mu_f_delta'] = 1
+	params['mu_f_delta'] = .1
 
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	return_val = 0
@@ -222,7 +222,7 @@ def main():
 	params['mu_f'] = .4
 	params['mu_f_prev'] = 0 
 	params['mu_f_prev_prev'] = 0
-	params['mu_f_delta'] = 1
+	params['mu_f_delta'] = .1
 	params['mu_c'] = .2
 	params['Xi_guess'] = 1
 	params['delta'] = 5
