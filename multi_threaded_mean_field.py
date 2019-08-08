@@ -202,18 +202,21 @@ def main():
 	#self_consistent(j, params)
 
 	outputs = []
-	for j in range(1):
+	for j in range(10):
 		pool = Pool(processes=10)
-		results = [pool.apply_async(self_consistent, args=((j/10)+x*.1,params)) for x in range(10)]
+		results = [pool.apply_async(self_consistent, args=((j/100)+x*.01,params)) for x in range(10)]
 		output = [p.get() for p in results]
 		print(output)
 		outputs.append(output)
-	log = open("output_2.txt", 'w')
+	log = open("phase_diagrams.csv", 'w')
+	log.write("J, Xi, Mu_f \n")
 	for row in outputs:
-		for each in row:
+		for tup in row:
 			# string = 
-			log.write(str(each))
-			log.write(",")
+			for each in tup:
+				log.write(str(each))
+				log.write(",")
+			log.write("\n")
 		log.write("\n")
 	log.close()
 
