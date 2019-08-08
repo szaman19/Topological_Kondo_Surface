@@ -60,7 +60,7 @@ def calibtrate_moment(Xi, params):
 				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 		num = num * (1 /(N ** 2) * (np.pi **2))*(delta** 2)
-		print(num, params['mu_f'])
+		print("J=",params['antifm_const'], num, params['mu_f'])
 	# if(num)
 	# print("Mu Moment", params['mu_f'])
 	params['mu_f_delta'] = 1
@@ -112,8 +112,7 @@ def self_consistent(j,parameters):
 
 def get_Xi(Xi_guess, params):
 	Xi_act = 0
-	k_range = params['cutoff']
-	norm = params['cutoff_norm']
+
 	delta = params['delta']
 	N = params['mesh_lines']
 	anti_f = params['antifm_const']
