@@ -187,37 +187,39 @@ def trial(j, params):
 	params['Xi_guess'] = j 
 	return (j,params['Xi_guess'])
 def main():
-	params = {}
-
-	params['beta'] = 1000
-	params['mu_f'] = .4
-	params['mu_f_prev'] = 0 
-	params['mu_f_prev_prev'] = 0
-	params['mu_f_delta'] = .1
-	params['mu_c'] = .2
-	params['Xi_guess'] = 1
-	params['delta'] = 5
-	params['mesh_lines'] = 100
+	
 
 	#self_consistent(j, params)
+	for i in range(5):
+		params = {}
+		params['beta'] = 1000
+		params['mu_f'] = .4
+		params['mu_f_prev'] = 0 
+		params['mu_f_prev_prev'] = 0
+		params['mu_f_delta'] = .1
+		params['mu_c'] = .2
+		params['Xi_guess'] = 1
+		params['delta'] = 5
+		params['mesh_lines'] = 100
+		params['mu_c'] = .2 + .05*i
+		outputs = []
 
-	outputs = []
-	for j in range(5):
-		pool = Pool(processes=8)
-		results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
-		output = [p.get() for p in results]
-		print(output)
-		outputs.append(output)
-	log = open("phase_diagrams.csv", 'w')
-	log.write("J, Xi, Mu_f \n")
-	for row in outputs:
-		for tup in row:
-			# string = 
-			for each in tup:
-				log.write(str(each))
-				log.write(",")
-			log.write("\n")
-		#log.write("\n")
-	log.close()
-
+		file_name = "phase_diagrams_mu_c" + str(params['mu_c']) + ".csv"
+		for j in range(5):
+			pool = Pool(processes=8)
+			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
+			output = [p.get() for p in results]
+			print(output)
+			outputs.append(output)
+		log = open(file_name, 'w')
+		log.write("J, Xi, Mu_f \n")
+		for row in outputs:
+			for tup in row:
+				# string = 
+				for each in tup:
+					log.write(str(each))
+					log.write(",")
+				log.write("\n")
+			#log.write("\n")
+		log.close()
 main()
