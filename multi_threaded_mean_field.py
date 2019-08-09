@@ -33,7 +33,7 @@ def calibtrate_moment(Xi, params):
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	num = num * (1 /(N ** 2) * (np.pi **2))*(delta** 2)
+	num = num * (1 /(N ** 2) )*(4 * delta** 2)
 	# params['mu_f'] = 0
 	while(abs(num-1) > 1E-8):
 		if(num > 1):
@@ -59,7 +59,7 @@ def calibtrate_moment(Xi, params):
 				eig_vals,U_dagger = LA.eig(H)
 				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-		num = num * (1 /(N ** 2) * (np.pi **2))*(delta** 2)
+		num = num * (1 /(N ** 2) )*(4*delta** 2)
 		print("J=",params['antifm_const'], num, params['mu_f'])
 	# if(num)
 	# print("Mu Moment", params['mu_f'])
@@ -101,7 +101,7 @@ def self_consistent(j,parameters):
 	Xi_act =  get_Xi(Xi_guess, params)
 	while(abs(Xi_guess - Xi_act) > 5e-7):
 		Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
-		calibtrate_moment(Xi_guess, params)
+		#calibtrate_moment(Xi_guess, params)
 		Xi_act =  get_Xi(Xi_guess, params)
 		counter += 1
 		if (counter % 10 ==0):
@@ -134,7 +134,7 @@ def get_Xi(Xi_guess, params):
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return  (Xi_act * (delta **2) * 3 * anti_f)/ (2 * (N ** 2) * (np.pi **2))
+	return  (Xi_act * (4 * delta **2) * 3 * anti_f)/ (2 * (N ** 2) )
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
@@ -143,8 +143,8 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c):
 
 	hamiltonian[0][1] = B
 	hamiltonian[1][0] = A
-	hamiltonian[0][0] = -mu_c
-	hamiltonian[1][1] = -mu_c 
+	hamiltonian[0][0] = mu_c
+	hamiltonian[1][1] = mu_c 
 	hamiltonian[2][2] = -mu_f
 	hamiltonian[3][3] = -mu_f
 	return hamiltonian
@@ -202,9 +202,9 @@ def main():
 	#self_consistent(j, params)
 
 	outputs = []
-	for j in range(10):
-		pool = Pool(processes=10)
-		results = [pool.apply_async(self_consistent, args=((j/10)+x*.01,params)) for x in range(10)]
+	for j in range(5):
+		pool = Pool(processes=8)
+		results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
 		output = [p.get() for p in results]
 		print(output)
 		outputs.append(output)
@@ -217,7 +217,7 @@ def main():
 				log.write(str(each))
 				log.write(",")
 			log.write("\n")
-		log.write("\n")
+		#log.write("\n")
 	log.close()
 
 main()
