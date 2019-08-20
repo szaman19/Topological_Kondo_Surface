@@ -105,7 +105,7 @@ def self_consistent(j,parameters):
 		Xi_act =  get_Xi(Xi_guess, params)
 		counter += 1
 		if (counter % 10 ==0):
-                print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))					
+			print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))					
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
 	return (j,Xi_act, params['mu_f'])
