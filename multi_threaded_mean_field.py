@@ -200,7 +200,7 @@ def main():
 		params['mu_c'] = .2
 		params['Xi_guess'] = 1
 		params['delta'] = 5
-		params['dens'] = .01
+		params['dens'] = .05
 		params['mesh_lines'] = int(2 * params['delta'] / params['dens'])
 		params['mu_c'] = .2 + .05*i
 		outputs = []
