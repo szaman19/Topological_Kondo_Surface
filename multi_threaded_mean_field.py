@@ -60,7 +60,7 @@ def calibtrate_moment(Xi, params):
 				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 		num = num * (1 /(N ** 2) )*(4*delta** 2)
-		print("J=",params['antifm_const'], num, params['mu_f'])
+                print("J={},itr_num={},mu_f={:.5f}".format(params['antifm_const'], num, params['mu_f']))
 	# if(num)
 	# print("Mu Moment", params['mu_f'])
 	params['mu_f_delta'] = 1
@@ -99,13 +99,13 @@ def self_consistent(j,parameters):
 	calibtrate_moment(Xi_guess, params)
 	counter = 0
 	Xi_act =  get_Xi(Xi_guess, params)
-	while(abs(Xi_guess - Xi_act) > 5e-7):
+	while(abs(Xi_guess - Xi_act) > 5e-9):
 		Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
-		#calibtrate_moment(Xi_guess, params)
+		calibtrate_moment(Xi_guess, params)
 		Xi_act =  get_Xi(Xi_guess, params)
 		counter += 1
 		if (counter % 10 ==0):
-			print(j, counter , Xi_act, Xi_guess)					
+                    print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))					
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
 	return (j,Xi_act, params['mu_f'])
@@ -141,10 +141,10 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	A = ky + 1j*kx
 	B = ky - 1j*kx
 
-	hamiltonian[0][1] = B
-	hamiltonian[1][0] = A
-	hamiltonian[0][0] = mu_c
-	hamiltonian[1][1] = mu_c 
+	#hamiltonian[0][1] = B
+	#hamiltonian[1][0] = A
+	hamiltonian[0][0] = 2*kx**2 +2* ky**2 -mu_c
+	hamiltonian[1][1] = 2*kx**2+ 2*ky**2 - mu_c 
 	hamiltonian[2][2] = -mu_f
 	hamiltonian[3][3] = -mu_f
 	return hamiltonian
@@ -190,7 +190,7 @@ def main():
 	
 
 	#self_consistent(j, params)
-	for i in range(5):
+	for i in range(1):
 		params = {}
 		params['beta'] = 1000
 		params['mu_f'] = .4
@@ -206,7 +206,7 @@ def main():
 		outputs = []
 
 		file_name = "phase_diagrams_mu_100_delta_" + str(params['delta']).replace(".", "_") + ".csv"
-		for j in range(10):
+		for j in range(5):
 			pool = Pool(processes=8)
 			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
 			output = [p.get() for p in results]
