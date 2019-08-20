@@ -206,7 +206,7 @@ def main():
 		outputs = []
 
 		file_name = "phase_diagrams_mu_100_delta_" + str(params['delta']).replace(".", "_") + ".csv"
-		for j in range(5):
+		for j in range(10):
 			pool = Pool(processes=8)
 			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
 			output = [p.get() for p in results]
