@@ -199,10 +199,10 @@ def main():
 		params['mu_f_delta'] = .1
 		params['mu_c'] = .2
 		params['Xi_guess'] = 1
-		params['delta'] = 5
+		params['delta'] = 5 + i 
 		params['dens'] = .05
 		params['mesh_lines'] = int(2 * params['delta'] / params['dens'])
-		params['mu_c'] = .2 + .05*i
+		params['mu_c'] = .2 
 		outputs = []
 
 		file_name = "phase_diagrams_mu_100_delta_" + str(params['delta']).replace(".", "_") + ".csv"
