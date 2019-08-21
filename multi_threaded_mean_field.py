@@ -141,10 +141,10 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	A = ky + 1j*kx
 	B = ky - 1j*kx
 
-	#hamiltonian[0][1] = B
-	#hamiltonian[1][0] = A
-	hamiltonian[0][0] = 2*kx**2 +2* ky**2 -mu_c
-	hamiltonian[1][1] = 2*kx**2+ 2*ky**2 - mu_c 
+	hamiltonian[0][1] = B
+	hamiltonian[1][0] = A
+	hamiltonian[0][0] = mu_c
+	hamiltonian[1][1] = mu_c 
 	hamiltonian[2][2] = -mu_f
 	hamiltonian[3][3] = -mu_f
 	return hamiltonian
@@ -205,7 +205,7 @@ def main():
 		params['mu_c'] = .2 
 		outputs = []
 
-		file_name = "phase_diagrams_mu_100_delta_" + str(params['delta']).replace(".", "_") + ".csv"
+		file_name = "phase_diagrams_mu_chiral_100_delta_" + str(params['delta']).replace(".", "_2") + ".csv"
 		for j in range(5):
 			pool = Pool(processes=8)
 			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
