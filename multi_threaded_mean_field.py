@@ -74,8 +74,8 @@ def calibtrate_moment(Xi, params):
 			U = LA.inv(U_dagger)
 			check_val+= sanity_check_moment(U,U_dagger,eig_vals,params['mu_f'])
 	check_val = check_val * (1 /(N ** 2) )
-	if (abs(num-check_val) > 1E-6):
-		print("up={:7f}, down={:7f}".format(np.real(num), np.real(check_val)))
+	# if (abs(num-check_val) > 1E-6):
+	# 	print("up={:7f}, down={:7f}".format(np.real(num), np.real(check_val)))
 	params['mu_f_delta'] = 1
 	return params['mu_f']
 
@@ -129,9 +129,10 @@ def self_consistent(j,parameters):
 		params['mu_f'] = calibtrate_moment(Xi_guess, params)
 		Xi_act =  get_Xi(Xi_guess, params)
 		counter += 1
-		if (counter % 10 ==0):
+		if (counter % 1000 ==0):
 			print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))					
 	
+	print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
 	
@@ -237,7 +238,7 @@ def main():
 
 		file_name = "phase_diagrams_mu_chiral_100_delta_" + str(params['delta']).replace(".", "_2") + ".csv"
 		for j in range(5):
-			pool = Pool(processes=1)
+			pool = Pool(processes=8)
 			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
 			output = [p.get() for p in results]
 			print(output)
