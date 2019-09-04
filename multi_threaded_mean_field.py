@@ -75,7 +75,7 @@ def calibtrate_moment(Xi, params):
 			check_val+= sanity_check_moment(U,U_dagger,eig_vals,params['mu_f'])
 	check_val = check_val * (1 /(N ** 2) )
 	if (abs(num-check_val) > 1E-6):
-		print("up={:7f}, down={:7f}".format(num, check_val))
+		print("up={:7f}, down={:7f}".format(np.real(num), np.real(check_val)))
 	params['mu_f_delta'] = 1
 	return params['mu_f']
 
