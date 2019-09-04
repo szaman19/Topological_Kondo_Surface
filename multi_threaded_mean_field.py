@@ -33,7 +33,7 @@ def calibtrate_moment(Xi, params):
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
 			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	num = num * (1 /(N ** 2) )*(4 * delta** 2)
+	num = num * (1 /(N ** 2) )
 	# params['mu_f'] = 0
 	while(abs(num-1) > 1E-8):
 		if(num > 1):
@@ -59,11 +59,13 @@ def calibtrate_moment(Xi, params):
 				eig_vals,U_dagger = LA.eig(H)
 				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-		num = num * (1 /(N ** 2) )*(4*delta** 2)
+		num = num * (1 /(N ** 2) )
 		print("J={},val={:9f},mu_f={:.9f}".format(params['antifm_const'], num, params['mu_f']))
 	# if(num)
 	# print("Mu Moment", params['mu_f'])
+
 	params['mu_f_delta'] = 1
+	return num
 
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	return_val = 0
@@ -72,6 +74,13 @@ def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	for j in range(2,4):
 		for i in range(4):
 			return_val += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
+	check_val = 0
+	for j in range(0,2):
+		for i in range(4):
+			check_val += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
+	if (check_val != return_val):
+		print("sanity check failed")
+
 	return return_val  
 
 
@@ -96,18 +105,22 @@ def self_consistent(j,parameters):
 	
 	params['antifm_const'] = j
 	Xi_guess = params['Xi_guess'] 
-	calibtrate_moment(Xi_guess, params)
+	params['mu_f'] = calibtrate_moment(Xi_guess, params)
+	
+
 	counter = 0
 	Xi_act =  get_Xi(Xi_guess, params)
 	while(abs(Xi_guess - Xi_act) > 5e-9):
 		Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
-		calibtrate_moment(Xi_guess, params)
+		params['mu_f'] = calibtrate_moment(Xi_guess, params)
 		Xi_act =  get_Xi(Xi_guess, params)
 		counter += 1
 		if (counter % 10 ==0):
 			print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))					
+	
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
+	
 	return (j,Xi_act, params['mu_f'])
 
 def get_Xi(Xi_guess, params):
@@ -121,6 +134,7 @@ def get_Xi(Xi_guess, params):
 			kx = -delta + 2 * (delta * i / N)
 			ky = -delta + 2 * (delta * j / N)
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
+			
 			H[0][2] = -Xi_guess
 			H[1][3] = -Xi_guess
 			H[2][0] = -np.conj(Xi_guess)
@@ -133,8 +147,10 @@ def get_Xi(Xi_guess, params):
 			# D = np.diag(eig_vals)
 			U_dagger.real[abs(U_dagger.real)<thresh] = 0.0
 			U_dagger.imag[abs(U_dagger.imag) < thresh] = 0.0
+			
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
-	return  (Xi_act * (4 * delta **2) * 3 * anti_f)/ (2 * (N ** 2) )
+	
+	return  (Xi_act * 3 * anti_f)/ (2 * (N ** 2) )
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
@@ -199,7 +215,7 @@ def main():
 		params['mu_f_delta'] = .1
 		params['mu_c'] = .2
 		params['Xi_guess'] = 1
-		params['delta'] = 5 + i 
+		params['delta'] = np.pi + i 
 		params['dens'] = .05
 		params['mesh_lines'] = int(2 * params['delta'] / params['dens'])
 		params['mu_c'] = .2 
@@ -216,11 +232,9 @@ def main():
 		log.write("J, Xi, Mu_f \n")
 		for row in outputs:
 			for tup in row:
-				# string = 
 				for each in tup:
 					log.write(str(each))
 					log.write(",")
 				log.write("\n")
-			#log.write("\n")
 		log.close()
 main()
