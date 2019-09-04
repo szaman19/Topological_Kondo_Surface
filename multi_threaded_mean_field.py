@@ -73,13 +73,16 @@ def calibtrate_moment(Xi, params):
 			U = LA.inv(U_dagger)
 			check_val+= sanity_check_moment(U,U_dagger,eig_vals,params['mu_f'])
 	check_val = check_val * (1 /(N ** 2) )
- 
+ 	
+ 	if (abs(num-check_val) > 1E-6):
+ 		print("up={:7f}, down={:7f}".format(num, check_val))
 	params['mu_f_delta'] = 1
 	return num
 
 
 def sanity_check_moment(U,U_dagger, eigen_vals, mu):
 	check_val = 0
+	beta = 1000
 	for j in range(0,2):
 		for i in range(4):
 			check_val += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
