@@ -25,6 +25,7 @@ def calibtrate_moment(Xi, params):
 	num = 0
 	delta = params['delta']
 	N = params['mesh_lines']
+	print(params['mu_f'])
 	for i in range(N):
 		for j in range(N):
 			kx = -delta + 2 * (delta * i / N)
@@ -60,7 +61,7 @@ def calibtrate_moment(Xi, params):
 				U = LA.inv(U_dagger)
 				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
 		num = num * (1 /(N ** 2) )
-		print("J={},val={:9f},mu_f={:.9f}".format(params['antifm_const'], num, params['mu_f']))
+		# print("J={},val={:9f},mu_f={:.9f}".format(params['antifm_const'], num, params['mu_f']))
 	# if(num)
 	# print("Mu Moment", params['mu_f'])
 	check_val = 0
@@ -236,7 +237,7 @@ def main():
 
 		file_name = "phase_diagrams_mu_chiral_100_delta_" + str(params['delta']).replace(".", "_2") + ".csv"
 		for j in range(5):
-			pool = Pool(processes=8)
+			pool = Pool(processes=1)
 			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
 			output = [p.get() for p in results]
 			print(output)
