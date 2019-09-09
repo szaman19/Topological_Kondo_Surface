@@ -20,73 +20,111 @@ def fermi_function(energy,  beta, mu=0):
 	except:
 		print("Exception has occured", energy)
 
+def mu_f_update(num, params):
+	if(num > 1):
+		params['mu_f_prev_prev'] = params['mu_f_prev']
+		params['mu_f_prev'] = params['mu_f']
+		if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
+			params['mu_f_delta'] /= 2
+		params['mu_f'] -= params['mu_f_delta']
+	else:
+		params['mu_f_prev_prev'] = params['mu_f_prev']
+		params['mu_f_prev'] = params['mu_f']
+		if(params['mu_f_prev_prev'] == params['mu_f'] + params['mu_f_delta']):
+			params['mu_f_delta'] /= 2
+		params['mu_f'] +=params['mu_f_delta']
+	
+	return params 
+
+
 def calibtrate_moment(Xi, params):
 	# print("Return the correct value for mu_f")
 	num = 0
-	delta = params['delta']
-	N = params['mesh_lines']
-	print(params['mu_f'])
-	for i in range(N):
-		for j in range(N):
-			kx = -delta + 2 * (delta * i / N)
-			ky = -delta + 2 * (delta * j / N)
-			H = generate_hamiltonian(kx,ky,params['mu_f'],params['mu_c'])
+
+	L = params['num_sites']
+	N = L ** 2
+	PI = params['lim']
+	MU_F = params['mu_f']
+	MU_C = params['mu_c']
+	M_U_D = {}
+
+	M_U_D['mu_f_prev_prev'] = 0
+	M_U_D['mu_f_prev'] = 0
+	M_U_D['mu_f_delta'] = .05
+	M_U_D['mu_f'] = MU_F
+
+	for i in range(L):
+		for j in range(L):
+			kx = -PI  + 2 * (PI / L * i)
+			ky =  -PI  + 2 * (PI / L * j)
+			H = generate_hamiltonian(kx,ky,MU_F,MU_C)
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
-			num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-	num = num * (1 /(N ** 2) )
+			num += moment_number_integral(U,U_dagger,eig_vals,MU_F)
+
+	num = num / N 
+
+
 	# params['mu_f'] = 0
+
+	
 	while(abs(num-1) > 1E-8):
-		if(num > 1):
-			params['mu_f_prev_prev'] = params['mu_f_prev']
-			params['mu_f_prev'] = params['mu_f']
-			if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
-				params['mu_f_delta'] /= 2
-			params['mu_f'] -= params['mu_f_delta']
-		else:
-			params['mu_f_prev_prev'] = params['mu_f_prev']
-			params['mu_f_prev'] = params['mu_f']
-			if(params['mu_f_prev_prev'] == params['mu_f'] + params['mu_f_delta']):
-				params['mu_f_delta'] /= 2
-			params['mu_f'] +=params['mu_f_delta']
+		M_U_D = mu_f_update(num, M_U_D)	
+		MU_F = M_U_D['mu_f']
 		num = 0
+		for i in range(L):
+			for j in range(L):
+				kx = -PI  + 2 * (PI / L * i)
+				ky =  -PI  + 2 * (PI / L * j)
 
-		for i in range(N):
-			for j in range(N):
-				kx = -delta + 2 * (delta * i / N)
-				ky = -delta + 2 * (delta * j / N)
-
-				H = generate_hamiltonian(kx,ky,params['mu_f'],params['mu_c'])
+				H = generate_hamiltonian(kx,ky,MU_F,MU_C)
 				eig_vals,U_dagger = LA.eig(H)
 				U = LA.inv(U_dagger)
-				num += moment_number_integral(U,U_dagger,eig_vals,params['mu_f'])
-		num = num * (1 /(N ** 2) )
-		# print("J={},val={:9f},mu_f={:.9f}".format(params['antifm_const'], num, params['mu_f']))
-	# if(num)
-	# print("Mu Moment", params['mu_f'])
-	check_val = 0
-	for i in range(N):
-		for j in range(N):
-			kx = -delta + 2 * (delta * i / N)
-			ky = -delta + 2 * (delta * j / N)
-			H = generate_hamiltonian(kx,ky,params['mu_f'],params['mu_c'])
+				num += moment_number_integral(U,U_dagger,eig_vals,MU_C)
+		num = num / N
+		print("J={},val={:.9f},mu_f={:.9f}".format(params['antifm_const'], num, MU_F))
+		
+
+	check_val_down = 0
+	check_val_up = 0 
+	for i in range(L):
+		for j in range(L):
+			kx = -PI  + 2 * (PI / L * i)
+			ky =  -PI  + 2 * (PI / L * j)
+			
+			H = generate_hamiltonian(kx,ky,MU_F,MU_C)
 			eig_vals,U_dagger = LA.eig(H)
 			U = LA.inv(U_dagger)
-			check_val+= sanity_check_moment(U,U_dagger,eig_vals,params['mu_f'])
-	check_val = check_val * (1 /(N ** 2) )
-	# if (abs(num-check_val) > 1E-6):
-	# 	print("up={:7f}, down={:7f}".format(np.real(num), np.real(check_val)))
-	params['mu_f_delta'] = 1
+			
+			check_val_up += up_moment(U,U_dagger,eig_vals,MU_F)
+			check_val_down += down_moment(U,U_dagger,eig_vals,MU_F)
+
+	check_val_up = check_val_up / N
+	check_val_down = check_val_down / N 
+
+	if (abs(check_val_down - check_val_up) > 1e-8):
+		print("WARNING: INVALID MOMENT CALCULATED!",check_val_up, check_val_down)
 	return params['mu_f']
 
 
-def sanity_check_moment(U,U_dagger, eigen_vals, mu):
-	check_val = 0
+def up_moment(U,U_dagger, eigen_vals, mu):
+	check_val_up = 0
+	# check_val_down = 0
 	beta = 1000
-	for j in range(0,2):
-		for i in range(4):
-			check_val += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
-	return check_val
+	j = 2
+	for i in range(4):
+		check_val_up += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
+	return check_val_up
+def down_moment(U,U_dagger, eigen_vals, mu):
+	# check_val_up = 0
+	check_val_down = 0
+	beta = 1000
+	j = 3
+	for i in range(4):
+		check_val_down += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
+	return check_val_down
+	# print(np.real(check_val_up), np.real(check_val_down))
+
 
 def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	return_val = 0
@@ -95,12 +133,10 @@ def moment_number_integral(U,U_dagger, eigen_vals, mu):
 	for j in range(2,4):
 		for i in range(4):
 			return_val += U[i][j] * U_dagger[j][i] * fermi_function(eigen_vals[i],beta,mu)
-	return return_val  
+	return np.real(return_val)  
 
 
-
-
-def self_consistent(j,parameters):
+def self_consistent(j, mu_c = 0):
 	''' 
 		For some J, we will find xi
 		for a range of k
@@ -113,20 +149,40 @@ def self_consistent(j,parameters):
 		
 	'''
 	params = {}
-	params = parameters
-	anti_f = []
-	Xi_list= []
+	params['beta'] = 1000
+	params['mu_f'] = .4
+	params['Xi_guess'] = 1
+	params['lim'] = np.pi
+	params['num_sites'] = 100
+	params['mu_c'] = mu_c 
 	
 	params['antifm_const'] = j
-	Xi_guess = params['Xi_guess'] 
-	params['mu_f'] = calibtrate_moment(Xi_guess, params)
 	
+
+	Xi_guess = params['Xi_guess']
+	Xi_act = 0
+
+	### Constants
+	L = params['num_sites']
+	N = L ** 2
+	PI = params['lim']
+
+
+	MU_F = calibtrate_moment(Xi_guess, params)
+	# for i in range(L):
+	# 	for j in range(L):
+	# 		kx = -PI  + 2 * (PI / L * i)
+	# 		ky =  -PI  + 2 * (PI / L * j)
+
+	# 		print(kx,ky)
+	
+	params['mu_f'] = calibtrate_moment(Xi_guess, params)
 
 	counter = 0
 	Xi_act =  get_Xi(Xi_guess, params)
 	while(abs(Xi_guess - Xi_act) > 5e-9):
 		Xi_guess = .2*(Xi_act) + .8*(Xi_guess) 		
-		params['mu_f'] = calibtrate_moment(Xi_guess, params)
+		# params['mu_f'] = calibtrate_moment(Xi_guess, params)
 		Xi_act =  get_Xi(Xi_guess, params)
 		counter += 1
 		if (counter % 1000 ==0):
@@ -135,19 +191,21 @@ def self_consistent(j,parameters):
 	print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
-	
 	return (j,Xi_act, params['mu_f'])
 
 def get_Xi(Xi_guess, params):
 	Xi_act = 0
 
-	delta = params['delta']
-	N = params['mesh_lines']
+	L = params['num_sites']
+	N = L ** 2
+	PI = params['lim']
+
 	anti_f = params['antifm_const']
-	for i in range(N):
-		for j in range(N):
-			kx = -delta + 2 * (delta * i / N)
-			ky = -delta + 2 * (delta * j / N)
+	for i in range(L):
+		for j in range(L):
+			kx = -PI  + 2 * (PI / L * i)
+			ky =  -PI  + 2 * (PI / L * j)
+
 			H = generate_hamiltonian(kx,ky, params['mu_f'],params['mu_c'])
 			
 			H[0][2] = -Xi_guess
@@ -165,17 +223,13 @@ def get_Xi(Xi_guess, params):
 			
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
 	
-	return  (Xi_act * 3 * anti_f)/ (2 * (N ** 2) )
+	return  (Xi_act * 3 * anti_f)/ (2 * N )
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
-	A = ky + 1j*kx
-	B = ky - 1j*kx
-
-	hamiltonian[0][1] = B
-	hamiltonian[1][0] = A
-	hamiltonian[0][0] = mu_c
-	hamiltonian[1][1] = mu_c 
+	
+	hamiltonian[0][0] = -2* (np.cos(kx) + np.cos(ky))-mu_c
+	hamiltonian[1][1] = -2* (np.cos(kx) + np.cos(ky))-mu_c 
 	hamiltonian[2][2] = -mu_f
 	hamiltonian[3][3] = -mu_f
 	return hamiltonian
@@ -221,25 +275,14 @@ def main():
 	
 
 	#self_consistent(j, params)
+	NUM_PROCESS = 8
 	for i in range(1):
-		params = {}
-		params['beta'] = 1000
-		params['mu_f'] = .4
-		params['mu_f_prev'] = 0 
-		params['mu_f_prev_prev'] = 0
-		params['mu_f_delta'] = .1
-		params['mu_c'] = .2
-		params['Xi_guess'] = 1
-		params['delta'] = np.pi + i 
-		params['dens'] = .05
-		params['mesh_lines'] = int(2 * params['delta'] / params['dens'])
-		params['mu_c'] = .2 
-		outputs = []
 
-		file_name = "phase_diagrams_mu_chiral_100_delta_" + str(params['delta']).replace(".", "_2") + ".csv"
-		for j in range(5):
-			pool = Pool(processes=8)
-			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,params)) for x in range(8)]
+		outputs = []
+		file_name = "phase_diagrams_kondo" + ".csv"
+		for j in range(10):
+			pool = Pool(processes=NUM_PROCESS)
+			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,)) for x in range(NUM_PROCESS)]
 			output = [p.get() for p in results]
 			print(output)
 			outputs.append(output)
