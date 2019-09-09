@@ -105,7 +105,7 @@ def calibtrate_moment(Xi, params):
 	if (abs(check_val_down - check_val_up) > 1e-8):
 		print("WARNING: INVALID MOMENT CALCULATED!",check_val_up, check_val_down)
 	
-	params['mu_f'] = num
+	params['mu_f'] = MU_F
 	return params['mu_f']
 
 
@@ -155,7 +155,7 @@ def self_consistent(j, mu_c = 0):
 	params['mu_f'] = .4
 	params['Xi_guess'] = 1
 	params['lim'] = np.pi
-	params['num_sites'] = 100
+	params['num_sites'] = 20
 	params['mu_c'] = mu_c 
 	
 	params['antifm_const'] = j
@@ -283,9 +283,9 @@ def main():
 
 		outputs = []
 		file_name = "phase_diagrams_kondo" + ".csv"
-		for j in range(10):
+		for j in range(50):
 			pool = Pool(processes=NUM_PROCESS)
-			results = [pool.apply_async(self_consistent, args=((j*0.008)+x*.001,)) for x in range(NUM_PROCESS)]
+			results = [pool.apply_async(self_consistent, args=((j*0.08)+x*.01,)) for x in range(NUM_PROCESS)]
 			output = [p.get() for p in results]
 			print(output)
 			outputs.append(output)
