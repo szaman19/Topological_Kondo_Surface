@@ -156,7 +156,7 @@ def self_consistent(j, mu_c = 0):
 	params['Xi_guess'] = 1
 	params['lim'] = np.pi
 	params['num_sites'] = 20
-	params['mu_c'] = mu_c 
+	params['mu_c'] = mu_c/8 
 	
 	params['antifm_const'] = j
 	
@@ -231,8 +231,15 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
 	
-	hamiltonian[0][0] = -2* (np.cos(kx) + np.cos(ky))-mu_c
-	hamiltonian[1][1] = -2* (np.cos(kx) + np.cos(ky))-mu_c 
+	hamiltonian = np.zeros(dims, dtype=complex)
+	A = np.sin(ky)-1j*np.sin(kx)
+	A_star = np.sin(ky)+1j*np.sin(kx)
+
+	epsilon_k = 0.3 * (np.sin(kx/2) ** 2 + np.sin(ky/2) ** 2) 
+	hamiltonian[0][0] = epsilon_k - mu_c 
+	hamiltonian[0][1] = A 
+	hamiltonian[1][0] = A_star
+	hamiltonian[1][1] = -epsilon_k - mu_c
 	hamiltonian[2][2] = -mu_f
 	hamiltonian[3][3] = -mu_f
 	return hamiltonian
@@ -279,13 +286,13 @@ def main():
 
 	#self_consistent(j, params)
 	NUM_PROCESS = 8
-	for i in range(1):
+	for i in range(4):
 
 		outputs = []
-		file_name = "phase_diagrams_kondo" + ".csv"
+		file_name = "phase_diagrams_chiral_kondo_"+str(i) + ".csv"
 		for j in range(15):
 			pool = Pool(processes=NUM_PROCESS)
-			results = [pool.apply_async(self_consistent, args=((j*0.08)+x*.01,)) for x in range(NUM_PROCESS)]
+			results = [pool.apply_async(self_consistent, args=((j*0.08)+x*.01,i)) for x in range(NUM_PROCESS)]
 			output = [p.get() for p in results]
 			print(output)
 			outputs.append(output)
