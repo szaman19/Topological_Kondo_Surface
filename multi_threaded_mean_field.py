@@ -287,10 +287,9 @@ def main():
 	#self_consistent(j, params)
 	NUM_PROCESS = 8
 	for i in range(4):
-
 		outputs = []
 		file_name = "phase_diagrams_chiral_kondo_"+str(i) + ".csv"
-		for j in range(15):
+		for j in range(8):
 			pool = Pool(processes=NUM_PROCESS)
 			results = [pool.apply_async(self_consistent, args=((j*0.08)+x*.01,i)) for x in range(NUM_PROCESS)]
 			output = [p.get() for p in results]
