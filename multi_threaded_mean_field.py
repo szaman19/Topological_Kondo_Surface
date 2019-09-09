@@ -257,7 +257,11 @@ def integral_helper(U,U_dagger,eigen_vals,params):
 	nf_1 = fermi_function(eigen_vals[1],beta)
 	nf_2 = fermi_function(eigen_vals[2],beta)
 	nf_3 = fermi_function(eigen_vals[3],beta)
-	return (U_11*C_13*nf_0 + U_12*C_23*nf_1 + U_13*C_33*nf_2 + U_14*C_43*nf_3)
+	num = (U_11*C_13*nf_0 + U_12*C_23*nf_1 + U_13*C_33*nf_2 + U_14*C_43*nf_3)
+
+	if(abs(num) > 1):
+		print("WARNING: INVALID SUM", num)
+	return num
 
 
 def get_Xi_helper(U,U_dagger,eigen_vals,params):
@@ -286,12 +290,12 @@ def main():
 
 	#self_consistent(j, params)
 	NUM_PROCESS = 8
-	for i in range(4):
+	for i in range(2):
 		outputs = []
 		file_name = "phase_diagrams_chiral_kondo_"+str(i) + ".csv"
 		for j in range(8):
 			pool = Pool(processes=NUM_PROCESS)
-			results = [pool.apply_async(self_consistent, args=((j*0.08)+x*.01,i)) for x in range(NUM_PROCESS)]
+			results = [pool.apply_async(self_consistent, args=((j*0.16)+x*.02,i)) for x in range(NUM_PROCESS)]
 			output = [p.get() for p in results]
 			print(output)
 			outputs.append(output)
