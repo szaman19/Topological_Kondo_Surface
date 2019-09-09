@@ -290,7 +290,7 @@ def main():
 
 	#self_consistent(j, params)
 	NUM_PROCESS = 8
-	for i in range(2):
+	for i in range(2,4):
 		outputs = []
 		file_name = "phase_diagrams_chiral_kondo_"+str(i) + ".csv"
 		for j in range(8):
