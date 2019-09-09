@@ -104,6 +104,8 @@ def calibtrate_moment(Xi, params):
 
 	if (abs(check_val_down - check_val_up) > 1e-8):
 		print("WARNING: INVALID MOMENT CALCULATED!",check_val_up, check_val_down)
+	
+	params['mu_f'] = num
 	return params['mu_f']
 
 
@@ -178,6 +180,7 @@ def self_consistent(j, mu_c = 0):
 	
 	params['mu_f'] = calibtrate_moment(Xi_guess, params)
 
+	print(params['mu_f'])
 	counter = 0
 	Xi_act =  get_Xi(Xi_guess, params)
 	while(abs(Xi_guess - Xi_act) > 5e-9):
@@ -188,7 +191,7 @@ def self_consistent(j, mu_c = 0):
 		if (counter % 1000 ==0):
 			print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))					
 	
-	print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))
+	print("J= {},{:3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
 	return (j,Xi_act, params['mu_f'])
