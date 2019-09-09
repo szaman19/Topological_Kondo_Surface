@@ -283,7 +283,7 @@ def main():
 
 		outputs = []
 		file_name = "phase_diagrams_kondo" + ".csv"
-		for j in range(50):
+		for j in range(15):
 			pool = Pool(processes=NUM_PROCESS)
 			results = [pool.apply_async(self_consistent, args=((j*0.08)+x*.01,)) for x in range(NUM_PROCESS)]
 			output = [p.get() for p in results]
