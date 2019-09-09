@@ -237,14 +237,14 @@ def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	hamiltonian[3][3] = -mu_f
 	return hamiltonian
 def integral_helper(U,U_dagger,eigen_vals,params):
-	U_11 = U[0][0]
-	C_13 = U_dagger[0][2]
-	U_12 = U[0][1]
-	C_23 = U_dagger[1][2]
-	U_13 = U[0][2]
-	C_33 = U_dagger[2][2]
-	U_14 = U[0][3]
-	C_43 = U_dagger[3][2]
+	U_11 = U[0][2]
+	C_13 = U_dagger[0][0]
+	U_12 = U[1][2]
+	C_23 = U_dagger[0][1]
+	U_13 = U[2][2]
+	C_33 = U_dagger[0][2]
+	U_14 = U[3][2]
+	C_43 = U_dagger[0][3]
 	beta = params['beta']
 	nf_0 = fermi_function(eigen_vals[0],beta)
 	nf_1 = fermi_function(eigen_vals[1],beta)
