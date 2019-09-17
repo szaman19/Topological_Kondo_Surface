@@ -70,7 +70,7 @@ def main():
 				H_ti = generate_hamiltonian(kx,ky, mu_f[counter], mu_c/8 , Xi[counter])
 				eig_vals = LA.eigvalsh(H_ti)
 				for en in eig_vals:
-					if (abs(en -each - (mu_c/8)) < 1e-4):
+					if (abs(en -each - (mu_c/8)) < 1e-5):
 						rho += 1
 				# print(en)
 		rho = rho / (L**2)
@@ -97,7 +97,7 @@ def main():
 	plt.ylabel('DOS')
 	# plt.title('TI Surface State Band Structure')
 	# plt.show()
-	plt.savefig("kondo_dos_3.png", format="png")			
+	plt.savefig("kondo_dos_3_2.png", format="png")			
 main()
 
 
