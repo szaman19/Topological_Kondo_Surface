@@ -59,7 +59,7 @@ def main():
 	file = open("ck_with_dos_0.dat", 'w')
 	file.write("j,xi,mu_c,mu_f,rho(0) \n")
 	xs = []
-	for each in range(-300,300):
+	for each in range(-3000,3000):
 		each /= 3000
 		xs.append(each)
 		rho = 0
