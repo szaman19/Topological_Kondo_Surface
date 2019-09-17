@@ -54,7 +54,7 @@ def main():
 	kx_s = []
 
 	rho_s = []
-	counter = 10
+	counter = 20
 
 	file = open("ck_with_dos_0.dat", 'w')
 	file.write("j,xi,mu_c,mu_f,rho(0) \n")
@@ -97,7 +97,7 @@ def main():
 	plt.ylabel('DOS')
 	# plt.title('TI Surface State Band Structure')
 	# plt.show()
-	plt.savefig("kondo_dos.png", format="png")			
+	plt.savefig("kondo_dos_2.png", format="png")			
 main()
 
 
