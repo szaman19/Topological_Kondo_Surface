@@ -59,15 +59,15 @@ def main():
 	file = open("ck_with_dos_0.dat", 'w')
 	file.write("j,xi,mu_c,mu_f,rho(0) \n")
 	xs = []
-	for each in range(-300,300):
-		each /= 3000
+	for each in range(-500,500):
+		each /= 100
 		xs.append(each)
 		rho = 0
 		for i in range(L):
 			for j in range(L):
 				kx = -PI  + 2 * (PI / L * i)
 				ky = -PI  + 2 * (PI / L * j)
-				H_ti = generate_hamiltonian(kx,ky, mu_f[counter], mu_c/8 , Xi[counter])
+				H_ti = generate_hamiltonian(kx,ky, 0, mu_c/8 , 0)
 				eig_vals = LA.eigvalsh(H_ti)
 				for en in eig_vals:
 					if (abs(en -each - (mu_c/8)) < 3e-4):

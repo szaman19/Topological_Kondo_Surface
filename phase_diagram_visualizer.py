@@ -5,7 +5,7 @@ figure(num=None, figsize=(3.5, 4.5), dpi=200, facecolor='w', edgecolor='k')
 import math
 
 def main():
-	plt.rc('text', usetex=True)
+	# plt.rc('text', usetex=True)
 	font = {
 	'fontname':'Times New Roman',
 	'color':'black',
@@ -33,11 +33,11 @@ def main():
 			j.append(float(arr[0]))
 			Xi.append(float(arr[1]))
 		mu_c = "{0:.2f}".format(i / 8)
-		plt.plot(j, Xi, label="$\\mu_c = "+mu_c+"$" )
+		plt.plot(j, Xi, label="mu_c = "+mu_c+"$" )
 
 	plt.gcf().subplots_adjust(left=0.15, bottom=.13, top = .93, right = .97)
-	plt.xlabel('$J_0$')
-	plt.ylabel('$\\Xi$')
+	# plt.xlabel('$J_0$')
+	# plt.ylabel('$\\Xi$')
 	plt.title('Phase Diagram')
 	plt.legend()
 	plt.show()
