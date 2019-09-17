@@ -70,7 +70,7 @@ def main():
 				H_ti = generate_hamiltonian(kx,ky, mu_f[counter], mu_c/8 , Xi[counter])
 				eig_vals = LA.eigvalsh(H_ti)
 				for en in eig_vals:
-					if (abs(en -each - (mu_c/8)) < 1e-4):
+					if (abs(en -each - (mu_c/8)) < 3e-4):
 						rho += 1
 				# print(en)
 		rho = rho / (L**2)
