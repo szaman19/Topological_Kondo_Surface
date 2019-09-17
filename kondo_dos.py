@@ -59,7 +59,7 @@ def main():
 	file = open("ck_with_dos_0.dat", 'w')
 	file.write("j,xi,mu_c,mu_f,rho(0) \n")
 	xs = []
-	for each in range(-3000,3000):
+	for each in range(-300,300):
 		each /= 3000
 		xs.append(each)
 		rho = 0
@@ -74,8 +74,8 @@ def main():
 						rho += 1
 				# print(en)
 		rho = rho / (L**2)
-		msg = str(each) +","+str(Xi[counter]) + "," +str(mu_c/8) + "," + str(mu_f[counter]) + "," + str(rho)+"\n"
-		# print(msg)
+		msg = str(each)+" "+str(afm_c[counter])+","+str(Xi[counter]) + "," +str(mu_c/8) + "," + str(mu_f[counter]) + "," + str(rho)+"\n"
+		print(msg)
 		# file.write(msg)
 		rho_s.append(rho)
 		# counter += 1
