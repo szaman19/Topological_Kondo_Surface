@@ -191,12 +191,11 @@ def self_consistent(j, mu_c = 0):
 		if (counter % 1000 ==0):
 			print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))					
 	
-        Xi_act = Xi_act / (j * 3) * 4
 	print("J= {},{:3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
         
-	return (j,Xi_act, params['mu_f'])
+	return (j,Xi_act * 4/(3 * j) , params['mu_f'])
 
 def get_Xi(Xi_guess, params):
 	Xi_act = 0
@@ -285,15 +284,15 @@ def main():
 	#self_consistent(j, params)
 	start = int(sys.argv[1])
 
-	end = start + 2
+	end = start + 1
 
 	NUM_PROCESS = 8
 
 	
 	for i in range(start,end):
 		outputs = []
-		file_name = "phase_diagrams_kondo_"+str(i) + ".csv"
-		for j in range(8):
+		file_name = "kondo_"+str(i) + ".csv"
+		for j in range(12):
 			pool = Pool(processes=NUM_PROCESS)
 			results = [pool.apply_async(self_consistent, args=((j*0.16)+x*.02+2,i)) for x in range(NUM_PROCESS)]
 			output = [p.get() for p in results]
