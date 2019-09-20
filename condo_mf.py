@@ -191,9 +191,11 @@ def self_consistent(j, mu_c = 0):
 		if (counter % 1000 ==0):
 			print("J= {},{:.3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))					
 	
+        Xi_act = Xi_act / (j * 3) * 4
 	print("J= {},{:3f},act = {:.8f}, guess = {:.8f}".format(j, counter , Xi_act, Xi_guess))
 	if(abs(0-Xi_act) > 1e-6):
 		print(j, Xi_act)
+        
 	return (j,Xi_act, params['mu_f'])
 
 def get_Xi(Xi_guess, params):
@@ -226,7 +228,7 @@ def get_Xi(Xi_guess, params):
 			
 			Xi_act +=  np.real(get_Xi_helper(U, U_dagger,eig_vals,params))
 	
-	return  (Xi_act * 3 * anti_f)/ (2 * N )
+	return  (Xi_act * 3 * anti_f)/ (4 * N )
 def generate_hamiltonian(kx,ky,mu_f, mu_c):
 	dims=(4,4)
 	hamiltonian = np.zeros(dims, dtype=complex)
@@ -293,7 +295,7 @@ def main():
 		file_name = "phase_diagrams_kondo_"+str(i) + ".csv"
 		for j in range(8):
 			pool = Pool(processes=NUM_PROCESS)
-			results = [pool.apply_async(self_consistent, args=((j*0.16)+x*.02,i)) for x in range(NUM_PROCESS)]
+			results = [pool.apply_async(self_consistent, args=((j*0.16)+x*.02+2,i)) for x in range(NUM_PROCESS)]
 			output = [p.get() for p in results]
 			print(output)
 			outputs.append(output)
