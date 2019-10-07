@@ -160,7 +160,7 @@ def calibrate_mu(op, params):
 	conduction_number /= (N)
 	moment_number /= (N) 
 
-	print("N_c: {.9f}, N_f: {.9f}", conduction_number, moment_number)
+	# print("N_c: {.9f}, N_f: {.9f}", conduction_number, moment_number)
 
 	is_equal_NC = util_equal(conduction_number,1)
 	is_equal_NF = util_equal(moment_number,1)
@@ -189,9 +189,9 @@ def calibrate_mu(op, params):
 		is_equal_NC = util_equal(conduction_number,1)
 		is_equal_NF = util_equal(moment_number,1)
 		loop_condition = not (is_equal_NF and is_equal_NC)
-		print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
+		# print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
 
-	print(util_equal(conduction_number,1))
+	# print(util_equal(conduction_number,1))
 
 	params['mu_c'] = mu_c
 	params['mu_f'] = mu_f
@@ -243,39 +243,237 @@ def calc_moment_number(U, U_dagger, eigen_vals, mu):
 
 
 def calc_xi_one(U_dagger, U, Eigs, J, spin):
-	print("To be implemented")
+	''' MUST divide by N before returning'''
 
-def calc_xi_two(U_dagger, U, Eigs, J):
-	print("To be implemented")
+	up_sum = 0
+	down_sum = 0
+	
+	f_k_dagger_up = get_row(U, 2)
+	f_k_dagger_down = get_row(U, 3)	
+	f_q_dagger_up = get_row(U, 6)
+	f_q_dagger_down = get_row(U, 7)
+
+
+	c_k_up = get_column(U_dagger, 0)
+	c_k_down = get_column(U_dagger, 1)
+	c_q_up = get_column(U_dagger, 4)
+	c_q_down = get_column(U_dagger, 5)
+
+
+	for i in range(len(Eigs)):
+		energy = Eigs[i]
+		up_sum += f_k_dagger_up * c_k_up * fermi_function(energy)
+		up_sum += f_q_dagger_up * c_q_up * fermi_function(energy)
+		down_sum += f_k_dagger_down * c_k_down * fermi_function(energy)
+		down_sum += f_q_dagger_down * c_q_down * fermi_function(energy)
+
+
+	if(spin == 0):
+		''' down '''
+		up_sum = up_sum * (J / 2)
+		down_sum = down_sum * (J / 4)
+	
+	else:
+		''' up '''
+		up_sum = up_sum * (J / 4)
+		down_sum = down_sum * (J / 2)
+
+	return up_sum + down_sum
+	# print("To be implemented")
+
+def calc_xi_two(U_dagger, U, Eigs, J, spin):
+
+	up_sum = 0
+	down_sum = 0
+	
+	f_k_dagger_up = get_row(U, 2)
+	f_k_dagger_down = get_row(U, 3)	
+	f_q_dagger_up = get_row(U, 6)
+	f_q_dagger_down = get_row(U, 7)
+
+	
+	c_k_up = get_column(U_dagger, 0)
+	c_k_down = get_column(U_dagger, 1)
+	c_q_up = get_column(U_dagger, 4)
+	c_q_down = get_column(U_dagger, 5)
+
+	for i in range(len(Eigs)):
+		energy = Eigs[i]
+		up_sum += f_k_dagger_up * c_q_up * fermi_function(energy)
+		up_sum += f_q_dagger_up * c_k_up * fermi_function(energy)
+
+		down_sum += f_k_dagger_down * c_q_down * fermi_function(energy)
+		down_sum += f_q_dagger_down * c_k_down * fermi_function(energy)
+	if(spin == 0):
+		''' down '''
+		up_sum = up_sum * (J / 2)
+		down_sum = down_sum * (J / 4)
+	
+	else:
+		''' up '''
+		up_sum = up_sum * (J / 4)
+		down_sum = down_sum * (J / 2)
+
+	return up_sum + down_sum
+	# print("To be implemented")
 
 def calc_M1_C(U_dagger, U, Eigs, J):
-	print("To be implemented")
 
-def calc_M1_C(U_dagger, U, Eigs, J):
-	print("To be implemented")
+	up_sum = 0
+	down_sum = 0
 
-def calc_M1_C(U_dagger, U, Eigs, J):
-	print("To be implemented")
+	c_k_up = get_column(U_dagger, 0)
+	c_k_down = get_column(U_dagger, 1)
+	c_q_up = get_column(U_dagger, 4)
+	c_q_down = get_column(U_dagger, 5)
 
-def calc_M1_C(U_dagger, U, Eigs, J):
-	print("To be implemented")
+	c_k_dagger_up = get_row(U, 0)
+	c_k_dagger_down = get_row(U, 1)
+	c_q_dagger_up = get_row(U, 4)
+	c_q_dagger_down = get_row(U, 5)
+
+	for i in range(len(Eigs)):
+		energy = Eigs[i]
+		up_sum += c_k_up * c_k_dagger_up * fermi_function(energy)
+		up_sum += c_q_up * c_q_dagger_up * fermi_function(energy)
+		down_sum += c_k_down * c_k_dagger_down * fermi_function(energy)
+		down_sum += c_q_down * c_q_dagger_down * fermi_function(energy)
+
+	# print("To be implemented")
+	return_val = (J /2) * (up_sum - down_sum)
+	return return_val
+
+def calc_M2_C(U_dagger, U, Eigs, J):
+
+
+	up_sum = 0
+	down_sum = 0
+
+	c_k_up = get_column(U_dagger, 0)
+	c_k_down = get_column(U_dagger, 1)
+	c_q_up = get_column(U_dagger, 4)
+	c_q_down = get_column(U_dagger, 5)
+
+	c_k_dagger_up = get_row(U, 0)
+	c_k_dagger_down = get_row(U, 1)
+	c_q_dagger_up = get_row(U, 4)
+	c_q_dagger_down = get_row(U, 5)
+
+	for i in range(len(Eigs)):
+		energy = Eigs[i]
+		up_sum += c_k_up * c_q_dagger_up * fermi_function(energy)
+		up_sum += c_q_up * c_k_dagger_up * fermi_function(energy)
+		down_sum += c_k_down * c_q_dagger_down * fermi_function(energy)
+		down_sum += c_q_down * c_k_dagger_down * fermi_function(energy)
+	
+	return_val = (J /2) * (up_sum - down_sum)
+	return return_val
+	# print("To be implemented")
+
+def calc_M1_F(U_dagger, U, Eigs, J):
+
+	up_sum = 0
+	down_sum = 0
+
+	f_k_up = get_column(U_dagger, 2)
+	f_k_down = get_column(U_dagger, 3)
+	f_q_up = get_column(U_dagger,6)
+	f_q_down =  get_column(U_dagger,7)
+
+	f_k_dagger_up = get_row(U, 2)
+	f_k_dagger_down = get_row(U, 3)	
+	f_q_dagger_up = get_row(U, 6)
+	f_q_dagger_down = get_row(U, 7)
+
+
+	for i in range(len(Eigs)):
+		energy = Eigs[i]
+		up_sum += f_k_up * f_k_dagger_up * fermi_function(energy)
+		up_sum += f_q_up * f_q_dagger_up * fermi_function(energy)
+		down_sum += f_k_down * f_k_dagger_down * fermi_function(energy)
+		down_sum += f_q_down * f_q_dagger_down * fermi_function(energy)
+
+	# print("To be implemented")
+
+	return_val = (J /2) * (up_sum - down_sum)
+	return return_val
+
+
+def calc_M2_F(U_dagger, U, Eigs, J):
+
+	up_sum = 0
+	down_sum = 0
+
+	f_k_up = get_column(U_dagger, 2)
+	f_k_down = get_column(U_dagger, 3)
+	f_q_up = get_column(U_dagger,6)
+	f_q_down =  get_column(U_dagger,7)
+
+	f_k_dagger_up = get_row(U, 2)
+	f_k_dagger_down = get_row(U, 3)	
+	f_q_dagger_up = get_row(U, 6)
+	f_q_dagger_down = get_row(U, 7)
+
+
+	for i in range(len(Eigs)):
+		energy = Eigs[i]
+		up_sum += f_k_up * f_q_dagger_up * fermi_function(energy)
+		up_sum += f_q_up * f_k_dagger_up * fermi_function(energy)
+		down_sum += f_k_down * f_q_dagger_down * fermi_function(energy)
+		down_sum += f_q_down * f_k_dagger_down * fermi_function(energy)
+
+	return_val = (J /2) * (up_sum - down_sum)
+	return return_val
+		
+
+	# print("To be implemented")
 
 def order_params_calculations(calc_op, guess_op, params):
+	eigen_vals, U_dagger_list = generate_U(op,params)
+
+	temp_xi1_up = 0
+	temp_xi1_down = 0
+	temp_xi2_up = 0
+	temp_xi2_down = 0
+
+	temp_m1_c = 0
+	temp_m2_c = 0
+	temp_m1_f = 0
+	temp_m2_f = 0
+
+	N = len(eigen_vals)
+	for i in range(len(eigen_vals)):
+		eig_vals = eigen_vals[i]
+		U_dagger = U_dagger_list[i]
+		U = np.transpose(np.conjugate(U_dagger))
+		
+		temp_xi1_up += calc_xi_one(U_dagger, U, eigs, j, 1)
+		temp_xi1_down += calc_xi_one(U_dagger, U, eigs, j, 0)
+		
+		temp_xi2_up += calc_xi_two(U_dagger, U, eigs, j, 1)
+		temp_xi2_down += calc_xi_two(U_dagger, U, eigs, j, 0)
+
+		temp_m1_c += calc_M1_C(U_dagger, U, eigs, j)
+		temp_m2_c += calc_M2_C(U_dagger, U, eigs, j)
+		
+		temp_m1_f += calc_M1_F(U_dagger, U, eigs, j)
+		temp_m2_f += calc_M2_F(U_dagger, U, eigs, j)
+
 	'''
 	Generate hamiltonian for each K using guess order parameters. After 
 	'''	
-	calc_op['xi1_up'] = calc_xi_one(U_dagger, U, eigs, j, 1)
-	calc_op['xi1_down'] = calc_xi_one(U_dagger, U, eigs, j, 0)
+	calc_op['xi1_up'] = temp_xi1_up  / N
+	calc_op['xi1_down'] = temp_xi1_down / N
 
-	calc_op['xi2_up'] = calc_xi_two(U_dagger, U, eigs, j, 1)
-	calc_op['xi2_down'] = calc_xi_two(U_dagger, U, eigs, j, 0)
+	calc_op['xi2_up'] = temp_xi2_up / N
+	calc_op['xi2_down'] = temp_xi2_down / N
 	
 
-	calc_op['M1_c'] = calc_M1_C(U_dagger, U, eigs, j)
-	calc_op['M2_c'] = calc_M2_C(U_dagger, U, eigs, j)
+	calc_op['M1_c'] = temp_m1_c / N
+	calc_op['M2_c'] = temp_m2_c / N
 
-	calc_op['M1_f'] = calc_M1_F(U_dagger, U, eigs, j)
-	calc_op['M2_f'] = calc_M2_F(U_dagger, U, eigs, j)
+	calc_op['M1_f'] = temp_m1_f / N
+	calc_op['M2_f'] = temp_m2_f / N
 
 	return calc_op
 
@@ -315,6 +513,9 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['M1_f']  = 0
 	calculated_order_params['M2_f']  = 0
 	return calculated_order_params
+def print_params_search(gp, cp):
+	for each in gp.keys():
+		print(each," guess:", gp[each], " calculated: ", cp[each])
 
 def self_consistent(j):
 	calculated_order_params = {}
@@ -329,13 +530,22 @@ def self_consistent(j):
 	guess_order_params = order_param_init(guess_order_params, True)
 	params = calibrate_mu(guess_order_params, params)
 
-	# while(order_param_equal(calculated_order_params, guess_order_params)):
-	# 	guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
+	counter = 0
+	while(order_param_equal(calculated_order_params, guess_order_params)):
+		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
 		
-	# 	params = calibrate_mu(guess_order_params, params)
+		params = calibrate_mu(guess_order_params, params)
 
-	# 	calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
+		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
 
+		if(counter %10 ==0):
+			print("j = ",counter,'*' * 80)
+			print_params_search(guess_order_params, calculated_order_params)
+			print('*' * 80)
+
+		counter += 1
+	for each in calculated_order_params.keys():
+		print(each, calculated_order_params[each])
 	return calculated_order_params
 
 
@@ -443,5 +653,5 @@ def hamiltonian_order_params(hamiltonian, order_params):
 
 def main():
 	points = gen_brillouin_zone()
-	self_consistent(j=2)
+	self_consistent(j=3)
 main() 
