@@ -16,9 +16,9 @@ def main():
 	plt.rcParams["axes.labelweight"] = "bold"
 	plt.rcParams["font.family"] = "serif"
 	plt.rcParams["font.serif"]="Times New Roman"
-	for i in range(4):
+	for i in range(1):
 		
-		f_name = "kondo_data/phase_diagrams_kondo_" + str(i)+".csv"
+		f_name = "kondo_" + str(i)+".csv"
 		f = open(f_name,"r")
 		out = []
 		counter = 0
