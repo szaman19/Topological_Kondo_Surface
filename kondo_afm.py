@@ -1,0 +1,422 @@
+import numpy as np 
+from numpy import linalg as LA 
+import numpy.matlib
+import math 
+from multiprocessing import Pool
+import matplotlib.pyplot as plt
+
+
+def gen_brillouin_zone(L = 50):
+	X_points = []
+	Y_points = []
+	for k in range(L):
+		temp_x = []
+		for i in range(L):
+			x = - np.pi + (np.pi / L * k) + (np.pi / (L-1) * i)
+			temp_x.append(x)
+		# print(temp_x)s
+		for x in temp_x:
+			y = - x - np.pi + (2 *	np.pi / L * k) 
+			X_points.append(x)
+			Y_points.append(y)
+
+	return (X_points,Y_points)
+
+
+K_POINTS = gen_brillouin_zone(L = 10)
+
+
+def util_equal(a , b, threshold=1E-7):
+	return not(abs(a - b) > threshold)
+
+def order_param_equal(calculated_order_params, guess_order_params ):
+	for params in calculated_order_params.keys():
+		v1 = calculated_order_params[params]
+		v2 = guess_order_params[params]
+		if (not util_equal(v1, v2)):
+			return False
+	return True
+
+def get_column(mat_U,column_num):
+	return mat_U[:,column_num]
+
+def get_row(mat_U, row_num):
+	return mat_U[row_num,:]
+
+
+def fermi_function(energy,  beta=1000, mu=0):
+	energy = np.real(energy)
+	try:
+		if ((beta * (energy - mu)) < -110):
+			return 1
+		elif((beta * (energy - mu)) > 120):
+			return 0
+		else:
+			return 1 / (1 + np.exp(beta * (energy - mu)))
+	except:
+		print("Exception has occured", energy)
+
+
+def generate_U(op, params):
+	mu_f = params['mu_f']
+	mu_c = params['mu_c']
+
+	eigen_vals = []
+	U_dagger_list = []
+	for kx in K_POINTS[0]:
+		for ky in K_POINTS[1]:
+			ham = gen_hamiltonian(kx, ky, mu_f,mu_c)
+			ham  = hamiltonian_order_params(ham, op)
+			eigs, U_dagger = LA.eigh(ham)
+			U_dagger_list.append(U_dagger)
+			eigen_vals.append(eigen_vals)
+	return eigen_vals, U_dagger_list
+
+
+def update_mu_f(num, params):
+	if (util_equal(num, 1)):
+		return params
+
+	if(num > 1):
+		params['mu_f_prev_prev'] = params['mu_f_prev']
+		params['mu_f_prev'] = params['mu_f']
+		if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
+			params['mu_f_delta'] /= 2
+		params['mu_f'] -= params['mu_f_delta']
+	else:
+		params['mu_f_prev_prev'] = params['mu_f_prev']
+		params['mu_f_prev'] = params['mu_f']
+		if(params['mu_f_prev_prev'] == params['mu_f'] + params['mu_f_delta']):
+			params['mu_f_delta'] /= 2
+		params['mu_f'] +=params['mu_f_delta']
+	
+	return params
+
+def update_mu_c(num, params):
+	if (util_equal(num, 1)):
+		return params
+		
+	if(num > 1):
+		params['mu_c_prev_prev'] = params['mu_c_prev']
+		params['mu_c_prev'] = params['mu_c']
+		if(params['mu_c_prev_prev'] == params['mu_c'] - params['mu_c_delta']):
+			params['mu_c_delta'] /= 2
+		params['mu_c'] -= params['mu_c_delta']
+	else:
+		params['mu_c_prev_prev'] = params['mu_c_prev']
+		params['mu_c_prev'] = params['mu_c']
+		if(params['mu_c_prev_prev'] == params['mu_c'] + params['mu_c_delta']):
+			params['mu_c_delta'] /= 2
+		params['mu_c'] +=params['mu_c_delta']
+	
+	return params
+
+def calibrate_mu(op, params):
+	eigen_vals, U_dagger_list = generate_U(op,params)
+
+	conduction_number = 0
+	moment_number = 0
+
+	mu_f = params['mu_f']
+	mu_c = params['mu_c']
+
+	N = len(K_POINTS[0]) **2
+
+	mu_c_data = {}
+	mu_f_data = {}
+
+	mu_f_data['mu_f_prev_prev'] = 0
+	mu_f_data['mu_f_prev'] = 0
+	mu_f_data['mu_f_delta'] = .05
+	mu_f_data['mu_f'] = mu_f
+
+	mu_c_data['mu_c_prev_prev'] = 0
+	mu_c_data['mu_c_prev'] = 0
+	mu_c_data['mu_c_delta'] = .05
+	mu_c_data['mu_c'] = mu_c
+
+	for i in range(len(eigen_vals)):
+		U_dagger = U_dagger_list[i]
+		eig_val = eigen_vals[i]
+		U = np.transpose(np.conjugate(U_dagger))
+		conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
+		moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
+
+	conduction_number /= N
+	moment_number /= N 
+	while (util_equal(conduction_number,1) and util_equal(moment_number,1)):
+		mu_c_data = update_mu_c(conduction_number, mu_c_data)
+		mu_f_data = update_mu_f(moment_number, mu_f_data)
+
+		mu_c = mu_c_data['mu_c']
+		mu_f = mu_f_data['mu_f']
+
+		conduction_number = 0
+		moment_number = 0
+
+		for i in range(len(eigen_vals)):
+			U_dagger = U_dagger_list[i]
+			eig_val = eigen_vals[i]
+			U = np.transpose(np.conjugate(U_dagger))
+			conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
+			moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
+
+		conduction_number /= N
+		moment_number /= N 
+
+		print("N_c: {.9f}, N_f: {.9f}", conduction_number, moment_number)
+
+	params['mu_c'] = mu_c
+	param['mu_f'] = mu_f
+
+	print("mu_c: ", mu_c)
+	print("mu_f: ", mu_f)
+
+	return param
+
+def calc_conduction_number(U, U_dagger, eigen_vals, mu):
+	
+	c_k_up = get_column(U_dagger, 0)
+	c_k_down = get_column(U_dagger, 1)
+	c_q_up = get_column(U_dagger, 4)
+	c_q_down = get_column(U_dagger, 5)
+
+	c_k_dagger_up = get_row(U, 0)
+	c_k_dagger_down = get_row(U, 1)
+	c_q_dagger_up = get_row(U, 4)
+	c_q_dagger_down = get_row(U, 5)
+
+	number = 0
+	for i in range(len(eigen_vals)):
+		energy = eigen_vals[i]	
+		number += (c_k_up * c_k_dagger_up + c_q_up * c_q_dagger_up
+			+c_k_down * c_k_dagger_down + c_q_down * c_q_dagger_down)*(fermi_function(energy, mu=mu))
+
+	return number	
+
+def calc_moment_number(U, U_dagger, eigen_vals, mu):
+	f_k_up = get_column(U_dagger, 2)
+	f_k_down = get_column(U_dagger, 3)
+	f_q_up = get_column(U_dagger,6)
+	f_q_down =  get_column(U_dagger,7)
+
+	f_k_dagger_up = get_row(U, 2)
+	f_k_dagger_down = get_row(U, 3)	
+	f_q_dagger_up = get_row(U, 6)
+	f_q_dagger_down = get_row(U, 7)
+
+	number = 0
+	for i in range(len(eigen_vals)):
+		energy = eigen_vals[i]
+		number += (f_k_up * f_k_dagger_up * (fermi_function(energy, mu=mu))+ f_q_up * f_q_dagger_up *(fermi_function(energy, mu=mu))
+			+f_k_down * f_k_dagger_down * (fermi_function(energy, mu=mu)) + f_q_down * f_q_dagger_down * (fermi_function(energy, mu=mu))) 
+		
+
+	return number	
+
+	# print("To be implemented")
+
+
+def calc_xi_one(U_dagger, U, Eigs, J, spin):
+	print("To be implemented")
+
+def calc_xi_two(U_dagger, U, Eigs, J):
+	print("To be implemented")
+
+def calc_M1_C(U_dagger, U, Eigs, J):
+	print("To be implemented")
+
+def calc_M1_C(U_dagger, U, Eigs, J):
+	print("To be implemented")
+
+def calc_M1_C(U_dagger, U, Eigs, J):
+	print("To be implemented")
+
+def calc_M1_C(U_dagger, U, Eigs, J):
+	print("To be implemented")
+
+def order_params_calculations(calc_op, guess_op, params):
+	'''
+	Generate hamiltonian for each K using guess order parameters. After 
+	'''	
+	calc_op['xi1_up'] = calc_xi_one(U_dagger, U, eigs, j, 1)
+	calc_op['xi1_down'] = calc_xi_one(U_dagger, U, eigs, j, 0)
+
+	calc_op['xi2_up'] = calc_xi_two(U_dagger, U, eigs, j, 1)
+	calc_op['xi2_down'] = calc_xi_two(U_dagger, U, eigs, j, 0)
+	
+
+	calc_op['M1_c'] = calc_M1_C(U_dagger, U, eigs, j)
+	calc_op['M2_c'] = calc_M2_C(U_dagger, U, eigs, j)
+
+	calc_op['M1_f'] = calc_M1_F(U_dagger, U, eigs, j)
+	calc_op['M2_f'] = calc_M2_F(U_dagger, U, eigs, j)
+
+	return calc_op
+
+
+def update_guess_calc(calc_op, guess_op):
+	for param in guess_op.keys():
+		guess_op[param] = .2* (calc_op[param]) + .8*(guess_op[param])
+	'''
+		Uncomment, in case we want to change to
+		scaling each param individually
+	'''
+	# guess_op['xi1_up'] = .2* (calc_op['xi1_up']) + .8*(guess_op['xi1_up'])
+	# guess_op['xi1_down'] = .2* (calc_op['xi1_down']) + .8*(guess_op['xi1_down'])
+	# guess_op['xi2_up'] = .2* (calc_op['xi2_up']) + .8*(guess_op['xi2_up'])
+	# guess_op['xi2_down'] = .2* (calc_op['xi2_down']) + .8*(guess_op['xi2_down'])
+	# guess_op['M1_c'] = .2* (calc_op['M1_c']) + .8*(guess_op['M1_c'])
+	# guess_op['M2_c'] = .2* (calc_op['M2_c']) + .8*(guess_op['M2_c'])
+	# guess_op['M1_f'] = .2* (calc_op['M1_f']) + .8*(guess_op['M1_f'])
+	# guess_op['M2_f'] = .2* (calc_op['M2_f']) + .8*(guess_op['M2_f'])
+	
+	return guess_op
+
+def order_param_init(calculated_order_params, guess = False):
+	if(guess):
+		A = 1
+	else:
+		A = 0
+	calculated_order_params['xi1_up']  = A
+	calculated_order_params['xi1_down']  = A
+
+	calculated_order_params['xi2_up']  = A
+	calculated_order_params['xi2_down']  = A
+
+	calculated_order_params['M1_c']  = 0
+	calculated_order_params['M2_c']  = 0
+
+	calculated_order_params['M1_f']  = 0
+	calculated_order_params['M2_f']  = 0
+	return calculated_order_params
+
+def self_consistent(j):
+	calculated_order_params = {}
+	guess_order_params = {}
+	params = {}
+
+	params['mu_c'] = .2
+	params['mu_f'] = .2
+	params['j'] = j
+	
+	calculated_order_params = order_param_init(calculated_order_params)
+	guess_order_params = order_param_init(guess_order_params, True)
+	params = calibrate_mu(guess_order_params, params)
+
+	# while(order_param_equal(calculated_order_params, guess_order_params)):
+	# 	guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
+		
+	# 	params = calibrate_mu(guess_order_params, params)
+
+	# 	calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
+
+	return calculated_order_params
+
+
+
+def gen_hamiltonian(kx,ky,mu_f, mu_c, W = 0.3, chiral = True):
+	if(chiral):
+		epsilon_k = W * (np.sin(kx/2) **2 + np.sin(ky/2)**2)
+		epsilon_k_q = W * (np.sin((kx + np.pi)/2) **2 + np.sin((ky+np.pi)/2)**2)
+		
+		a_k = np.sin(ky) - 1j* np.sin(kx)
+		a_q =  np.sin(ky + np.pi) - 1j* np.sin(kx + np.pi)
+		a_k_star = np.sin(ky) + 1j* np.sin(kx)
+		a_q_star = np.sin(ky + np.pi) + 1j* np.sin(kx + np.pi)
+	else:
+		epsilon_k = -2 * (np.cos(kx)  + np.cos(ky))
+		epsilon_k_q = -2 * (np.cos(kx + np.pi)  + np.cos(ky+np.pi))
+
+		a_k = 0
+		a_q = 0
+		a_k_star = 0
+		a_q_star = 0
+	
+	dims = (8,8)
+	ham = np.zeros(dims, dtype=complex)
+
+	ham[0][0] = epsilon_k -mu_c
+	ham[1][1] = -epsilon_k - mu_c
+
+	ham[2][2] = -mu_f
+	ham[3][3] = -mu_f
+
+	ham[4][4] = epsilon_k_q
+	ham[5][5] = -epsilon_k_q
+
+	ham[6][6] = -mu_f
+	ham[7][7] = -mu_f
+
+	ham[0][1] = a_k
+	ham[1][0] = a_k_star
+
+	ham[4][5] = a_q
+	ham[5][4] = a_q_star
+			
+	return ham
+
+def hamiltonian_order_params(hamiltonian, order_params):
+	'''
+	Must add the order parameters to hamiltonian. 
+
+	Break Hamilhonian into Four 4 x 4 blocks: 
+
+	| H1 H2 |
+	| H3 H4 |
+
+	'''
+	#H1 Block Begin ############################################################################## 
+	hamiltonian [0][0] = hamiltonian [0][0] + order_params['M1_f']
+	hamiltonian [1][1] = hamiltonian [1][1] - order_params['M1_f']
+	hamiltonian [2][2] = hamiltonian [2][2] + order_params['M1_c']
+	hamiltonian [3][3] = hamiltonian [3][3] -  order_params['M1_c']
+
+
+	hamiltonian [0][2] = - order_params['xi1_up']
+	hamiltonian [1][3] = - order_params['xi1_down']
+	hamiltonian [2][0] = - np.conjugate(order_params['xi1_up'])
+	hamiltonian [3][1] = - np.conjugate(order_params['xi1_down'])
+
+	#H4 Block Begin ##############################################################################
+	hamiltonian [4][4] = hamiltonian [4][4] + order_params['M1_f']
+	hamiltonian [5][5] = hamiltonian [5][5] - order_params['M1_f']
+	hamiltonian [6][6] = hamiltonian [6][6] + order_params['M1_c']
+	hamiltonian [7][7] = hamiltonian [7][7]  - order_params['M1_c']
+
+
+	hamiltonian [4][6] = - order_params['xi1_up']
+	hamiltonian [5][7] = - order_params['xi1_down']
+	hamiltonian [6][4] = - np.conjugate(order_params['xi1_up'])
+	hamiltonian [7][5] = - np.conjugate(order_params['xi1_down'])	
+
+	#H2 Block Begin ############################################################################## 
+	hamiltonian [0][4] = order_params['M2_f']
+	hamiltonian [1][5] = - order_params['M2_f']
+	hamiltonian [2][6] = order_params['M2_c']
+	hamiltonian [3][7] = -  order_params['M2_c']
+
+
+	hamiltonian [0][6] = - order_params['xi2_up']
+	hamiltonian [1][7] = - order_params['xi2_down']
+	hamiltonian [2][4] = - np.conjugate(order_params['xi2_up'])
+	hamiltonian [3][5] = - np.conjugate(order_params['xi2_down'])
+
+	#H3 Block Begin ############################################################################## 
+	hamiltonian [4][0] = order_params['M2_f']
+	hamiltonian [5][1] = - order_params['M2_f']
+	hamiltonian [6][2] = order_params['M2_c']
+	hamiltonian [7][3] = -  order_params['M2_c']
+
+
+	hamiltonian [4][2] = - order_params['xi2_up']
+	hamiltonian [5][3] = - order_params['xi2_down']
+	hamiltonian [6][0] = - np.conjugate(order_params['xi2_up'])
+	hamiltonian [7][1] = - np.conjugate(order_params['xi2_down'])
+
+	return hamiltonian
+
+def main():
+	points = gen_brillouin_zone()
+	self_consistent(j=2)
+main() 
