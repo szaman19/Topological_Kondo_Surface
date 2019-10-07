@@ -5,6 +5,7 @@ import math
 from multiprocessing import Pool
 import matplotlib.pyplot as plt
 
+np.seterr(all='raise')
 
 def gen_brillouin_zone(L = 50):
 	X_points = []
@@ -23,7 +24,7 @@ def gen_brillouin_zone(L = 50):
 	return (X_points,Y_points)
 
 
-K_POINTS = gen_brillouin_zone(L = 10)
+K_POINTS = gen_brillouin_zone(L = 5)
 
 
 def util_equal(a , b, threshold=1E-7):
@@ -61,6 +62,10 @@ def generate_U(op, params):
 	mu_f = params['mu_f']
 	mu_c = params['mu_c']
 
+	print("*"*80)
+	print("Generating U matrices")
+	print("*"*80)
+
 	eigen_vals = []
 	U_dagger_list = []
 	for kx in K_POINTS[0]:
@@ -69,7 +74,12 @@ def generate_U(op, params):
 			ham  = hamiltonian_order_params(ham, op)
 			eigs, U_dagger = LA.eigh(ham)
 			U_dagger_list.append(U_dagger)
-			eigen_vals.append(eigen_vals)
+			eigen_vals.append(eigs)
+	
+	print("*"*80)
+	print("Finished generating U matrices")
+	print("*"*80)
+	
 	return eigen_vals, U_dagger_list
 
 
@@ -135,16 +145,28 @@ def calibrate_mu(op, params):
 	mu_c_data['mu_c_delta'] = .05
 	mu_c_data['mu_c'] = mu_c
 
+
 	for i in range(len(eigen_vals)):
+		# print(i)
 		U_dagger = U_dagger_list[i]
 		eig_val = eigen_vals[i]
+		# print(U_dagger)
+		# print(eig_val)
 		U = np.transpose(np.conjugate(U_dagger))
 		conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
 		moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
-	conduction_number /= N
-	moment_number /= N 
-	while (util_equal(conduction_number,1) and util_equal(moment_number,1)):
+	print(type(conduction_number))
+	conduction_number /= (N)
+	moment_number /= (N) 
+
+	print("N_c: {.9f}, N_f: {.9f}", conduction_number, moment_number)
+
+	is_equal_NC = util_equal(conduction_number,1)
+	is_equal_NF = util_equal(moment_number,1)
+
+	loop_condition = not (is_equal_NF and is_equal_NC)
+	while (loop_condition):
 		mu_c_data = update_mu_c(conduction_number, mu_c_data)
 		mu_f_data = update_mu_f(moment_number, mu_f_data)
 
@@ -161,18 +183,23 @@ def calibrate_mu(op, params):
 			conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
 			moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
-		conduction_number /= N
-		moment_number /= N 
+		conduction_number /= (N)
+		moment_number /= (N) 
 
-		print("N_c: {.9f}, N_f: {.9f}", conduction_number, moment_number)
+		is_equal_NC = util_equal(conduction_number,1)
+		is_equal_NF = util_equal(moment_number,1)
+		loop_condition = not (is_equal_NF and is_equal_NC)
+		print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
+
+	print(util_equal(conduction_number,1))
 
 	params['mu_c'] = mu_c
-	param['mu_f'] = mu_f
+	params['mu_f'] = mu_f
 
 	print("mu_c: ", mu_c)
 	print("mu_f: ", mu_f)
 
-	return param
+	return params
 
 def calc_conduction_number(U, U_dagger, eigen_vals, mu):
 	
@@ -189,8 +216,8 @@ def calc_conduction_number(U, U_dagger, eigen_vals, mu):
 	number = 0
 	for i in range(len(eigen_vals)):
 		energy = eigen_vals[i]	
-		number += (c_k_up * c_k_dagger_up + c_q_up * c_q_dagger_up
-			+c_k_down * c_k_dagger_down + c_q_down * c_q_dagger_down)*(fermi_function(energy, mu=mu))
+		number += (c_k_up[i] * c_k_dagger_up[i]  + c_q_up[i] * c_q_dagger_up[i]
+			+c_k_down[i] * c_k_dagger_down[i]  + c_q_down[i] * c_q_dagger_down[i] )* (fermi_function(energy, mu=mu))
 
 	return number	
 
@@ -208,10 +235,8 @@ def calc_moment_number(U, U_dagger, eigen_vals, mu):
 	number = 0
 	for i in range(len(eigen_vals)):
 		energy = eigen_vals[i]
-		number += (f_k_up * f_k_dagger_up * (fermi_function(energy, mu=mu))+ f_q_up * f_q_dagger_up *(fermi_function(energy, mu=mu))
-			+f_k_down * f_k_dagger_down * (fermi_function(energy, mu=mu)) + f_q_down * f_q_dagger_down * (fermi_function(energy, mu=mu))) 
-		
-
+		number += (f_k_up[i] * f_k_dagger_up[i]+ f_q_up[i] * f_q_dagger_up[i]
+			+f_k_down[i] * f_k_dagger_down[i]+ f_q_down[i] * f_q_dagger_down[i]) * (fermi_function(energy, mu=mu)) 
 	return number	
 
 	# print("To be implemented")
