@@ -62,9 +62,9 @@ def generate_U(op, params):
 	mu_f = params['mu_f']
 	mu_c = params['mu_c']
 
-	print("*"*80)
-	print("Generating U matrices")
-	print("*"*80)
+	# print("*"*80)
+	# print("Generating U matrices")
+	# print("*"*80)
 
 	eigen_vals = []
 	U_dagger_list = []
@@ -76,9 +76,9 @@ def generate_U(op, params):
 			U_dagger_list.append(U_dagger)
 			eigen_vals.append(eigs)
 	
-	print("*"*80)
-	print("Finished generating U matrices")
-	print("*"*80)
+	# print("*"*80)
+	# print("Finished generating U matrices")
+	# print("*"*80)
 	
 	return eigen_vals, U_dagger_list
 
@@ -194,7 +194,7 @@ def calibrate_mu(op, params):
 		is_equal_NC = util_equal(conduction_number,1)
 		is_equal_NF = util_equal(moment_number,1)
 		loop_condition = not (is_equal_NF and is_equal_NC)
-		# print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
+		print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
 
 	# print(util_equal(conduction_number,1))
 
