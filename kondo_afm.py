@@ -206,6 +206,8 @@ def calibrate_mu(op, params):
 		loop_condition = not (is_equal_NF and is_equal_NC)
 		if(counter % 1000 == 0 and counter > 0):
 			print("N_c: {:9f}, N_f: {:9f}".format( conduction_number, moment_number))
+			print("mu_c: ", mu_c)
+			print("mu_f: ", mu_f)
 
 		counter +=1
 	# print(util_equal(conduction_number,1))
@@ -214,8 +216,6 @@ def calibrate_mu(op, params):
 	params['mu_f'] = mu_f
 	
 
-	# print("mu_c: ", mu_c)
-	# print("mu_f: ", mu_f)
 
 	return params
 
