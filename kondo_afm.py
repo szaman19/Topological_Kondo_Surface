@@ -448,7 +448,7 @@ def order_params_calculations(calc_op, guess_op, params):
 	temp_m1_f = 0
 	temp_m2_f = 0
 
-	N = len(eigen_vals)
+	N = len(K_POINTS[0]) * len(K_POINTS[0]) 
 	print(N)
 	j = params['j']
 	for i in range(len(eigen_vals)):
