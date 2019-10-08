@@ -92,7 +92,8 @@ def generate_U(op, params):
 def update_mu_f(num, params):
 	if (util_equal(num, 1)):
 		return params
-
+	if (params['mu_f_delta'] ==0):
+		params['mu_f_delta'] = 0.05
 	if(num > 1):
 		params['mu_f_prev_prev'] = params['mu_f_prev']
 		params['mu_f_prev'] = params['mu_f']
@@ -111,7 +112,8 @@ def update_mu_f(num, params):
 def update_mu_c(num, params):
 	if (util_equal(num, 1)):
 		return params
-		
+	if (params['mu_c_delta'] ==0):
+		params['mu_c_delta'] = 0.05	
 	if(num > 1):
 		params['mu_c_prev_prev'] = params['mu_c_prev']
 		params['mu_c_prev'] = params['mu_c']
