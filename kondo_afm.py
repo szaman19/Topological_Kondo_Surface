@@ -534,7 +534,7 @@ def order_param_init(calculated_order_params, guess = False):
 	return calculated_order_params
 def print_params_search(gp, cp):
 	for each in gp.keys():
-		print(each,"{:14f}".format(abs(gp[each]- cp[each])))
+		print(each,"{:18f}".format(abs(gp[each]- cp[each])))
 
 def self_consistent(j):
 	calculated_order_params = {}
