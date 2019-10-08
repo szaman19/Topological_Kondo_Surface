@@ -24,7 +24,7 @@ def gen_brillouin_zone(L = 10):
 
 	return (X_points,Y_points)
 
-K_POINTS = gen_brillouin_zone(5)
+K_POINTS = gen_brillouin_zone(20)
 
 
 def util_equal(a , b, threshold=1E-7):
@@ -71,7 +71,7 @@ def generate_U(op, params):
 	for i in range(len(K_POINTS[0])):
 		kx = K_POINTS[0][i]
 		ky = K_POINTS[1][i]
-		
+
 		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
 		ham  = hamiltonian_order_params(ham, op)
 		eigs, U_dagger = LA.eigh(ham)
