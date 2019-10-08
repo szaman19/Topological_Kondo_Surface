@@ -211,7 +211,7 @@ def calibrate_mu(op, params):
 	params['mu_c'] = mu_c
 	params['mu_f'] = mu_f
 	
-	print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
+	# print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
 
 	# print("mu_c: ", mu_c)
 	# print("mu_f: ", mu_f)
@@ -459,7 +459,7 @@ def order_params_calculations(calc_op, guess_op, params):
 	temp_m2_f = 0
 
 	N = len(K_POINTS[0])
-	print(N)
+	# print(N)
 	j = params['j']
 	for i in range(len(eigen_vals)):
 		eigs = eigen_vals[i]
