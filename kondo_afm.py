@@ -199,7 +199,7 @@ def calibrate_mu(op, params):
 		# conduction_number /= (N)
 		# moment_number /= (N) 
 
-		print(mu_c, mu_f)
+		# print(mu_c, mu_f)
 
 		is_equal_NC = util_equal(conduction_number,1)
 		is_equal_NF = util_equal(moment_number,1)
