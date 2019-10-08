@@ -558,7 +558,7 @@ def self_consistent(j):
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
 
-		if(counter %2 == 0)
+		if(counter %2 == 0):
 			print("j = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
