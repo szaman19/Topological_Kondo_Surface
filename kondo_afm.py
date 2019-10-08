@@ -24,10 +24,10 @@ def gen_brillouin_zone(L = 10):
 
 	return (X_points,Y_points)
 
-K_POINTS = gen_brillouin_zone(20)
+K_POINTS = gen_brillouin_zone(25)
 
 
-def util_equal(a , b, threshold=1E-7):
+def util_equal(a , b, threshold=5E-7):
 	return not(abs(a - b) > threshold)
 
 def order_param_equal(calculated_order_params, guess_order_params ):
