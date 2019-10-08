@@ -163,8 +163,8 @@ def calibrate_mu(op, params):
 		moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
 	# print(type(conduction_number))
-	conduction_number /= (N)
-	moment_number /= (N) 
+	# conduction_number /= (N)
+	# moment_number /= (N) 
 
 	print("N_c: {:.9f}, N_f: {:.9f}", conduction_number, moment_number)
 
@@ -196,8 +196,8 @@ def calibrate_mu(op, params):
 			conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
 			moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
-		conduction_number /= (N)
-		moment_number /= (N) 
+		# conduction_number /= (N)
+		# moment_number /= (N) 
 
 		print(mu_c, mu_f)
 
