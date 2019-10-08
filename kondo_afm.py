@@ -78,9 +78,9 @@ def generate_U(op, params):
 		U_dagger_list.append(U_dagger)
 		eigen_vals.append(eigs)
 	
-	print(len(eigen_vals))
-	print(K_POINTS[0])
-	print(len(K_POINTS[1]))
+	# print(len(eigen_vals))
+	# print(K_POINTS[0])
+	# print(len(K_POINTS[1]))
 
 	# print("*"*80)
 	# print("Finished generating U matrices")
