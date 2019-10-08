@@ -204,14 +204,15 @@ def calibrate_mu(op, params):
 		is_equal_NC = util_equal(conduction_number,1)
 		is_equal_NF = util_equal(moment_number,1)
 		loop_condition = not (is_equal_NF and is_equal_NC)
-		# if(counter % 1000 == 0):
+		if(counter % 1000 == 0 and counter > 0):
+			print("N_c: {:9f}, N_f: {:9f}".format( conduction_number, moment_number))
+
 		counter +=1
 	# print(util_equal(conduction_number,1))
 
 	params['mu_c'] = mu_c
 	params['mu_f'] = mu_f
 	
-	# print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
 
 	# print("mu_c: ", mu_c)
 	# print("mu_f: ", mu_f)
@@ -562,7 +563,7 @@ def self_consistent(j):
 			print("j = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
-
+		print(not order_param_equal(calculated_order_params, guess_order_params))
 		counter += 1
 	for each in calculated_order_params.keys():
 		print(each, calculated_order_params[each])
