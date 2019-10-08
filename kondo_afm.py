@@ -673,5 +673,5 @@ def hamiltonian_order_params(hamiltonian, order_params):
 
 def main():
 	points = gen_brillouin_zone()
-	self_consistent(j=3)
+	self_consistent(j=2)
 main() 
