@@ -449,6 +449,7 @@ def order_params_calculations(calc_op, guess_op, params):
 	temp_m2_f = 0
 
 	N = len(eigen_vals)
+	j = params['j']
 	for i in range(len(eigen_vals)):
 		eigs = eigen_vals[i]
 		U_dagger = U_dagger_list[i]
