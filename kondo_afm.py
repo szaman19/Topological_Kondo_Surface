@@ -155,7 +155,7 @@ def calibrate_mu(op, params):
 		conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
 		moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
-	print(type(conduction_number))
+	# print(type(conduction_number))
 	conduction_number /= (N)
 	moment_number /= (N) 
 
@@ -449,6 +449,7 @@ def order_params_calculations(calc_op, guess_op, params):
 	temp_m2_f = 0
 
 	N = len(eigen_vals)
+	print(N)
 	j = params['j']
 	for i in range(len(eigen_vals)):
 		eigs = eigen_vals[i]
@@ -547,7 +548,7 @@ def self_consistent(j):
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
 
-		if(counter %10 ==0):
+		if(counter %2 ==0):
 			print("j = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
