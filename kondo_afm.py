@@ -208,6 +208,9 @@ def calibrate_mu(op, params):
 			print("N_c: {:9f}, N_f: {:9f}".format( conduction_number, moment_number))
 			print("mu_c: ", mu_c)
 			print("mu_f: ", mu_f)
+			print("dalta", mu_f_data['mu_f_delta'])
+			print("delta", mu_c_data['mu_c_delta'])
+
 
 		counter +=1
 	# print(util_equal(conduction_number,1))
