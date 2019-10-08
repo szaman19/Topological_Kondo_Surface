@@ -433,7 +433,7 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 	# print("To be implemented")
 
 def order_params_calculations(calc_op, guess_op, params):
-	eigen_vals, U_dagger_list = generate_U(op,params)
+	eigen_vals, U_dagger_list = generate_U(guess_op,params)
 
 	temp_xi1_up = 0
 	temp_xi1_down = 0
