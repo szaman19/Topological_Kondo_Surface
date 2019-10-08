@@ -500,7 +500,7 @@ def order_params_calculations(calc_op, guess_op, params):
 
 def update_guess_calc(calc_op, guess_op):
 	for param in guess_op.keys():
-		guess_op[param] = .05* (calc_op[param]) + .95*(guess_op[param])
+		guess_op[param] = .2* (calc_op[param]) + .80*(guess_op[param])
 	'''
 		Uncomment, in case we want to change to
 		scaling each param individually
