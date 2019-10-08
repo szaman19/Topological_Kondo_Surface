@@ -136,7 +136,7 @@ def calibrate_mu(op, params):
 	mu_f = params['mu_f']
 	mu_c = params['mu_c']
 
-	N = len(K_POINTS[0]) **2
+	N = len(K_POINTS[0]) 
 
 	mu_c_data = {}
 	mu_f_data = {}
@@ -163,8 +163,8 @@ def calibrate_mu(op, params):
 		moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
 	# print(type(conduction_number))
-	# conduction_number /= (N)
-	# moment_number /= (N) 
+	conduction_number /= (N)
+	moment_number /= (N) 
 
 	print("N_c: {:.9f}, N_f: {:.9f}", conduction_number, moment_number)
 
@@ -196,15 +196,15 @@ def calibrate_mu(op, params):
 			conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
 			moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
-		# conduction_number /= (N)
-		# moment_number /= (N) 
+		conduction_number /= (N)
+		moment_number /= (N) 
 
 		# print(mu_c, mu_f)
 
 		is_equal_NC = util_equal(conduction_number,1)
 		is_equal_NF = util_equal(moment_number,1)
 		loop_condition = not (is_equal_NF and is_equal_NC)
-		if(counter % 100 == 0):
+		if(counter % 1000 == 0):
 			print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
 		counter +=1
 	# print(util_equal(conduction_number,1))
@@ -212,8 +212,8 @@ def calibrate_mu(op, params):
 	params['mu_c'] = mu_c
 	params['mu_f'] = mu_f
 
-	print("mu_c: ", mu_c)
-	print("mu_f: ", mu_f)
+	# print("mu_c: ", mu_c)
+	# print("mu_f: ", mu_f)
 
 	return params
 
@@ -557,7 +557,7 @@ def self_consistent(j):
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
 
-		if(counter %10 ==0):
+		if(counter %20 ==0):
 			print("j = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
