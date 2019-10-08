@@ -16,6 +16,7 @@ def gen_brillouin_zone(L = 10):
 			x = - np.pi + (np.pi / L * k) + (np.pi / (L-1) * i)
 			temp_x.append(x)
 		# print(temp_x)s
+
 		for x in temp_x:
 			y = - x - np.pi + (2 *	np.pi / L * k) 
 			X_points.append(x)
@@ -23,7 +24,7 @@ def gen_brillouin_zone(L = 10):
 
 	return (X_points,Y_points)
 
-K_POINTS = gen_brillouin_zone(10)
+K_POINTS = gen_brillouin_zone(5)
 
 
 def util_equal(a , b, threshold=1E-7):
@@ -67,14 +68,20 @@ def generate_U(op, params):
 
 	eigen_vals = []
 	U_dagger_list = []
-	for kx in K_POINTS[0]:
-		for ky in K_POINTS[1]:
-			ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
-			ham  = hamiltonian_order_params(ham, op)
-			eigs, U_dagger = LA.eigh(ham)
-			U_dagger_list.append(U_dagger)
-			eigen_vals.append(eigs)
+	for i in range(len(K_POINTS[0])):
+		kx = K_POINTS[0][i]
+		ky = K_POINTS[1][i]
+		
+		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
+		ham  = hamiltonian_order_params(ham, op)
+		eigs, U_dagger = LA.eigh(ham)
+		U_dagger_list.append(U_dagger)
+		eigen_vals.append(eigs)
 	
+	print(len(eigen_vals))
+	print(K_POINTS[0])
+	print(len(K_POINTS[1]))
+
 	# print("*"*80)
 	# print("Finished generating U matrices")
 	# print("*"*80)
