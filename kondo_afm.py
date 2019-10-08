@@ -23,7 +23,6 @@ def gen_brillouin_zone(L = 10):
 
 	return (X_points,Y_points)
 
-
 K_POINTS = gen_brillouin_zone(L = 10)
 
 
@@ -70,7 +69,7 @@ def generate_U(op, params):
 	U_dagger_list = []
 	for kx in K_POINTS[0]:
 		for ky in K_POINTS[1]:
-			ham = gen_hamiltonian(kx, ky, mu_f,mu_c)
+			ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
 			ham  = hamiltonian_order_params(ham, op)
 			eigs, U_dagger = LA.eigh(ham)
 			U_dagger_list.append(U_dagger)
@@ -555,7 +554,7 @@ def self_consistent(j):
 
 
 
-def gen_hamiltonian(kx,ky,mu_f, mu_c, W = 0.3, chiral = True):
+def gen_hamiltonian(kx,ky,mu_f, mu_c,  chiral, W = 0.3):
 	if(chiral):
 		epsilon_k = W * (np.sin(kx/2) **2 + np.sin(ky/2)**2)
 		epsilon_k_q = W * (np.sin((kx + np.pi)/2) **2 + np.sin((ky+np.pi)/2)**2)
