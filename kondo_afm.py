@@ -97,13 +97,13 @@ def update_mu_f(num, params):
 		params['mu_f_prev_prev'] = params['mu_f_prev']
 		params['mu_f_prev'] = params['mu_f']
 		if(params['mu_f_prev_prev'] == params['mu_f'] - params['mu_f_delta']):
-			params['mu_f_delta'] /= 2
+			params['mu_f_delta'] /= 4
 		params['mu_f'] -= params['mu_f_delta']
 	else:
 		params['mu_f_prev_prev'] = params['mu_f_prev']
 		params['mu_f_prev'] = params['mu_f']
 		if(params['mu_f_prev_prev'] == params['mu_f'] + params['mu_f_delta']):
-			params['mu_f_delta'] /= 2
+			params['mu_f_delta'] /= 4
 		params['mu_f'] +=params['mu_f_delta']
 	
 	return params
