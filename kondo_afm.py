@@ -23,7 +23,7 @@ def gen_brillouin_zone(L = 10):
 
 	return (X_points,Y_points)
 
-K_POINTS = gen_brillouin_zone(L = 10)
+K_POINTS = gen_brillouin_zone(10)
 
 
 def util_equal(a , b, threshold=1E-7):
