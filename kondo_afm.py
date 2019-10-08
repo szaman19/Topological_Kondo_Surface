@@ -24,7 +24,7 @@ def gen_brillouin_zone(L = 10):
 
 	return (X_points,Y_points)
 
-K_POINTS = gen_brillouin_zone(20)
+K_POINTS = gen_brillouin_zone(50)
 
 
 def util_equal(a , b, threshold=1E-7):
@@ -558,7 +558,7 @@ def self_consistent(j):
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
 
-		if(counter %20 ==0):
+		if(counter %20 ==0 or counter > 120):
 			print("j = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
