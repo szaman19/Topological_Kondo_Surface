@@ -269,10 +269,10 @@ def calc_xi_one(U_dagger, U, Eigs, J, spin):
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
-		up_sum += f_k_dagger_up * c_k_up * fermi_function(energy)
-		up_sum += f_q_dagger_up * c_q_up * fermi_function(energy)
-		down_sum += f_k_dagger_down * c_k_down * fermi_function(energy)
-		down_sum += f_q_dagger_down * c_q_down * fermi_function(energy)
+		up_sum += f_k_dagger_up[i] * c_k_up[i] * fermi_function(energy)
+		up_sum += f_q_dagger_up[i] * c_q_up[i] * fermi_function(energy)
+		down_sum += f_k_dagger_down[i] * c_k_down[i] * fermi_function(energy)
+		down_sum += f_q_dagger_down[i] * c_q_down[i] * fermi_function(energy)
 
 
 	if(spin == 0):
@@ -306,11 +306,11 @@ def calc_xi_two(U_dagger, U, Eigs, J, spin):
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
-		up_sum += f_k_dagger_up * c_q_up * fermi_function(energy)
-		up_sum += f_q_dagger_up * c_k_up * fermi_function(energy)
+		up_sum += f_k_dagger_up[i] * c_q_up[i] * fermi_function(energy)
+		up_sum += f_q_dagger_up[i] * c_k_up[i] * fermi_function(energy)
 
-		down_sum += f_k_dagger_down * c_q_down * fermi_function(energy)
-		down_sum += f_q_dagger_down * c_k_down * fermi_function(energy)
+		down_sum += f_k_dagger_down[i] * c_q_down[i] * fermi_function(energy)
+		down_sum += f_q_dagger_down[i] * c_k_down[i] * fermi_function(energy)
 	if(spin == 0):
 		''' down '''
 		up_sum = up_sum * (J / 2)
@@ -341,10 +341,10 @@ def calc_M1_C(U_dagger, U, Eigs, J):
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
-		up_sum += c_k_up * c_k_dagger_up * fermi_function(energy)
-		up_sum += c_q_up * c_q_dagger_up * fermi_function(energy)
-		down_sum += c_k_down * c_k_dagger_down * fermi_function(energy)
-		down_sum += c_q_down * c_q_dagger_down * fermi_function(energy)
+		up_sum += c_k_up[i] * c_k_dagger_up [i]* fermi_function(energy)
+		up_sum += c_q_up[i] * c_q_dagger_up[i] * fermi_function(energy)
+		down_sum += c_k_down[i] * c_k_dagger_down[i] * fermi_function(energy)
+		down_sum += c_q_down[i] * c_q_dagger_down[i] * fermi_function(energy)
 
 	# print("To be implemented")
 	return_val = (J /2) * (up_sum - down_sum)
@@ -368,10 +368,10 @@ def calc_M2_C(U_dagger, U, Eigs, J):
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
-		up_sum += c_k_up * c_q_dagger_up * fermi_function(energy)
-		up_sum += c_q_up * c_k_dagger_up * fermi_function(energy)
-		down_sum += c_k_down * c_q_dagger_down * fermi_function(energy)
-		down_sum += c_q_down * c_k_dagger_down * fermi_function(energy)
+		up_sum += c_k_up[i] * c_q_dagger_up[i] * fermi_function(energy)
+		up_sum += c_q_up[i] * c_k_dagger_up[i] * fermi_function(energy)
+		down_sum += c_k_down[i] * c_q_dagger_down[i] * fermi_function(energy)
+		down_sum += c_q_down[i] * c_k_dagger_down[i] * fermi_function(energy)
 	
 	return_val = (J /2) * (up_sum - down_sum)
 	return return_val
@@ -395,10 +395,10 @@ def calc_M1_F(U_dagger, U, Eigs, J):
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
-		up_sum += f_k_up * f_k_dagger_up * fermi_function(energy)
-		up_sum += f_q_up * f_q_dagger_up * fermi_function(energy)
-		down_sum += f_k_down * f_k_dagger_down * fermi_function(energy)
-		down_sum += f_q_down * f_q_dagger_down * fermi_function(energy)
+		up_sum += f_k_up[i] * f_k_dagger_up[i] * fermi_function(energy)
+		up_sum += f_q_up[i] * f_q_dagger_up[i] * fermi_function(energy)
+		down_sum += f_k_down[i] * f_k_dagger_down[i] * fermi_function(energy)
+		down_sum += f_q_down [i]* f_q_dagger_down[i] * fermi_function(energy)
 
 	# print("To be implemented")
 
@@ -424,10 +424,10 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
-		up_sum += f_k_up * f_q_dagger_up * fermi_function(energy)
-		up_sum += f_q_up * f_k_dagger_up * fermi_function(energy)
-		down_sum += f_k_down * f_q_dagger_down * fermi_function(energy)
-		down_sum += f_q_down * f_k_dagger_down * fermi_function(energy)
+		up_sum += f_k_up[i] * f_q_dagger_up[i] * fermi_function(energy)
+		up_sum += f_q_up[i] * f_k_dagger_up[i] * fermi_function(energy)
+		down_sum += f_k_down[i] * f_q_dagger_down[i] * fermi_function(energy)
+		down_sum += f_q_down[i] * f_k_dagger_down[i] * fermi_function(energy)
 
 	return_val = (J /2) * (up_sum - down_sum)
 	return return_val
