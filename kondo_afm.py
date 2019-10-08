@@ -502,9 +502,9 @@ def update_guess_calc(calc_op, guess_op):
 
 def order_param_init(calculated_order_params, guess = False):
 	if(guess):
-		A = 1
-	else:
 		A = 0
+	else:
+		A = 1
 	calculated_order_params['xi1_up']  = A
 	calculated_order_params['xi1_down']  = A
 
@@ -535,7 +535,7 @@ def self_consistent(j):
 	params = calibrate_mu(guess_order_params, params)
 
 	counter = 0
-	while(order_param_equal(calculated_order_params, guess_order_params)):
+	while(not order_param_equal(calculated_order_params, guess_order_params)):
 		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
 		
 		params = calibrate_mu(guess_order_params, params)
