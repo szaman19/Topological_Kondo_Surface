@@ -540,8 +540,8 @@ def self_consistent(j):
 	guess_order_params = {}
 	params = {}
 
-	params['mu_c'] = .2
-	params['mu_f'] = .2
+	params['mu_c'] = -.2
+	params['mu_f'] = -.2
 	params['j'] = j
 	
 	calculated_order_params = order_param_init(calculated_order_params)
