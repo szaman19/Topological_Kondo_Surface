@@ -165,6 +165,8 @@ def calibrate_mu(op, params):
 	is_equal_NF = util_equal(moment_number,1)
 
 	loop_condition = not (is_equal_NF and is_equal_NC)
+
+	counter = 0
 	while (loop_condition):
 		mu_c_data = update_mu_c(conduction_number, mu_c_data)
 		mu_f_data = update_mu_f(moment_number, mu_f_data)
@@ -193,8 +195,9 @@ def calibrate_mu(op, params):
 		is_equal_NC = util_equal(conduction_number,1)
 		is_equal_NF = util_equal(moment_number,1)
 		loop_condition = not (is_equal_NF and is_equal_NC)
-		print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
-
+		if(counter % 10 == 0):
+			print("N_c: {:.9f}, N_f: {:.9f}".format( conduction_number, moment_number))
+		counter +=1
 	# print(util_equal(conduction_number,1))
 
 	params['mu_c'] = mu_c
@@ -447,7 +450,7 @@ def order_params_calculations(calc_op, guess_op, params):
 
 	N = len(eigen_vals)
 	for i in range(len(eigen_vals)):
-		eig_vals = eigen_vals[i]
+		eigs = eigen_vals[i]
 		U_dagger = U_dagger_list[i]
 		U = np.transpose(np.conjugate(U_dagger))
 		
@@ -534,6 +537,7 @@ def self_consistent(j):
 	guess_order_params = order_param_init(guess_order_params, True)
 	params = calibrate_mu(guess_order_params, params)
 
+	print("Params initalized")
 	counter = 0
 	while(not order_param_equal(calculated_order_params, guess_order_params)):
 		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
