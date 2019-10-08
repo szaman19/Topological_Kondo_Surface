@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 np.seterr(all='raise')
 
-def gen_brillouin_zone(L = 50):
+def gen_brillouin_zone(L = 10):
 	X_points = []
 	Y_points = []
 	for k in range(L):
@@ -24,7 +24,7 @@ def gen_brillouin_zone(L = 50):
 	return (X_points,Y_points)
 
 
-K_POINTS = gen_brillouin_zone(L = 5)
+K_POINTS = gen_brillouin_zone(L = 10)
 
 
 def util_equal(a , b, threshold=1E-7):
@@ -160,7 +160,7 @@ def calibrate_mu(op, params):
 	conduction_number /= (N)
 	moment_number /= (N) 
 
-	# print("N_c: {.9f}, N_f: {.9f}", conduction_number, moment_number)
+	print("N_c: {.9f}, N_f: {.9f}", conduction_number, moment_number)
 
 	is_equal_NC = util_equal(conduction_number,1)
 	is_equal_NF = util_equal(moment_number,1)
@@ -175,6 +175,11 @@ def calibrate_mu(op, params):
 
 		conduction_number = 0
 		moment_number = 0
+
+		params['mu_c'] = mu_c
+		params['mu_f'] = mu_f
+
+		eigen_vals, U_dagger_list = generate_U(op,params)
 
 		for i in range(len(eigen_vals)):
 			U_dagger = U_dagger_list[i]
