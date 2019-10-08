@@ -534,7 +534,7 @@ def order_param_init(calculated_order_params, guess = False):
 	return calculated_order_params
 def print_params_search(gp, cp):
 	for each in gp.keys():
-		print(each,"{:9f}".format(abs(gp[each]- cp[each])))
+		print(each,"{:14f}".format(abs(gp[each]- cp[each])))
 
 def self_consistent(j):
 	calculated_order_params = {}
@@ -558,7 +558,7 @@ def self_consistent(j):
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
 
-		if(counter %20 ==0 or counter > 120):
+		if(counter %2 == 0)
 			print("j = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
