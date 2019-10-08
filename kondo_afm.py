@@ -24,7 +24,7 @@ def gen_brillouin_zone(L = 10):
 
 	return (X_points,Y_points)
 
-K_POINTS = gen_brillouin_zone(25)
+K_POINTS = gen_brillouin_zone(50)
 
 
 def util_equal(a , b, threshold=5E-7):
@@ -92,7 +92,7 @@ def generate_U(op, params):
 def update_mu_f(num, params):
 	if (util_equal(num, 1)):
 		return params
-	if (params['mu_f_delta'] <1E-9):
+	if (params['mu_f_delta'] <1E-11):
 		params['mu_f_delta'] = 0.05
 	if(num > 1):
 		params['mu_f_prev_prev'] = params['mu_f_prev']
@@ -112,7 +112,7 @@ def update_mu_f(num, params):
 def update_mu_c(num, params):
 	if (util_equal(num, 1)):
 		return params
-	if (params['mu_c_delta'] <1E-9):
+	if (params['mu_c_delta'] <1E-11):
 		params['mu_c_delta'] = 0.05	
 	if(num > 1):
 		params['mu_c_prev_prev'] = params['mu_c_prev']
@@ -679,5 +679,5 @@ def hamiltonian_order_params(hamiltonian, order_params):
 
 def main():
 	points = gen_brillouin_zone()
-	self_consistent(j=2)
+	self_consistent(j=3.6)
 main() 
