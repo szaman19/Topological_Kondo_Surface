@@ -645,8 +645,8 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	#H1 Block Begin ############################################################################## 
 	hamiltonian [0][0] = hamiltonian [0][0] + order_params['M1_f']
 	hamiltonian [1][1] = hamiltonian [1][1] - order_params['M1_f']
-	hamiltonian [2][2] = hamiltonian [2][2] + order_params['M1_c']
-	hamiltonian [3][3] = hamiltonian [3][3] -  order_params['M1_c']
+	hamiltonian [2][2] = hamiltonian [2][2] - order_params['M1_c']
+	hamiltonian [3][3] = hamiltonian [3][3] +  order_params['M1_c']
 
 
 	hamiltonian [0][2] = - order_params['xi1_up']
@@ -657,8 +657,8 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	#H4 Block Begin ##############################################################################
 	hamiltonian [4][4] = hamiltonian [4][4] + order_params['M1_f']
 	hamiltonian [5][5] = hamiltonian [5][5] - order_params['M1_f']
-	hamiltonian [6][6] = hamiltonian [6][6] + order_params['M1_c']
-	hamiltonian [7][7] = hamiltonian [7][7]  - order_params['M1_c']
+	hamiltonian [6][6] = hamiltonian [6][6] - order_params['M1_c']
+	hamiltonian [7][7] = hamiltonian [7][7] + order_params['M1_c']
 
 
 	hamiltonian [4][6] = - order_params['xi1_up']
@@ -710,7 +710,7 @@ def main():
 	log.write("\n")
 	for vec in outputs:
 		for dic in vec:
-			string = ",".join([str(dic[k]) for k in sorted(dic.keys())])
+			string = ",".join([str(np.real(dic[k])) for k in sorted(dic.keys())])
 			log.write(string)
 			log.write("\n")
 	log.close()
