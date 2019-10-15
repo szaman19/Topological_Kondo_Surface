@@ -549,7 +549,7 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['M2_c']  = 2
 
 	calculated_order_params['M1_f']  = 0
-	calculated_order_params['M2_f']  = 2
+	calculated_order_params['M2_f']  = -2
 	return calculated_order_params
 def print_params_search(gp, cp):
 	for each in gp.keys():
@@ -561,7 +561,7 @@ def self_consistent(j, K_POINTS):
 	params = {}
 
 	params['mu_c'] = -.2
-	params['mu_f'] = .2
+	params['mu_f'] = -.2
 	params['j'] = j
 	
 	calculated_order_params = order_param_init(calculated_order_params)
@@ -697,7 +697,7 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	return hamiltonian
 
 def main():
-	K_POINTS = gen_brillouin_zone(20)
+	K_POINTS = gen_brillouin_zone(8)
 	# points = gen_brillouin_zone()
 
 	NUM_PROCESS = 8
