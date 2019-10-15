@@ -561,7 +561,7 @@ def self_consistent(j, K_POINTS):
 	params = {}
 
 	params['mu_c'] = -.2
-	params['mu_f'] = -.2
+	params['mu_f'] = .2
 	params['j'] = j
 	
 	calculated_order_params = order_param_init(calculated_order_params)
@@ -586,6 +586,10 @@ def self_consistent(j, K_POINTS):
 	for each in calculated_order_params.keys():
 		print(each, calculated_order_params[each])
 	calculated_order_params['j'] = j
+
+	for each in params.keys():
+		print(each, params[each])
+
 	return calculated_order_params
 
 
