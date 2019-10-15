@@ -696,18 +696,18 @@ def main():
 	K_POINTS = gen_brillouin_zone(8)
 	points = gen_brillouin_zone()
 
-	NUM_PROCESS = 1
+	NUM_PROCESS = 8
 
 	outputs = []
-	for j in range(1):
+	for j in range(2):
 		pool = Pool(processes=NUM_PROCESS)
-		results = [pool.apply_async(self_consistent, args=(2 + .8 * j + .02*x, K_POINTS)) for x in range(NUM_PROCESS)]
+		results = [pool.apply_async(self_consistent, args=(2 + 1.6 * j + .02*x, K_POINTS)) for x in range(NUM_PROCESS)]
 		output = [p.get() for p in results]
 		outputs.append(output)
 	log = open("kondo_afm.csv","w")
 	string = ",".join([str(k) for k in sorted(outputs[0][0])])
 	log.write(string)
-
+	log.write("\n")
 	for vec in outputs:
 		for dic in vec:
 			for key in sorted(dic):
@@ -717,5 +717,5 @@ def main():
 	log.close()
 
 
-	self_consistent(3.6, K_POINTS)
+	# self_consistent(3.6, K_POINTS)
 main() 
