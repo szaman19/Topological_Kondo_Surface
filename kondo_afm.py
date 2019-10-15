@@ -703,7 +703,7 @@ def main():
 	NUM_PROCESS = 8
 
 	outputs = []
-	for j in range(2):
+	for j in range(1):
 		pool = Pool(processes=NUM_PROCESS)
 		results = [pool.apply_async(self_consistent, args=(2 + 1.6 * j + .2*x, K_POINTS)) for x in range(NUM_PROCESS)]
 		output = [p.get() for p in results]
