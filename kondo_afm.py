@@ -517,20 +517,20 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 
 
 def update_guess_calc(calc_op, guess_op):
-	for param in guess_op.keys():
-		guess_op[param] = .2* (calc_op[param]) + .80*(guess_op[param])
+	# for param in guess_op.keys():
+	# 	guess_op[param] = .2* (calc_op[param]) + .80*(guess_op[param])
 	'''
 		Uncomment, in case we want to change to
 		scaling each param individually
 	'''
-	# guess_op['xi1_up'] = .2* (calc_op['xi1_up']) + .8*(guess_op['xi1_up'])
-	# guess_op['xi1_down'] = .2* (calc_op['xi1_down']) + .8*(guess_op['xi1_down'])
-	# guess_op['xi2_up'] = .2* (calc_op['xi2_up']) + .8*(guess_op['xi2_up'])
-	# guess_op['xi2_down'] = .2* (calc_op['xi2_down']) + .8*(guess_op['xi2_down'])
+	guess_op['xi1_up'] = .2* (calc_op['xi1_up']) + .8*(guess_op['xi1_up'])
+	guess_op['xi1_down'] = .2* (calc_op['xi1_down']) + .8*(guess_op['xi1_down'])
+	guess_op['xi2_up'] = .2* (calc_op['xi2_up']) + .8*(guess_op['xi2_up'])
+	guess_op['xi2_down'] = .2* (calc_op['xi2_down']) + .8*(guess_op['xi2_down'])
 	# guess_op['M1_c'] = .2* (calc_op['M1_c']) + .8*(guess_op['M1_c'])
-	# guess_op['M2_c'] = .2* (calc_op['M2_c']) + .8*(guess_op['M2_c'])
+	guess_op['M2_c'] = .2* (calc_op['M2_c']) + .8*(guess_op['M2_c'])
 	# guess_op['M1_f'] = .2* (calc_op['M1_f']) + .8*(guess_op['M1_f'])
-	# guess_op['M2_f'] = .2* (calc_op['M2_f']) + .8*(guess_op['M2_f'])
+	guess_op['M2_f'] = .2* (calc_op['M2_f']) + .8*(guess_op['M2_f'])
 	
 	return guess_op
 
@@ -577,14 +577,15 @@ def self_consistent(j, K_POINTS):
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
 
-		if(counter %2 == 0):
+		if(counter %1000 == 0):
 			print("i = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
-		print(not order_param_equal(calculated_order_params, guess_order_params))
+		# print(not order_param_equal(calculated_order_params, guess_order_params))
 		counter += 1
 	for each in calculated_order_params.keys():
 		print(each, calculated_order_params[each])
+	calculated_order_params['j'] = j
 	return calculated_order_params
 
 
@@ -694,5 +695,27 @@ def hamiltonian_order_params(hamiltonian, order_params):
 def main():
 	K_POINTS = gen_brillouin_zone(8)
 	points = gen_brillouin_zone()
+
+	NUM_PROCESS = 1
+
+	outputs = []
+	for j in range(1):
+		pool = Pool(processes=NUM_PROCESS)
+		results = [pool.apply_async(self_consistent, args=(2 + .8 * j + .02*x, K_POINTS)) for x in range(NUM_PROCESS)]
+		output = [p.get() for p in results]
+		outputs.append(output)
+	log = open("kondo_afm.csv","w")
+	string = ",".join([str(k) for k in sorted(outputs[0][0])])
+	log.write(string)
+
+	for vec in outputs:
+		for dic in vec:
+			for key in sorted(dic):
+				log.write(str(dic[key]))
+				log.write(",")
+			log.write("\n")
+	log.close()
+
+
 	self_consistent(3.6, K_POINTS)
 main() 
