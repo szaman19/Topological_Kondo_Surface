@@ -24,7 +24,7 @@ def gen_brillouin_zone(L = 10):
 
 	return (X_points,Y_points)
 
-K_POINTS = gen_brillouin_zone(50)
+
 
 
 def util_equal(a , b, threshold=5E-3):
@@ -58,7 +58,7 @@ def fermi_function(energy,  beta=1000, mu=0):
 		print("Exception has occured", energy)
 
 
-def generate_U(op, params):
+def generate_U(op, params, K_POINTS):
 	mu_f = params['mu_f']
 	mu_c = params['mu_c']
 
@@ -92,7 +92,7 @@ def generate_U(op, params):
 def update_mu_f(num, params):
 	if (util_equal(num, 1)):
 		return params
-	if (params['mu_f_delta'] <1E-11):
+	if (params['mu_f_delta'] <1E-8):
 		params['mu_f_delta'] = 0.05
 	if(num > 1):
 		params['mu_f_prev_prev'] = params['mu_f_prev']
@@ -112,7 +112,7 @@ def update_mu_f(num, params):
 def update_mu_c(num, params):
 	if (util_equal(num, 1)):
 		return params
-	if (params['mu_c_delta'] <1E-11):
+	if (params['mu_c_delta'] <1E-8):
 		params['mu_c_delta'] = 0.05	
 	if(num > 1):
 		params['mu_c_prev_prev'] = params['mu_c_prev']
@@ -129,8 +129,8 @@ def update_mu_c(num, params):
 	
 	return params
 
-def calibrate_mu(op, params):
-	eigen_vals, U_dagger_list = generate_U(op,params)
+def calibrate_mu(op, params, K_POINTS):
+	eigen_vals, U_dagger_list = generate_U(op,params, K_POINTS)
 
 	conduction_number = 0
 	moment_number = 0
@@ -189,7 +189,7 @@ def calibrate_mu(op, params):
 		params['mu_c'] = mu_c
 		params['mu_f'] = mu_f
 
-		eigen_vals, U_dagger_list = generate_U(op,params)
+		eigen_vals, U_dagger_list = generate_U(op,params, K_POINTS)
 
 		for i in range(len(eigen_vals)):
 			U_dagger = U_dagger_list[i]
@@ -198,15 +198,15 @@ def calibrate_mu(op, params):
 			conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
 			moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
-		conduction_number /= (N)
-		moment_number /= (N) 
+		conduction_number /= N
+		moment_number /= N
 
 		# print(mu_c, mu_f)
 
-		is_equal_NC = util_equal(conduction_number,1)
+		is_equal_NC = util_equal(conduction_number,2)
 		is_equal_NF = util_equal(moment_number,1)
 		loop_condition = not (is_equal_NF and is_equal_NC)
-		if(counter % 1000 == 0 and counter > 0):
+		if(counter % 400 == 0 and counter > 0):
 			print("N_c: {:9f}, N_f: {:9f}".format( conduction_number, moment_number))
 			print("mu_c: ", mu_c)
 			print("mu_f: ", mu_f)
@@ -241,7 +241,20 @@ def calc_conduction_number(U, U_dagger, eigen_vals, mu):
 		energy = eigen_vals[i]	
 		number += (c_k_up[i] * c_k_dagger_up[i]  + c_q_up[i] * c_q_dagger_up[i]
 			+c_k_down[i] * c_k_dagger_down[i]  + c_q_down[i] * c_q_dagger_down[i] )* (fermi_function(energy, mu=mu))
+	f_k_up = get_column(U_dagger, 2)
+	f_k_down = get_column(U_dagger, 3)
+	f_q_up = get_column(U_dagger,6)
+	f_q_down =  get_column(U_dagger,7)
 
+	f_k_dagger_up = get_row(U, 2)
+	f_k_dagger_down = get_row(U, 3)	
+	f_q_dagger_up = get_row(U, 6)
+	f_q_dagger_down = get_row(U, 7)
+
+	for i in range(len(eigen_vals)):
+		energy = eigen_vals[i]
+		number += (f_k_up[i] * f_k_dagger_up[i]+ f_q_up[i] * f_q_dagger_up[i]
+			+f_k_down[i] * f_k_dagger_down[i]+ f_q_down[i] * f_q_dagger_down[i]) * (fermi_function(energy, mu=mu))
 	return number	
 
 def calc_moment_number(U, U_dagger, eigen_vals, mu):
@@ -451,8 +464,8 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 
 	# print("To be implemented")
 
-def order_params_calculations(calc_op, guess_op, params):
-	eigen_vals, U_dagger_list = generate_U(guess_op,params)
+def order_params_calculations(calc_op, guess_op, params, K_POINTS):
+	eigen_vals, U_dagger_list = generate_U(guess_op,params, K_POINTS)
 
 	temp_xi1_up = 0
 	temp_xi1_down = 0
@@ -533,7 +546,7 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['xi2_down']  = A
 
 	calculated_order_params['M1_c']  = 0
-	calculated_order_params['M2_c']  = 0
+	calculated_order_params['M2_c']  = 2
 
 	calculated_order_params['M1_f']  = 0
 	calculated_order_params['M2_f']  = 0
@@ -542,7 +555,7 @@ def print_params_search(gp, cp):
 	for each in gp.keys():
 		print(each,"{:18f}".format(abs(gp[each]- cp[each])))
 
-def self_consistent(j):
+def self_consistent(j, K_POINTS):
 	calculated_order_params = {}
 	guess_order_params = {}
 	params = {}
@@ -553,19 +566,19 @@ def self_consistent(j):
 	
 	calculated_order_params = order_param_init(calculated_order_params)
 	guess_order_params = order_param_init(guess_order_params, True)
-	params = calibrate_mu(guess_order_params, params)
+	params = calibrate_mu(guess_order_params, params, K_POINTS)
 
 	print("Params initalized")
 	counter = 0
 	while(not order_param_equal(calculated_order_params, guess_order_params)):
 		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
 		
-		params = calibrate_mu(guess_order_params, params)
+		params = calibrate_mu(guess_order_params, params, K_POINTS)
 
-		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params)
+		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
 
 		if(counter %2 == 0):
-			print("j = ",counter,'*' * 80)
+			print("i = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
 		print(not order_param_equal(calculated_order_params, guess_order_params))
@@ -577,6 +590,7 @@ def self_consistent(j):
 
 
 def gen_hamiltonian(kx,ky,mu_f, mu_c,  chiral, W = 0.3):
+	
 	if(chiral):
 		epsilon_k = W * (np.sin(kx/2) **2 + np.sin(ky/2)**2)
 		epsilon_k_q = W * (np.sin((kx + np.pi)/2) **2 + np.sin((ky+np.pi)/2)**2)
@@ -600,14 +614,14 @@ def gen_hamiltonian(kx,ky,mu_f, mu_c,  chiral, W = 0.3):
 	ham[0][0] = epsilon_k -mu_c
 	ham[1][1] = -epsilon_k - mu_c
 
-	ham[2][2] = -mu_f
-	ham[3][3] = -mu_f
+	ham[2][2] = -mu_f - mu_c
+	ham[3][3] = -mu_f - mu_c
 
-	ham[4][4] = epsilon_k_q
-	ham[5][5] = -epsilon_k_q
+	ham[4][4] = epsilon_k_q -mu_c
+	ham[5][5] = -epsilon_k_q -mu_c
 
-	ham[6][6] = -mu_f
-	ham[7][7] = -mu_f
+	ham[6][6] = -mu_f - mu_c
+	ham[7][7] = -mu_f - mu_c
 
 	ham[0][1] = a_k
 	ham[1][0] = a_k_star
@@ -678,6 +692,7 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	return hamiltonian
 
 def main():
+	K_POINTS = gen_brillouin_zone(8)
 	points = gen_brillouin_zone()
-	self_consistent(j=3.6)
+	self_consistent(3.6, K_POINTS)
 main() 
