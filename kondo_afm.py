@@ -170,7 +170,7 @@ def calibrate_mu(op, params, K_POINTS):
 
 	# print("N_c: {:.9f}, N_f: {:.9f}", conduction_number, moment_number)
 
-	is_equal_NC = util_equal(conduction_number,1)
+	is_equal_NC = util_equal(conduction_number,2)
 	is_equal_NF = util_equal(moment_number,1)
 
 	loop_condition = not (is_equal_NF and is_equal_NC)
