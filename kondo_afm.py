@@ -27,7 +27,7 @@ def gen_brillouin_zone(L = 10):
 
 
 
-def util_equal(a , b, threshold=5E-3):
+def util_equal(a , b, threshold=5E-5):
 	return not(abs(a - b) > threshold)
 
 def order_param_equal(calculated_order_params, guess_order_params ):
@@ -669,8 +669,8 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	#H2 Block Begin ############################################################################## 
 	hamiltonian [0][4] = order_params['M2_f']
 	hamiltonian [1][5] = - order_params['M2_f']
-	hamiltonian [2][6] = - order_params['M2_c']
-	hamiltonian [3][7] =  order_params['M2_c']
+	hamiltonian [2][6] =  order_params['M2_c']
+	hamiltonian [3][7] = - order_params['M2_c']
 
 
 	hamiltonian [0][6] = - order_params['xi2_up']
@@ -681,8 +681,8 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	#H3 Block Begin ############################################################################## 
 	hamiltonian [4][0] = order_params['M2_f']
 	hamiltonian [5][1] = - order_params['M2_f']
-	hamiltonian [6][2] = -order_params['M2_c']
-	hamiltonian [7][3] =  order_params['M2_c']
+	hamiltonian [6][2] = order_params['M2_c']
+	hamiltonian [7][3] = -order_params['M2_c']
 
 
 	hamiltonian [4][2] = - order_params['xi2_up']
