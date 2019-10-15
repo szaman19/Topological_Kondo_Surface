@@ -705,7 +705,7 @@ def main():
 		output = [p.get() for p in results]
 		outputs.append(output)
 	log = open("kondo_afm.csv","w")
-	string = ",".join([str(k) for k in sorted(outputs[0][0])])
+	string = ",".join([str(k) for k in sorted(outputs[0][0].keys())])
 	log.write(string)
 	log.write("\n")
 	for vec in outputs:
