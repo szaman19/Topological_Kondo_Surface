@@ -38,10 +38,10 @@ def order_param_equal(calculated_order_params, guess_order_params ):
 			return False
 	return True
 
-def get_column(mat_U,column_num):
+def get_row(mat_U,column_num):
 	return mat_U[:,column_num]
 
-def get_row(mat_U, row_num):
+def get_column(mat_U, row_num):
 	return mat_U[row_num,:]
 
 
@@ -235,12 +235,6 @@ def calc_conduction_number(U, U_dagger, eigen_vals, mu):
 	c_k_dagger_down = get_row(U, 1)
 	c_q_dagger_up = get_row(U, 4)
 	c_q_dagger_down = get_row(U, 5)
-
-	number = 0
-	for i in range(len(eigen_vals)):
-		energy = eigen_vals[i]	
-		number += (c_k_up[i] * c_k_dagger_up[i]  + c_q_up[i] * c_q_dagger_up[i]
-			+c_k_down[i] * c_k_dagger_down[i]  + c_q_down[i] * c_q_dagger_down[i] )* (fermi_function(energy, mu=mu))
 	f_k_up = get_column(U_dagger, 2)
 	f_k_down = get_column(U_dagger, 3)
 	f_q_up = get_column(U_dagger,6)
@@ -250,6 +244,12 @@ def calc_conduction_number(U, U_dagger, eigen_vals, mu):
 	f_k_dagger_down = get_row(U, 3)	
 	f_q_dagger_up = get_row(U, 6)
 	f_q_dagger_down = get_row(U, 7)
+
+	number = 0
+	for i in range(len(eigen_vals)):
+		energy = eigen_vals[i]	
+		number += (c_k_up[i] * c_k_dagger_up[i]  + c_q_up[i] * c_q_dagger_up[i]
+			+c_k_down[i] * c_k_dagger_down[i]  + c_q_down[i] * c_q_dagger_down[i] )* (fermi_function(energy, mu=mu))
 
 	for i in range(len(eigen_vals)):
 		energy = eigen_vals[i]
