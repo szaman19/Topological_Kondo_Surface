@@ -701,7 +701,7 @@ def main():
 	outputs = []
 	for j in range(2):
 		pool = Pool(processes=NUM_PROCESS)
-		results = [pool.apply_async(self_consistent, args=(2 + 1.6 * j + .02*x, K_POINTS)) for x in range(NUM_PROCESS)]
+		results = [pool.apply_async(self_consistent, args=(2 + 1.6 * j + .2*x, K_POINTS)) for x in range(NUM_PROCESS)]
 		output = [p.get() for p in results]
 		outputs.append(output)
 	log = open("kondo_afm.csv","w")
@@ -710,9 +710,8 @@ def main():
 	log.write("\n")
 	for vec in outputs:
 		for dic in vec:
-			for key in sorted(dic):
-				log.write(str(dic[key]))
-				log.write(",")
+			string = ",".join([str(dic[k]) for k in sorted(dic.keys())])
+			log.write(string)
 			log.write("\n")
 	log.close()
 
