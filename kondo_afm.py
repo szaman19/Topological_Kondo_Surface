@@ -110,11 +110,11 @@ def update_mu_f(num, params):
 	return params
 
 def update_mu_c(num, params):
-	if (util_equal(num, 1)):
+	if (util_equal(num, 2)):
 		return params
 	if (params['mu_c_delta'] <1E-8):
 		params['mu_c_delta'] = 0.05	
-	if(num > 1):
+	if(num > 2):
 		params['mu_c_prev_prev'] = params['mu_c_prev']
 		params['mu_c_prev'] = params['mu_c']
 		if(params['mu_c_prev_prev'] == params['mu_c'] - params['mu_c_delta']):
