@@ -579,7 +579,7 @@ def self_consistent(j, K_POINTS):
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
 
-		if(counter %100 == 0):
+		if(counter %5 == 0):
 			print("i = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
