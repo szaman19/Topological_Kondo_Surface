@@ -38,10 +38,10 @@ def order_param_equal(calculated_order_params, guess_order_params ):
 			return False
 	return True
 
-def get_row(mat_U,column_num):
+def get_col(mat_U,column_num):
 	return mat_U[:,column_num]
 
-def get_column(mat_U, row_num):
+def get_row(mat_U, row_num):
 	return mat_U[row_num,:]
 
 
@@ -226,24 +226,25 @@ def calibrate_mu(op, params, K_POINTS):
 
 def calc_conduction_number(U, U_dagger, eigen_vals, mu):
 	
-	c_k_up = get_column(U_dagger, 0)
-	c_k_down = get_column(U_dagger, 1)
-	c_q_up = get_column(U_dagger, 4)
-	c_q_down = get_column(U_dagger, 5)
+	c_k_up = get_row(U, 0)
+	c_k_down = get_row(U, 1)
+	c_q_up = get_row(U, 4)
+	c_q_down = get_row(U, 5)
 
-	c_k_dagger_up = get_row(U, 0)
-	c_k_dagger_down = get_row(U, 1)
-	c_q_dagger_up = get_row(U, 4)
-	c_q_dagger_down = get_row(U, 5)
-	f_k_up = get_column(U_dagger, 2)
-	f_k_down = get_column(U_dagger, 3)
-	f_q_up = get_column(U_dagger,6)
-	f_q_down =  get_column(U_dagger,7)
+	c_k_dagger_up = get_col(U_dagger, 0)
+	c_k_dagger_down = get_col(U_dagger, 1)
+	c_q_dagger_up = get_col(U_dagger, 4)
+	c_q_dagger_down = get_col(U_dagger, 5)
 
-	f_k_dagger_up = get_row(U, 2)
-	f_k_dagger_down = get_row(U, 3)	
-	f_q_dagger_up = get_row(U, 6)
-	f_q_dagger_down = get_row(U, 7)
+	f_k_up = get_row(U, 2)
+	f_k_down = get_row(U, 3)
+	f_q_up = get_row(U,6)
+	f_q_down =  get_row(U,7)
+
+	f_k_dagger_up = get_col(U_dagger, 2)
+	f_k_dagger_down = get_col(U_dagger, 3)	
+	f_q_dagger_up = get_col(U_dagger, 6)
+	f_q_dagger_down = get_col(U_dagger, 7)
 
 	number = 0
 	for i in range(len(eigen_vals)):
@@ -258,15 +259,15 @@ def calc_conduction_number(U, U_dagger, eigen_vals, mu):
 	return number	
 
 def calc_moment_number(U, U_dagger, eigen_vals, mu):
-	f_k_up = get_column(U_dagger, 2)
-	f_k_down = get_column(U_dagger, 3)
-	f_q_up = get_column(U_dagger,6)
-	f_q_down =  get_column(U_dagger,7)
+	f_k_up = get_row(U, 2)
+	f_k_down = get_row(U, 3)
+	f_q_up = get_row(U,6)
+	f_q_down =  get_row(U,7)
 
-	f_k_dagger_up = get_row(U, 2)
-	f_k_dagger_down = get_row(U, 3)	
-	f_q_dagger_up = get_row(U, 6)
-	f_q_dagger_down = get_row(U, 7)
+	f_k_dagger_up = get_col(U_dagger, 2)
+	f_k_dagger_down = get_col(U_dagger, 3)	
+	f_q_dagger_up = get_col(U_dagger, 6)
+	f_q_dagger_down = get_col(U_dagger, 7)
 
 	number = 0
 	for i in range(len(eigen_vals)):
@@ -284,16 +285,16 @@ def calc_xi_one(U_dagger, U, Eigs, J, spin):
 	up_sum = 0
 	down_sum = 0
 	
-	f_k_dagger_up = get_row(U, 2)
-	f_k_dagger_down = get_row(U, 3)	
-	f_q_dagger_up = get_row(U, 6)
-	f_q_dagger_down = get_row(U, 7)
+	f_k_dagger_up = get_col(U_dagger, 2)
+	f_k_dagger_down = get_col(U_dagger, 3)	
+	f_q_dagger_up = get_col(U_dagger, 6)
+	f_q_dagger_down = get_col(U_dagger, 7)
 
 
-	c_k_up = get_column(U_dagger, 0)
-	c_k_down = get_column(U_dagger, 1)
-	c_q_up = get_column(U_dagger, 4)
-	c_q_down = get_column(U_dagger, 5)
+	c_k_up = get_row(U, 0)
+	c_k_down = get_row(U, 1)
+	c_q_up = get_row(U, 4)
+	c_q_down = get_row(U, 5)
 
 
 	for i in range(len(Eigs)):
@@ -322,16 +323,16 @@ def calc_xi_two(U_dagger, U, Eigs, J, spin):
 	up_sum = 0
 	down_sum = 0
 	
-	f_k_dagger_up = get_row(U, 2)
-	f_k_dagger_down = get_row(U, 3)	
-	f_q_dagger_up = get_row(U, 6)
-	f_q_dagger_down = get_row(U, 7)
+	f_k_dagger_up = get_col(U_dagger, 2)
+	f_k_dagger_down = get_col(U_dagger, 3)	
+	f_q_dagger_up = get_col(U_dagger, 6)
+	f_q_dagger_down = get_col(U_dagger, 7)
 
 	
-	c_k_up = get_column(U_dagger, 0)
-	c_k_down = get_column(U_dagger, 1)
-	c_q_up = get_column(U_dagger, 4)
-	c_q_down = get_column(U_dagger, 5)
+	c_k_up = get_row(U, 0)
+	c_k_down = get_row(U, 1)
+	c_q_up = get_row(U, 4)
+	c_q_down = get_row(U, 5)
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
@@ -358,15 +359,16 @@ def calc_M1_C(U_dagger, U, Eigs, J):
 	up_sum = 0
 	down_sum = 0
 
-	c_k_up = get_column(U_dagger, 0)
-	c_k_down = get_column(U_dagger, 1)
-	c_q_up = get_column(U_dagger, 4)
-	c_q_down = get_column(U_dagger, 5)
+	c_k_up = get_row(U, 0)
+	c_k_down = get_row(U, 1)
+	c_q_up = get_row(U, 4)
+	c_q_down = get_row(U, 5)
 
-	c_k_dagger_up = get_row(U, 0)
-	c_k_dagger_down = get_row(U, 1)
-	c_q_dagger_up = get_row(U, 4)
-	c_q_dagger_down = get_row(U, 5)
+	c_k_dagger_up = get_col(U_dagger, 0)
+	c_k_dagger_down = get_col(U_dagger, 1)
+	c_q_dagger_up = get_col(U_dagger, 4)
+	c_q_dagger_down = get_col(U_dagger, 5)
+
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
@@ -385,15 +387,15 @@ def calc_M2_C(U_dagger, U, Eigs, J):
 	up_sum = 0
 	down_sum = 0
 
-	c_k_up = get_column(U_dagger, 0)
-	c_k_down = get_column(U_dagger, 1)
-	c_q_up = get_column(U_dagger, 4)
-	c_q_down = get_column(U_dagger, 5)
+	c_k_up = get_row(U, 0)
+	c_k_down = get_row(U, 1)
+	c_q_up = get_row(U, 4)
+	c_q_down = get_row(U, 5)
 
-	c_k_dagger_up = get_row(U, 0)
-	c_k_dagger_down = get_row(U, 1)
-	c_q_dagger_up = get_row(U, 4)
-	c_q_dagger_down = get_row(U, 5)
+	c_k_dagger_up = get_col(U_dagger, 0)
+	c_k_dagger_down = get_col(U_dagger, 1)
+	c_q_dagger_up = get_col(U_dagger, 4)
+	c_q_dagger_down = get_col(U_dagger, 5)
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
@@ -411,15 +413,15 @@ def calc_M1_F(U_dagger, U, Eigs, J):
 	up_sum = 0
 	down_sum = 0
 
-	f_k_up = get_column(U_dagger, 2)
-	f_k_down = get_column(U_dagger, 3)
-	f_q_up = get_column(U_dagger,6)
-	f_q_down =  get_column(U_dagger,7)
+	f_k_up = get_row(U, 2)
+	f_k_down = get_row(U, 3)
+	f_q_up = get_row(U,6)
+	f_q_down =  get_row(U,7)
 
-	f_k_dagger_up = get_row(U, 2)
-	f_k_dagger_down = get_row(U, 3)	
-	f_q_dagger_up = get_row(U, 6)
-	f_q_dagger_down = get_row(U, 7)
+	f_k_dagger_up = get_col(U_dagger, 2)
+	f_k_dagger_down = get_col(U_dagger, 3)	
+	f_q_dagger_up = get_col(U_dagger, 6)
+	f_q_dagger_down = get_col(U_dagger, 7)
 
 
 	for i in range(len(Eigs)):
@@ -440,15 +442,15 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 	up_sum = 0
 	down_sum = 0
 
-	f_k_up = get_column(U_dagger, 2)
-	f_k_down = get_column(U_dagger, 3)
-	f_q_up = get_column(U_dagger,6)
-	f_q_down =  get_column(U_dagger,7)
+	f_k_up = get_row(U, 2)
+	f_k_down = get_row(U, 3)
+	f_q_up = get_row(U,6)
+	f_q_down =  get_row(U,7)
 
-	f_k_dagger_up = get_row(U, 2)
-	f_k_dagger_down = get_row(U, 3)	
-	f_q_dagger_up = get_row(U, 6)
-	f_q_dagger_down = get_row(U, 7)
+	f_k_dagger_up = get_col(U_dagger, 2)
+	f_k_dagger_down = get_col(U_dagger, 3)	
+	f_q_dagger_up = get_col(U_dagger, 6)
+	f_q_dagger_down = get_col(U_dagger, 7)
 
 
 	for i in range(len(Eigs)):
