@@ -699,7 +699,7 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	return hamiltonian
 
 def main():
-	K_POINTS = gen_brillouin_zone(8)
+	K_POINTS = gen_brillouin_zone(40)
 	# points = gen_brillouin_zone()
 
 	# NUM_PROCESS = 8
