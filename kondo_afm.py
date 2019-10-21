@@ -207,11 +207,11 @@ def calibrate_mu(op, params, K_POINTS):
 		is_equal_NF = util_equal(moment_number,1)
 		loop_condition = not (is_equal_NF and is_equal_NC)
 		if(counter % 400 == 0 and counter > 0):
-			print("N_c: {:9f}, N_f: {:9f}".format( conduction_number, moment_number))
+			print("j: {:2f}N_c: {:9f}, N_f: {:9f}".format( param['j'],conduction_number, moment_number))
 			print("mu_c: ", mu_c)
 			print("mu_f: ", mu_f)
-			print("dalta", mu_f_data['mu_f_delta'])
-			print("delta", mu_c_data['mu_c_delta'])
+			print("dalta f", mu_f_data['mu_f_delta'])
+			print("delta c", mu_c_data['mu_c_delta'])
 
 
 		counter +=1
