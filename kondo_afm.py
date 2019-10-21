@@ -146,7 +146,7 @@ def calibrate_mu(op, params, K_POINTS):
 	mu_f_data['mu_f_prev_prev'] = 0
 	mu_f_data['mu_f_prev'] = 0
 	mu_f_data['mu_f_delta'] = .05
-	mu_f_data['mu_f'] = mu_f
+	mu_f_data['mu_f'] = 0
 
 	mu_c_data['mu_c_prev_prev'] = 0
 	mu_c_data['mu_c_prev'] = 0
