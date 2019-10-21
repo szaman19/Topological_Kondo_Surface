@@ -27,7 +27,7 @@ def gen_brillouin_zone(L = 10):
 
 
 
-def util_equal(a , b, threshold=5E-3):
+def util_equal(a , b, threshold=5E-2):
 	return not(abs(a - b) > threshold)
 
 def order_param_equal(calculated_order_params, guess_order_params ):
