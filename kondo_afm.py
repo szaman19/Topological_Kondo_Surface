@@ -574,7 +574,7 @@ def self_consistent(j, K_POINTS):
 	params = {}
 
 	params['mu_c'] = -.2
-	params['mu_f'] = -.2
+	params['mu_f'] = .2
 	params['j'] = j
 	
 	calculated_order_params = order_param_init(calculated_order_params)
@@ -612,7 +612,6 @@ def gen_hamiltonian(kx,ky,mu_f, mu_c,  chiral, W = 0.3):
 	if(chiral):
 		epsilon_k = W * (np.sin(kx/2) **2 + np.sin(ky/2)**2)
 		epsilon_k_q = W * (np.sin((kx + np.pi)/2) **2 + np.sin((ky+np.pi)/2)**2)
-		
 		a_k = np.sin(ky) - 1j* np.sin(kx)
 		a_q =  np.sin(ky + np.pi) - 1j* np.sin(kx + np.pi)
 		a_k_star = np.sin(ky) + 1j* np.sin(kx)
