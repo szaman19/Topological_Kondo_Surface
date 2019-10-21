@@ -623,13 +623,13 @@ def gen_hamiltonian(kx,ky,mu_f, mu_c,  chiral, W = 0.3):
 	ham = np.zeros(dims, dtype=complex)
 
 	ham[0][0] = epsilon_k -mu_c
-	ham[1][1] = -epsilon_k - mu_c
+	ham[1][1] = epsilon_k - mu_c
 
 	ham[2][2] = -mu_f - mu_c
 	ham[3][3] = -mu_f - mu_c
 
 	ham[4][4] = epsilon_k_q -mu_c
-	ham[5][5] = -epsilon_k_q -mu_c
+	ham[5][5] = epsilon_k_q -mu_c
 
 	ham[6][6] = -mu_f - mu_c
 	ham[7][7] = -mu_f - mu_c
