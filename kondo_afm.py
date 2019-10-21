@@ -515,12 +515,16 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 	# calc_op['M1_c'] = temp_m1_c / N
 	calc_op['M1_c'] = 0
 
-	calc_op['M2_c'] = temp_m2_c / N
+	# calc_op['M2_c'] = temp_m2_c / N
+	calc_op['M2_c'] = 0
+
 
 	# calc_op['M1_f'] = temp_m1_f / N
 	calc_op['M1_f'] = 0
 
-	calc_op['M2_f'] = temp_m2_f / N
+	# calc_op['M2_f'] = temp_m2_f / N
+	calc_op['M2_f'] = 0
+
 
 	return calc_op
 
@@ -555,10 +559,10 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['xi2_down']  = 0
 
 	calculated_order_params['M1_c']  = 0
-	calculated_order_params['M2_c']  = 2
+	calculated_order_params['M2_c']  = 0
 
 	calculated_order_params['M1_f']  = 0
-	calculated_order_params['M2_f']  = -2
+	calculated_order_params['M2_f']  = 0
 	return calculated_order_params
 def print_params_search(gp, cp):
 	for each in gp.keys():
@@ -680,10 +684,10 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	hamiltonian [7][5] = - np.conjugate(order_params['xi1_down'])	
 
 	#H2 Block Begin ############################################################################## 
-	hamiltonian [0][4] = order_params['M2_f']
-	hamiltonian [1][5] = - order_params['M2_f']
-	hamiltonian [2][6] =  -order_params['M2_c']
-	hamiltonian [3][7] =  order_params['M2_c']
+	# hamiltonian [0][4] = order_params['M2_f']
+	# hamiltonian [1][5] = - order_params['M2_f']
+	# hamiltonian [2][6] =  -order_params['M2_c']
+	# hamiltonian [3][7] =  order_params['M2_c']
 
 
 	# hamiltonian [0][6] = - order_params['xi2_up']
@@ -692,10 +696,10 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	# hamiltonian [3][5] = - np.conjugate(order_params['xi2_down'])
 
 	#H3 Block Begin ############################################################################## 
-	hamiltonian [4][0] = order_params['M2_f']
-	hamiltonian [5][1] = - order_params['M2_f']
-	hamiltonian [6][2] = -order_params['M2_c']
-	hamiltonian [7][3] =  order_params['M2_c']
+	# hamiltonian [4][0] = order_params['M2_f']
+	# hamiltonian [5][1] = - order_params['M2_f']
+	# hamiltonian [6][2] = -order_params['M2_c']
+	# hamiltonian [7][3] =  order_params['M2_c']
 
 
 	# hamiltonian [4][2] = - order_params['xi2_up']
