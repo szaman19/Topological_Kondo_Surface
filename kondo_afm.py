@@ -505,9 +505,12 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 	calc_op['xi1_up'] = temp_xi1_up  / N
 	calc_op['xi1_down'] = temp_xi1_down / N
 
-	calc_op['xi2_up'] = temp_xi2_up / N
-	calc_op['xi2_down'] = temp_xi2_down / N
+	# calc_op['xi2_up'] = temp_xi2_up / N
+	# calc_op['xi2_down'] = temp_xi2_down / N
 	
+	calc_op['xi2_down'] = 0
+	calc_op['xi2_up'] = 0
+
 
 	# calc_op['M1_c'] = temp_m1_c / N
 	calc_op['M1_c'] = 0
@@ -683,10 +686,10 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	hamiltonian [3][7] =  order_params['M2_c']
 
 
-	hamiltonian [0][6] = - order_params['xi2_up']
-	hamiltonian [1][7] = - order_params['xi2_down']
-	hamiltonian [2][4] = - np.conjugate(order_params['xi2_up'])
-	hamiltonian [3][5] = - np.conjugate(order_params['xi2_down'])
+	# hamiltonian [0][6] = - order_params['xi2_up']
+	# hamiltonian [1][7] = - order_params['xi2_down']
+	# hamiltonian [2][4] = - np.conjugate(order_params['xi2_up'])
+	# hamiltonian [3][5] = - np.conjugate(order_params['xi2_down'])
 
 	#H3 Block Begin ############################################################################## 
 	hamiltonian [4][0] = order_params['M2_f']
@@ -695,10 +698,10 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	hamiltonian [7][3] =  order_params['M2_c']
 
 
-	hamiltonian [4][2] = - order_params['xi2_up']
-	hamiltonian [5][3] = - order_params['xi2_down']
-	hamiltonian [6][0] = - np.conjugate(order_params['xi2_up'])
-	hamiltonian [7][1] = - np.conjugate(order_params['xi2_down'])
+	# hamiltonian [4][2] = - order_params['xi2_up']
+	# hamiltonian [5][3] = - order_params['xi2_down']
+	# hamiltonian [6][0] = - np.conjugate(order_params['xi2_up'])
+	# hamiltonian [7][1] = - np.conjugate(order_params['xi2_down'])
 
 	return hamiltonian
 
