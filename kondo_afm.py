@@ -92,8 +92,8 @@ def generate_U(op, params, K_POINTS):
 def update_mu_f(num, params):
 	if (util_equal(num, 1)):
 		return params
-	if (params['mu_f_delta'] <1E-8):
-		params['mu_f_delta'] = 0.05
+	# if (params['mu_f_delta'] <1E-8):
+	# 	params['mu_f_delta'] = 0.05
 	if(num > 1):
 		params['mu_f_prev_prev'] = params['mu_f_prev']
 		params['mu_f_prev'] = params['mu_f']
