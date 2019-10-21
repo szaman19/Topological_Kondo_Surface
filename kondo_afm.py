@@ -547,10 +547,10 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['xi2_up']  = 0
 	calculated_order_params['xi2_down']  = 0
 
-	calculated_order_params['M1_c']  = 0
+	calculated_order_params['M1_c']  = -2
 	calculated_order_params['M2_c']  = 2
 
-	calculated_order_params['M1_f']  = 0
+	calculated_order_params['M1_f']  = -2
 	calculated_order_params['M2_f']  = -2
 	return calculated_order_params
 def print_params_search(gp, cp):
