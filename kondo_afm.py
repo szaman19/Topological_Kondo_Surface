@@ -529,9 +529,9 @@ def update_guess_calc(calc_op, guess_op):
 	guess_op['xi1_down'] = .2* (calc_op['xi1_down']) + .8*(guess_op['xi1_down'])
 	guess_op['xi2_up'] = .2* (calc_op['xi2_up']) + .8*(guess_op['xi2_up'])
 	guess_op['xi2_down'] = .2* (calc_op['xi2_down']) + .8*(guess_op['xi2_down'])
-	# guess_op['M1_c'] = .2* (calc_op['M1_c']) + .8*(guess_op['M1_c'])
+	guess_op['M1_c'] = .2* (calc_op['M1_c']) + .8*(guess_op['M1_c'])
 	guess_op['M2_c'] = .2* (calc_op['M2_c']) + .8*(guess_op['M2_c'])
-	# guess_op['M1_f'] = .2* (calc_op['M1_f']) + .8*(guess_op['M1_f'])
+	guess_op['M1_f'] = .2* (calc_op['M1_f']) + .8*(guess_op['M1_f'])
 	guess_op['M2_f'] = .2* (calc_op['M2_f']) + .8*(guess_op['M2_f'])
 	
 	return guess_op
@@ -544,8 +544,8 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['xi1_up']  = A
 	calculated_order_params['xi1_down']  = A
 
-	calculated_order_params['xi2_up']  = A
-	calculated_order_params['xi2_down']  = A
+	calculated_order_params['xi2_up']  = 0
+	calculated_order_params['xi2_down']  = 0
 
 	calculated_order_params['M1_c']  = 0
 	calculated_order_params['M2_c']  = 2
