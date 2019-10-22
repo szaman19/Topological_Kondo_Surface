@@ -8,21 +8,15 @@ import matplotlib.pyplot as plt
 np.seterr(all='raise')
 
 def gen_brillouin_zone(L = 10):
-	X_points = []
-	Y_points = []
-	for k in range(L):
-		temp_x = []
-		for i in range(L):
-			x = - np.pi + (np.pi / L * k) + (np.pi / (L-1) * i)
-			temp_x.append(x)
-		# print(temp_x)s
-
-		for x in temp_x:
-			y = - x - np.pi + (2 *	np.pi / L * k) 
-			X_points.append(x)
-			Y_points.append(y)
-
-	return (X_points,Y_points)
+	# X_points = []
+	# Y_points = []
+	Points = []
+	for i in range(L):
+		for j in range(L):
+			kx = -np.pi + 2 * (np.pi / L * i)
+			ky = -np.pi + 2 * (np.pi / L * j)
+			Points.append((kx,ky))
+	return Points
 
 
 
@@ -45,7 +39,7 @@ def get_row(mat_U, row_num):
 	return mat_U[row_num,:]
 
 
-def fermi_function(energy,  beta=1000, mu=0):
+def fermi_function(energy,  beta=10000, mu=0):
 	energy = np.real(energy)
 	try:
 		if ((beta * (energy - mu)) < -110):
@@ -68,17 +62,23 @@ def generate_U(op, params, K_POINTS):
 
 	eigen_vals = []
 	U_dagger_list = []
-	for i in range(len(K_POINTS[0])):
-		kx = K_POINTS[0][i]
-		ky = K_POINTS[1][i]
+	U_list = []
+	for i in range(len(K_POINTS)):
+		kx = K_POINTS[i][0]
+		ky = K_POINTS[i][1]
 
+		# print(kx,ky)
 		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
 		ham  = hamiltonian_order_params(ham, op)
 		eigs, U_dagger = LA.eigh(ham)
+		U = LA.inv(U_dagger)
 		U_dagger_list.append(U_dagger)
+		U_list.append(U)
 		eigen_vals.append(eigs)
 	
+
 	# print(len(eigen_vals))
+	# print(len(U_dagger_list))
 	# print(K_POINTS[0])
 	# print(len(K_POINTS[1]))
 
@@ -86,7 +86,7 @@ def generate_U(op, params, K_POINTS):
 	# print("Finished generating U matrices")
 	# print("*"*80)
 	
-	return eigen_vals, U_dagger_list
+	return eigen_vals, U_dagger_list, U_list
 
 
 def update_mu_f(num, params):
@@ -138,7 +138,7 @@ def calibrate_mu(op, params, K_POINTS):
 	mu_f = params['mu_f']
 	mu_c = params['mu_c']
 
-	N = len(K_POINTS[0]) 
+	N = len(K_POINTS) 
 
 	mu_c_data = {}
 	mu_f_data = {}
@@ -165,8 +165,8 @@ def calibrate_mu(op, params, K_POINTS):
 		moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
 	# print(type(conduction_number))
-	conduction_number /= (N)
-	moment_number /= (N) 
+	conduction_number /= (2*N)
+	moment_number /= (2*N) 
 
 	# print("N_c: {:.9f}, N_f: {:.9f}", conduction_number, moment_number)
 
@@ -212,8 +212,7 @@ def calibrate_mu(op, params, K_POINTS):
 			print("mu_f: ", mu_f)
 			print("dalta f", mu_f_data['mu_f_delta'])
 			print("delta c", mu_c_data['mu_c_delta'])
-
-
+			
 		counter +=1
 	# print(util_equal(conduction_number,1))
 
@@ -479,7 +478,7 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 	temp_m1_f = 0
 	temp_m2_f = 0
 
-	N = len(K_POINTS[0])
+	N = len(K_POINTS)
 	# print(N)
 	j = params['j']
 	for i in range(len(eigen_vals)):
@@ -502,8 +501,8 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 	'''
 	Generate hamiltonian for each K using guess order parameters. After 
 	'''	
-	calc_op['xi1_up'] = temp_xi1_up  / N
-	calc_op['xi1_down'] = temp_xi1_down / N
+	calc_op['xi1_up'] = temp_xi1_up  / (2 * N)
+	calc_op['xi1_down'] = temp_xi1_down / (2 * N)
 
 	# calc_op['xi2_up'] = temp_xi2_up / N
 	# calc_op['xi2_down'] = temp_xi2_down / N
@@ -577,31 +576,32 @@ def self_consistent(j, K_POINTS):
 	params['mu_f'] = .2
 	params['j'] = j
 	
-	calculated_order_params = order_param_init(calculated_order_params)
 	guess_order_params = order_param_init(guess_order_params, True)
-	params = calibrate_mu(guess_order_params, params, K_POINTS)
+	generate_U(guess_order_params, params, K_POINTS)
+	# calculated_order_params = order_param_init(calculated_order_params)
+	# params = calibrate_mu(guess_order_params, params, K_POINTS)
 
-	print("Params initalized")
-	counter = 0
-	while(not order_param_equal(calculated_order_params, guess_order_params)):
-		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
+	# print("Params initalized")
+	# counter = 0
+	# while(not order_param_equal(calculated_order_params, guess_order_params)):
+	# 	guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
 		
-		params = calibrate_mu(guess_order_params, params, K_POINTS)
+	# 	params = calibrate_mu(guess_order_params, params, K_POINTS)
 
-		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
+	# 	calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
 
-		if(counter %5 == 0):
-			print("i = ",counter,'*' * 80)
-			print_params_search(guess_order_params, calculated_order_params)
-			print('*' * 80)
-		# print(not order_param_equal(calculated_order_params, guess_order_params))
-		counter += 1
-	for each in calculated_order_params.keys():
-		print(each, calculated_order_params[each])
-	calculated_order_params['j'] = j
+	# 	if(counter %5 == 0):
+	# 		print("i = ",counter,'*' * 80)
+	# 		print_params_search(guess_order_params, calculated_order_params)
+	# 		print('*' * 80)
+	# 	# print(not order_param_equal(calculated_order_params, guess_order_params))
+	# 	counter += 1
+	# for each in calculated_order_params.keys():
+	# 	print(each, calculated_order_params[each])
+	# calculated_order_params['j'] = j
 
-	for each in params.keys():
-		print(each, params[each])
+	# for each in params.keys():
+	# 	print(each, params[each])
 
 	return calculated_order_params
 
@@ -709,8 +709,12 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	return hamiltonian
 
 def main():
-	K_POINTS = gen_brillouin_zone(8)
+	K_POINTS = gen_brillouin_zone(10)
 	# points = gen_brillouin_zone()
+
+	# print(len(K_POINTS))
+	# for i in range(len(K_POINTS)):
+	# 	print(K_POINTS[i])
 
 	# NUM_PROCESS = 8
 
