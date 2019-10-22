@@ -577,31 +577,31 @@ def self_consistent(j, K_POINTS):
 	params['j'] = j
 	
 	guess_order_params = order_param_init(guess_order_params, True)
-	generate_U(guess_order_params, params, K_POINTS)
-	# calculated_order_params = order_param_init(calculated_order_params)
-	# params = calibrate_mu(guess_order_params, params, K_POINTS)
+	# generate_U(guess_order_params, params, K_POINTS)
+	calculated_order_params = order_param_init(calculated_order_params)
+	params = calibrate_mu(guess_order_parsams, params, K_POINTS)
 
-	# print("Params initalized")
-	# counter = 0
-	# while(not order_param_equal(calculated_order_params, guess_order_params)):
-	# 	guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
+	print("Params initalized")
+	counter = 0
+	while(not order_param_equal(calculated_order_params, guess_order_params)):
+		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
 		
-	# 	params = calibrate_mu(guess_order_params, params, K_POINTS)
+		params = calibrate_mu(guess_order_params, params, K_POINTS)
 
-	# 	calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
+		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
 
-	# 	if(counter %5 == 0):
-	# 		print("i = ",counter,'*' * 80)
-	# 		print_params_search(guess_order_params, calculated_order_params)
-	# 		print('*' * 80)
-	# 	# print(not order_param_equal(calculated_order_params, guess_order_params))
-	# 	counter += 1
-	# for each in calculated_order_params.keys():
-	# 	print(each, calculated_order_params[each])
-	# calculated_order_params['j'] = j
+		if(counter %5 == 0):
+			print("i = ",counter,'*' * 80)
+			print_params_search(guess_order_params, calculated_order_params)
+			print('*' * 80)
+		# print(not order_param_equal(calculated_order_params, guess_order_params))
+		counter += 1
+	for each in calculated_order_params.keys():
+		print(each, calculated_order_params[each])
+	calculated_order_params['j'] = j
 
-	# for each in params.keys():
-	# 	print(each, params[each])
+	for each in params.keys():
+		print(each, params[each])
 
 	return calculated_order_params
 
