@@ -318,7 +318,7 @@ def calc_xi_one(U_dagger, U, Eigs, J, spin):
 		''' up '''
 		up_sum = up_sum * (J / 4)
 		down_sum = down_sum * (J / 2)
-	print(up_sum + down_sum)
+	# print(up_sum + down_sum)
 	return (up_sum + down_sum) 
 	# print("To be implemented")
 
