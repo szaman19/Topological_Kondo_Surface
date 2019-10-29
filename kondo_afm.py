@@ -36,7 +36,7 @@ def get_col(mat_U,column_num):
 	return mat_U[:,column_num]
 
 def get_row(mat_U, row_num):
-	return mat_U[row_num,:]
+	return mat_U[row_num]
 
 
 def fermi_function(energy,  beta=10000, mu=0):
@@ -71,28 +71,15 @@ def generate_U(op, params, K_POINTS):
 		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
 		ham  = hamiltonian_order_params(ham, op)
 		eigs, U_dagger = LA.eigh(ham)
-		U = LA.inv(U_dagger)
 		U_dagger_list.append(U_dagger)
-		U_list.append(U)
 		eigen_vals.append(eigs)
-	
-
-	# print(len(eigen_vals))
-	# print(len(U_dagger_list))
-	# print(K_POINTS[0])
-	# print(len(K_POINTS[1]))
-
-	# print("*"*80)
-	# print("Finished generating U matrices")
-	# print("*"*80)
-	
-	return eigen_vals, U_dagger_list, U_list
+	return eigen_vals, U_dagger_list
 
 
 def update_mu_f(num, params):
 	if (util_equal(num, 1)):
 		return params
-	if (params['mu_f_delta'] <1E-8):
+	if (params['mu_f_delta'] <1E-10):
 		params['mu_f_delta'] = 0.0005
 	if(num > 1):
 		params['mu_f_prev_prev'] = params['mu_f_prev']
@@ -112,7 +99,7 @@ def update_mu_f(num, params):
 def update_mu_c(num, params):
 	if (util_equal(num, 2)):
 		return params
-	if (params['mu_c_delta'] <1E-8):
+	if (params['mu_c_delta'] <1E-10):
 		params['mu_c_delta'] = 0.05	
 	if(num > 2):
 		params['mu_c_prev_prev'] = params['mu_c_prev']
@@ -189,7 +176,15 @@ def calibrate_mu(op, params, K_POINTS):
 		params['mu_c'] = mu_c
 		params['mu_f'] = mu_f
 
+		# eigen_vals, U_dagger_list = generate_U(op,params, K_POINTS)
+
+
+		# for i in range(L):
+		# 	for j in range(L):
+		# 		kx = -np.pi + 2 * (np.pi / L * i)
+		# 		kx = -np.pi + 2 * (np.pi / L * i)
 		eigen_vals, U_dagger_list = generate_U(op,params, K_POINTS)
+
 
 		for i in range(len(eigen_vals)):
 			U_dagger = U_dagger_list[i]
@@ -198,13 +193,14 @@ def calibrate_mu(op, params, K_POINTS):
 			conduction_number += calc_conduction_number(U, U_dagger, eig_val, mu_c)
 			moment_number += calc_moment_number(U, U_dagger, eig_val, mu_f)
 
-		conduction_number /= N
-		moment_number /= N
+		conduction_number /= (2 * N)
+		moment_number /= (2 * N)
 
 		# print(mu_c, mu_f)
 
 		is_equal_NC = util_equal(conduction_number,2)
 		is_equal_NF = util_equal(moment_number,1)
+
 		loop_condition = not (is_equal_NF and is_equal_NC)
 		if(counter % 400 == 0 and counter > 0):
 			print("j: {:2f} N_c: {:9f}, N_f: {:9f}".format( params['j'],conduction_number, moment_number))
@@ -215,6 +211,9 @@ def calibrate_mu(op, params, K_POINTS):
 			
 		counter +=1
 	# print(util_equal(conduction_number,1))
+
+	print("Conduction Number: ", conduction_number)
+	print("Moment Number: ", moment_number)
 
 	params['mu_c'] = mu_c
 	params['mu_f'] = mu_f
@@ -244,17 +243,19 @@ def calc_conduction_number(U, U_dagger, eigen_vals, mu):
 	f_k_dagger_down = get_col(U_dagger, 3)	
 	f_q_dagger_up = get_col(U_dagger, 6)
 	f_q_dagger_down = get_col(U_dagger, 7)
-
+ 
 	number = 0
 	for i in range(len(eigen_vals)):
 		energy = eigen_vals[i]	
-		number += (c_k_up[i] * c_k_dagger_up[i]  + c_q_up[i] * c_q_dagger_up[i]
-			+c_k_down[i] * c_k_dagger_down[i]  + c_q_down[i] * c_q_dagger_down[i] )* (fermi_function(energy, mu=mu))
+		number += (np.absolute(c_k_up[i])**2   + np.absolute(c_q_up[i])**2
+			+np.absolute(c_k_down[i])**2  + np.absolute(c_q_down[i])**2)* (fermi_function(energy, mu=mu))
 
 	for i in range(len(eigen_vals)):
 		energy = eigen_vals[i]
-		number += (f_k_up[i] * f_k_dagger_up[i]+ f_q_up[i] * f_q_dagger_up[i]
-			+f_k_down[i] * f_k_dagger_down[i]+ f_q_down[i] * f_q_dagger_down[i]) * (fermi_function(energy, mu=mu))
+		number += (np.absolute(f_k_up[i])**2+ np.absolute(f_q_up[i])**2
+			+np.absolute(f_k_down[i])**2+ np.absolute(f_q_down[i])**2) * (fermi_function(energy, mu=mu))
+	
+	# print("total number: ", number)
 	return number	
 
 def calc_moment_number(U, U_dagger, eigen_vals, mu):
@@ -268,11 +269,14 @@ def calc_moment_number(U, U_dagger, eigen_vals, mu):
 	f_q_dagger_up = get_col(U_dagger, 6)
 	f_q_dagger_down = get_col(U_dagger, 7)
 
+	# print(len(eigen_vals) == 8)
 	number = 0
 	for i in range(len(eigen_vals)):
 		energy = eigen_vals[i]
 		number += (f_k_up[i] * f_k_dagger_up[i]+ f_q_up[i] * f_q_dagger_up[i]
 			+f_k_down[i] * f_k_dagger_down[i]+ f_q_down[i] * f_q_dagger_down[i]) * (fermi_function(energy, mu=mu)) 
+	
+	# print("Moment number:", number)
 	return number	
 
 	# print("To be implemented")
@@ -295,6 +299,7 @@ def calc_xi_one(U_dagger, U, Eigs, J, spin):
 	c_q_up = get_row(U, 4)
 	c_q_down = get_row(U, 5)
 
+	# print(Eigs)
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
@@ -313,8 +318,8 @@ def calc_xi_one(U_dagger, U, Eigs, J, spin):
 		''' up '''
 		up_sum = up_sum * (J / 4)
 		down_sum = down_sum * (J / 2)
-
-	return up_sum + down_sum
+	print(up_sum + down_sum)
+	return (up_sum + down_sum) 
 	# print("To be implemented")
 
 def calc_xi_two(U_dagger, U, Eigs, J, spin):
@@ -484,8 +489,9 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 	for i in range(len(eigen_vals)):
 		eigs = eigen_vals[i]
 		U_dagger = U_dagger_list[i]
-		U = np.transpose(np.conjugate(U_dagger))
-		
+		# U = np.transpose(np.conjugate(U_dagger))
+		U = LA.inv(U_dagger)
+
 		temp_xi1_up += calc_xi_one(U_dagger, U, eigs, j, 1)
 		temp_xi1_down += calc_xi_one(U_dagger, U, eigs, j, 0)
 		
@@ -504,25 +510,25 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 	calc_op['xi1_up'] = temp_xi1_up  / (2 * N)
 	calc_op['xi1_down'] = temp_xi1_down / (2 * N)
 
-	# calc_op['xi2_up'] = temp_xi2_up / N
-	# calc_op['xi2_down'] = temp_xi2_down / N
+	calc_op['xi2_up'] = temp_xi2_up / (2*N)
+	calc_op['xi2_down'] = temp_xi2_down / (2*N)
 	
-	calc_op['xi2_down'] = 0
-	calc_op['xi2_up'] = 0
+	# calc_op['xi2_down'] = 0
+	# calc_op['xi2_up'] = 0
 
 
 	# calc_op['M1_c'] = temp_m1_c / N
 	calc_op['M1_c'] = 0
 
-	# calc_op['M2_c'] = temp_m2_c / N
-	calc_op['M2_c'] = 0
+	calc_op['M2_c'] = temp_m2_c / (2*N)
+	# calc_op['M2_c'] = 0
 
 
 	# calc_op['M1_f'] = temp_m1_f / N
 	calc_op['M1_f'] = 0
 
-	# calc_op['M2_f'] = temp_m2_f / N
-	calc_op['M2_f'] = 0
+	calc_op['M2_f'] = temp_m2_f / (2*N)
+	# calc_op['M2_f'] = 0
 
 
 	return calc_op
@@ -548,7 +554,7 @@ def update_guess_calc(calc_op, guess_op):
 
 def order_param_init(calculated_order_params, guess = False):
 	if(guess):
-		A = 0
+		A = 2
 	else:
 		A = 1
 	calculated_order_params['xi1_up']  = A
@@ -573,13 +579,13 @@ def self_consistent(j, K_POINTS):
 	params = {}
 
 	params['mu_c'] = -.2
-	params['mu_f'] = .2
+	params['mu_f'] = -.2
 	params['j'] = j
 	
 	guess_order_params = order_param_init(guess_order_params, True)
 	# generate_U(guess_order_params, params, K_POINTS)
 	calculated_order_params = order_param_init(calculated_order_params)
-	params = calibrate_mu(guess_order_parsams, params, K_POINTS)
+	params = calibrate_mu(guess_order_params, params, K_POINTS)
 
 	print("Params initalized")
 	counter = 0
@@ -587,6 +593,8 @@ def self_consistent(j, K_POINTS):
 		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
 		
 		params = calibrate_mu(guess_order_params, params, K_POINTS)
+		print(guess_order_params)
+		print(params)
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
 
@@ -594,6 +602,8 @@ def self_consistent(j, K_POINTS):
 			print("i = ",counter,'*' * 80)
 			print_params_search(guess_order_params, calculated_order_params)
 			print('*' * 80)
+
+			
 		# print(not order_param_equal(calculated_order_params, guess_order_params))
 		counter += 1
 	for each in calculated_order_params.keys():
@@ -683,33 +693,33 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	hamiltonian [7][5] = - np.conjugate(order_params['xi1_down'])	
 
 	#H2 Block Begin ############################################################################## 
-	# hamiltonian [0][4] = order_params['M2_f']
-	# hamiltonian [1][5] = - order_params['M2_f']
-	# hamiltonian [2][6] =  -order_params['M2_c']
-	# hamiltonian [3][7] =  order_params['M2_c']
+	hamiltonian [0][4] = order_params['M2_f']
+	hamiltonian [1][5] = - order_params['M2_f']
+	hamiltonian [2][6] =  -order_params['M2_c']
+	hamiltonian [3][7] =  order_params['M2_c']
 
 
-	# hamiltonian [0][6] = - order_params['xi2_up']
-	# hamiltonian [1][7] = - order_params['xi2_down']
-	# hamiltonian [2][4] = - np.conjugate(order_params['xi2_up'])
-	# hamiltonian [3][5] = - np.conjugate(order_params['xi2_down'])
+	hamiltonian [0][6] = - order_params['xi2_up']
+	hamiltonian [1][7] = - order_params['xi2_down']
+	hamiltonian [2][4] = - np.conjugate(order_params['xi2_up'])
+	hamiltonian [3][5] = - np.conjugate(order_params['xi2_down'])
 
 	#H3 Block Begin ############################################################################## 
-	# hamiltonian [4][0] = order_params['M2_f']
-	# hamiltonian [5][1] = - order_params['M2_f']
-	# hamiltonian [6][2] = -order_params['M2_c']
-	# hamiltonian [7][3] =  order_params['M2_c']
+	hamiltonian [4][0] = order_params['M2_f']
+	hamiltonian [5][1] = - order_params['M2_f']
+	hamiltonian [6][2] = -order_params['M2_c']
+	hamiltonian [7][3] =  order_params['M2_c']
 
 
-	# hamiltonian [4][2] = - order_params['xi2_up']
-	# hamiltonian [5][3] = - order_params['xi2_down']
-	# hamiltonian [6][0] = - np.conjugate(order_params['xi2_up'])
-	# hamiltonian [7][1] = - np.conjugate(order_params['xi2_down'])
+	hamiltonian [4][2] = - order_params['xi2_up']
+	hamiltonian [5][3] = - order_params['xi2_down']
+	hamiltonian [6][0] = - np.conjugate(order_params['xi2_up'])
+	hamiltonian [7][1] = - np.conjugate(order_params['xi2_down'])
 
 	return hamiltonian
 
 def main():
-	K_POINTS = gen_brillouin_zone(10)
+	K_POINTS = gen_brillouin_zone(20)
 	# points = gen_brillouin_zone()
 
 	# print(len(K_POINTS))
@@ -735,7 +745,7 @@ def main():
 	# 		log.write("\n")
 	# log.close()
 
-	results = self_consistent(3.6, K_POINTS)
+	results = self_consistent(2.7, K_POINTS)
 	print(results)
 
 
