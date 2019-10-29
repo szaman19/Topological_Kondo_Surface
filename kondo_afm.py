@@ -560,14 +560,14 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['xi1_up']  = A
 	calculated_order_params['xi1_down']  = A
 
-	calculated_order_params['xi2_up']  = 0
-	calculated_order_params['xi2_down']  = 0
+	calculated_order_params['xi2_up']  = .2
+	calculated_order_params['xi2_down']  = .3
 
 	calculated_order_params['M1_c']  = 0
-	calculated_order_params['M2_c']  = 0
+	calculated_order_params['M2_c']  = 1
 
 	calculated_order_params['M1_f']  = 0
-	calculated_order_params['M2_f']  = 0
+	calculated_order_params['M2_f']  = 1
 	return calculated_order_params
 def print_params_search(gp, cp):
 	for each in gp.keys():
