@@ -21,7 +21,7 @@ def gen_brillouin_zone(L = 10):
 
 
 
-def util_equal(a , b, threshold=5E-2):
+def util_equal(a , b, threshold=5E-8):
 	return not(abs(a - b) > threshold)
 
 def order_param_equal(calculated_order_params, guess_order_params ):
@@ -79,7 +79,7 @@ def generate_U(op, params, K_POINTS):
 def update_mu_f(num, params):
 	if (util_equal(num, 1)):
 		return params
-	if (params['mu_f_delta'] <1E-10):
+	if (params['mu_f_delta'] <1E-11):
 		params['mu_f_delta'] = 0.0005
 	if(num > 1):
 		params['mu_f_prev_prev'] = params['mu_f_prev']
@@ -471,6 +471,7 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 	# print("To be implemented")
 
 def order_params_calculations(calc_op, guess_op, params, K_POINTS):
+	
 	eigen_vals, U_dagger_list = generate_U(guess_op,params, K_POINTS)
 
 	temp_xi1_up = 0
@@ -745,7 +746,7 @@ def main():
 	# 		log.write("\n")
 	# log.close()
 
-	results = self_consistent(2.7, K_POINTS)
+	results = self_consistent(3, K_POINTS)
 	print(results)
 
 
