@@ -742,27 +742,27 @@ def main():
 	# for i in range(len(K_POINTS)):
 	# 	print(K_POINTS[i])
 
-	# NUM_PROCESS = 8
+	NUM_PROCESS = 8
 
-	# outputs = []
-	# for j in range(1):
-	# 	pool = Pool(processes=NUM_PROCESS)
-	# 	results = [pool.apply_async(self_consistent, args=(2 + 1.6 * j + .2*x, K_POINTS)) for x in range(NUM_PROCESS)]
-	# 	output = [p.get() for p in results]
-	# 	outputs.append(output)
-	# log = open("kondo_afm.csv","w")
-	# string = ",".join([str(k) for k in sorted(outputs[0][0].keys())])
-	# log.write(string)
-	# log.write("\n")
-	# for vec in outputs:
-	# 	for dic in vec:
-	# 		string = ",".join([str(np.real(dic[k])) for k in sorted(dic.keys())])
-	# 		log.write(string)
-	# 		log.write("\n")
-	# log.close()
+	outputs = []
+	for j in range(1):
+		pool = Pool(processes=NUM_PROCESS)
+		results = [pool.apply_async(self_consistent, args=(2 + 1.6 * j + .2*x, K_POINTS)) for x in range(NUM_PROCESS)]
+		output = [p.get() for p in results]
+		outputs.append(output)
+	log = open("kondo_afm.csv","w")
+	string = ",".join([str(k) for k in sorted(outputs[0][0].keys())])
+	log.write(string)
+	log.write("\n")
+	for vec in outputs:
+		for dic in vec:
+			string = ",".join([str(np.real(dic[k])) for k in sorted(dic.keys())])
+			log.write(string)
+			log.write("\n")
+	log.close()
 
-	results = self_consistent(3.6, K_POINTS)
-	print(results)
+	# results = self_consistent(3.6, K_POINTS)
+	# print(results)
 
 
 main() 
