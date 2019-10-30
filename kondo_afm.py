@@ -21,7 +21,7 @@ def gen_brillouin_zone(L = 10):
 
 
 
-def util_equal(a , b, threshold=5E-6):
+def util_equal(a , b, threshold=5E-4):
 	return not(abs(a - b) > threshold)
 
 def order_param_equal(calculated_order_params, guess_order_params ):
@@ -471,7 +471,7 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 
 def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 	
-	eigen_vals, U_dagger_list = generate_U(guess_op,params, K_POINTS)
+	# eigen_vals, U_dagger_list = generate_U(guess_op,params, K_POINTS)
 
 	temp_xi1_up = 0
 	temp_xi1_down = 0
@@ -486,12 +486,24 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 	N = len(K_POINTS)
 	# print(N)
 	j = params['j']
-	for i in range(len(eigen_vals)):
-		eigs = eigen_vals[i]
-		U_dagger = U_dagger_list[i]
-		# U = np.transpose(np.conjugate(U_dagger))
-		U = LA.inv(U_dagger)
 
+	mu_f = params['mu_f']
+	mu_c = params['mu_c']
+
+	# print("*"*80)
+	# print("Generating U matrices")
+	# print("*"*80)
+
+	for i in range(len(K_POINTS)):
+		kx = K_POINTS[i][0]
+		ky = K_POINTS[i][1]
+
+		# print(kx,ky)
+		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
+		ham  = hamiltonian_order_params(ham, guess_op)
+		eigs, U_dagger = LA.eigh(ham)
+		U = LA.inv(U_dagger)
+	
 		temp_xi1_up += calc_xi_one(U_dagger, U, eigs, j, 1)
 		temp_xi1_down += calc_xi_one(U_dagger, U, eigs, j, 0)
 		
@@ -503,6 +515,9 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 		
 		temp_m1_f += calc_M1_F(U_dagger, U, eigs, j)
 		temp_m2_f += calc_M2_F(U_dagger, U, eigs, j)
+
+		# U = np.transpose(np.conjugate(U_dagger))
+
 
 	'''
 	Generate hamiltonian for each K using guess order parameters. After 
