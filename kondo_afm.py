@@ -21,7 +21,7 @@ def gen_brillouin_zone(L = 10):
 
 
 
-def util_equal(a , b, threshold=5E-8):
+def util_equal(a , b, threshold=5E-6):
 	return not(abs(a - b) > threshold)
 
 def order_param_equal(calculated_order_params, guess_order_params ):
@@ -720,7 +720,7 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	return hamiltonian
 
 def main():
-	K_POINTS = gen_brillouin_zone(20)
+	K_POINTS = gen_brillouin_zone(30)
 	# points = gen_brillouin_zone()
 
 	# print(len(K_POINTS))
