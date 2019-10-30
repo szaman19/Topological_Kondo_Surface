@@ -32,10 +32,10 @@ def order_param_equal(calculated_order_params, guess_order_params ):
 			return False
 	return True
 
-def get_col(mat_U,column_num):
+def get_row(mat_U,column_num):
 	return mat_U[:,column_num]
 
-def get_row(mat_U, row_num):
+def get_col(mat_U, row_num):
 	return mat_U[row_num]
 
 
@@ -456,7 +456,7 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 	f_q_dagger_down = get_col(U_dagger, 7)
 
 
-	for i in range(len(Eigs)):
+	for i in range(8):
 		energy = Eigs[i]
 		up_sum += f_k_up[i] * f_q_dagger_up[i] * fermi_function(energy)
 		up_sum += f_q_up[i] * f_k_dagger_up[i] * fermi_function(energy)
