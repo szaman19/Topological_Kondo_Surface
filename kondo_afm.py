@@ -67,7 +67,7 @@ def generate_U(op, params, K_POINTS):
 		ky = K_POINTS[i][1]
 
 		# print(kx,ky)
-		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
+		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, True)
 		ham  = hamiltonian_order_params(ham, op)
 		eigs, U_dagger = LA.eigh(ham)
 		U_dagger_list.append(U_dagger)
@@ -499,7 +499,7 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 		ky = K_POINTS[i][1]
 
 		# print(kx,ky)
-		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
+		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, True)
 		ham  = hamiltonian_order_params(ham, guess_op)
 		eigs, U_dagger = LA.eigh(ham)
 		U = LA.inv(U_dagger)
@@ -750,7 +750,7 @@ def main():
 		results = [pool.apply_async(self_consistent, args=(2 + 1.6 * j + .2*x, K_POINTS)) for x in range(NUM_PROCESS)]
 		output = [p.get() for p in results]
 		outputs.append(output)
-	log = open("kondo_afm.csv","w")
+	log = open("chiral_afm.csv","w")
 	string = ",".join([str(k) for k in sorted(outputs[0][0].keys())])
 	log.write(string)
 	log.write("\n")
