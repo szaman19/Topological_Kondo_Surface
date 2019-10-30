@@ -381,7 +381,7 @@ def calc_M1_C(U_dagger, U, Eigs, J):
 		down_sum += c_q_down[i] * c_q_dagger_down[i] * fermi_function(energy)
 
 	# print("To be implemented")
-	return_val = (J /2) * (up_sum - down_sum)
+	return_val = (J /4) * (up_sum - down_sum)
 	return return_val
 
 def calc_M2_C(U_dagger, U, Eigs, J):
@@ -407,7 +407,7 @@ def calc_M2_C(U_dagger, U, Eigs, J):
 		down_sum += c_k_down[i] * c_q_dagger_down[i] * fermi_function(energy)
 		down_sum += c_q_down[i] * c_k_dagger_down[i] * fermi_function(energy)
 	
-	return_val = (J /2) * (up_sum - down_sum)
+	return_val = (J /4) * (up_sum - down_sum)
 	return return_val
 	# print("To be implemented")
 
@@ -436,7 +436,7 @@ def calc_M1_F(U_dagger, U, Eigs, J):
 
 	# print("To be implemented")
 
-	return_val = (J /2) * (up_sum - down_sum)
+	return_val = (J /4) * (up_sum - down_sum)
 	return return_val
 
 
@@ -463,7 +463,7 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 		down_sum += f_k_down[i] * f_q_dagger_down[i] * fermi_function(energy)
 		down_sum += f_q_down[i] * f_k_dagger_down[i] * fermi_function(energy)
 
-	return_val = (J /2) * (up_sum - down_sum)
+	return_val = (J /4) * (up_sum - down_sum)
 	return return_val
 		
 
