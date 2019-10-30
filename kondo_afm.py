@@ -62,7 +62,6 @@ def generate_U(op, params, K_POINTS):
 
 	eigen_vals = []
 	U_dagger_list = []
-	U_list = []
 	for i in range(len(K_POINTS)):
 		kx = K_POINTS[i][0]
 		ky = K_POINTS[i][1]
@@ -594,10 +593,11 @@ def self_consistent(j, K_POINTS):
 		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
 		
 		params = calibrate_mu(guess_order_params, params, K_POINTS)
-		print(guess_order_params)
-		print(params)
+		# print(guess_order_params)
+		# print(params)
 
 		calculated_order_params = order_params_calculations(calculated_order_params, guess_order_params, params, K_POINTS)
+
 
 		if(counter %5 == 0):
 			print("i = ",counter,'*' * 80)
@@ -639,7 +639,7 @@ def gen_hamiltonian(kx,ky,mu_f, mu_c,  chiral, W = 0.3):
 	dims = (8,8)
 	ham = np.zeros(dims, dtype=complex)
 
-	ham[0][0] = epsilon_k -mu_c
+	ham[0][0] = epsilon_k - mu_c
 	ham[1][1] = epsilon_k - mu_c
 
 	ham[2][2] = -mu_f - mu_c
@@ -746,7 +746,7 @@ def main():
 	# 		log.write("\n")
 	# log.close()
 
-	results = self_consistent(3, K_POINTS)
+	results = self_consistent(3.6, K_POINTS)
 	print(results)
 
 
