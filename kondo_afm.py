@@ -287,10 +287,10 @@ def calc_xi_one(U_dagger, U, Eigs, J, spin):
 	up_sum = 0
 	down_sum = 0
 	
-	f_k_dagger_up = np.conjugate(get_row(U_dagger, 2))
-	f_k_dagger_down = np.conjugate(get_row(U_dagger, 3))	
-	f_q_dagger_up = np.conjugate(get_row(U_dagger, 6))
-	f_q_dagger_down = np.conjugate(get_row(U_dagger, 7))
+	f_k_dagger_up = np.conjugate(get_row(U, 2))
+	f_k_dagger_down = np.conjugate(get_row(U, 3))	
+	f_q_dagger_up = np.conjugate(get_row(U, 6))
+	f_q_dagger_down = np.conjugate(get_row(U, 7))
 
 
 	c_k_up = get_row(U, 0)
