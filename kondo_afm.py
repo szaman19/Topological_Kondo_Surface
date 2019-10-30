@@ -32,10 +32,10 @@ def order_param_equal(calculated_order_params, guess_order_params ):
 			return False
 	return True
 
-def get_row(mat_U,column_num):
+def get_col(mat_U,column_num):
 	return mat_U[:,column_num]
 
-def get_col(mat_U, row_num):
+def get_row(mat_U, row_num):
 	return mat_U[row_num]
 
 
