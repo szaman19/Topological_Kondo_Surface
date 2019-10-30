@@ -579,7 +579,7 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['xi2_down']  = .3
 
 	calculated_order_params['M1_c']  = 0
-	calculated_order_params['M2_c']  = 1
+	calculated_order_params['M2_c']  = -1
 
 	calculated_order_params['M1_f']  = 0
 	calculated_order_params['M2_f']  = 1
