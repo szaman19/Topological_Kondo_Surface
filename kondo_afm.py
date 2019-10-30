@@ -326,16 +326,16 @@ def calc_xi_two(U_dagger, U, Eigs, J, spin):
 	up_sum = 0
 	down_sum = 0
 	
-	f_k_dagger_up = get_col(U_dagger, 2)
-	f_k_dagger_down = get_col(U_dagger, 3)	
-	f_q_dagger_up = get_col(U_dagger, 6)
-	f_q_dagger_down = get_col(U_dagger, 7)
+	f_k_dagger_up = np.conjugate(get_row(U_dagger, 2))
+	f_k_dagger_down = np.conjugate(get_row(U_dagger, 3))	
+	f_q_dagger_up = np.conjugate(get_row(U_dagger, 6))
+	f_q_dagger_down = np.conjugate(get_row(U_dagger, 7))
 
 	
-	c_k_up = get_row(U, 0)
-	c_k_down = get_row(U, 1)
-	c_q_up = get_row(U, 4)
-	c_q_down = get_row(U, 5)
+	c_k_up = get_row(U_dagger, 0)
+	c_k_down = get_row(U_dagger, 1)
+	c_q_up = get_row(U_dagger, 4)
+	c_q_down = get_row(U_dagger, 5)
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
@@ -362,10 +362,10 @@ def calc_M1_C(U_dagger, U, Eigs, J):
 	up_sum = 0
 	down_sum = 0
 
-	c_k_up = get_row(U, 0)
-	c_k_down = get_row(U, 1)
-	c_q_up = get_row(U, 4)
-	c_q_down = get_row(U, 5)
+	c_k_up = get_row(U_dagger, 0)
+	c_k_down = get_row(U_dagger, 1)
+	c_q_up = get_row(U_dagger, 4)
+	c_q_down = get_row(U_dagger, 5)
 
 	c_k_dagger_up = get_col(U_dagger, 0)
 	c_k_dagger_down = get_col(U_dagger, 1)
@@ -390,15 +390,15 @@ def calc_M2_C(U_dagger, U, Eigs, J):
 	up_sum = 0
 	down_sum = 0
 
-	c_k_up = get_row(U, 0)
-	c_k_down = get_row(U, 1)
-	c_q_up = get_row(U, 4)
-	c_q_down = get_row(U, 5)
+	c_k_up = get_row(U_dagger, 0)
+	c_k_down = get_row(U_dagger, 1)
+	c_q_up = get_row(U_dagger, 4)
+	c_q_down = get_row(U_dagger, 5)
 
-	c_k_dagger_up = get_col(U_dagger, 0)
-	c_k_dagger_down = get_col(U_dagger, 1)
-	c_q_dagger_up = get_col(U_dagger, 4)
-	c_q_dagger_down = get_col(U_dagger, 5)
+	c_k_dagger_up = np.conjugate(get_row(U_dagger, 0))
+	c_k_dagger_down = np.conjugate(get_row(U_dagger, 1))
+	c_q_dagger_up = np.conjugate(get_row(U_dagger, 4))
+	c_q_dagger_down = np.conjugate(get_row(U_dagger, 5))
 
 	for i in range(len(Eigs)):
 		energy = Eigs[i]
@@ -416,10 +416,10 @@ def calc_M1_F(U_dagger, U, Eigs, J):
 	up_sum = 0
 	down_sum = 0
 
-	f_k_up = get_row(U, 2)
-	f_k_down = get_row(U, 3)
-	f_q_up = get_row(U,6)
-	f_q_down =  get_row(U,7)
+	f_k_up = get_row(U_dagger, 2)
+	f_k_down = get_row(U_dagger, 3)
+	f_q_up = get_row(U_dagger,6)
+	f_q_down =  get_row(U_dagger,7)
 
 	f_k_dagger_up = get_col(U_dagger, 2)
 	f_k_dagger_down = get_col(U_dagger, 3)	
@@ -445,15 +445,15 @@ def calc_M2_F(U_dagger, U, Eigs, J):
 	up_sum = 0
 	down_sum = 0
 
-	f_k_up = get_row(U, 2)
-	f_k_down = get_row(U, 3)
-	f_q_up = get_row(U,6)
-	f_q_down =  get_row(U,7)
+	f_k_up = get_row(U_dagger, 2)
+	f_k_down = get_row(U_dagger, 3)
+	f_q_up = get_row(U_dagger,6)
+	f_q_down =  get_row(U_dagger,7)
 
-	f_k_dagger_up = get_col(U_dagger, 2)
-	f_k_dagger_down = get_col(U_dagger, 3)	
-	f_q_dagger_up = get_col(U_dagger, 6)
-	f_q_dagger_down = get_col(U_dagger, 7)
+	f_k_dagger_up = np.conjugate(get_row(U_dagger, 2))
+	f_k_dagger_down = np.conjugate(get_row(U_dagger, 3))	
+	f_q_dagger_up = np.conjugate(get_row(U_dagger, 6))
+	f_q_dagger_down = np.conjugate(get_row(U_dagger, 7))
 
 
 	for i in range(8):
