@@ -570,8 +570,10 @@ def update_guess_calc(calc_op, guess_op):
 def order_param_init(calculated_order_params, guess = False):
 	if(guess):
 		A = 2
+		B = 3
 	else:
 		A = 1
+		B = -3
 	calculated_order_params['xi1_up']  = A
 	calculated_order_params['xi1_down']  = A
 
@@ -579,10 +581,10 @@ def order_param_init(calculated_order_params, guess = False):
 	calculated_order_params['xi2_down']  = .3
 
 	calculated_order_params['M1_c']  = 0
-	calculated_order_params['M2_c']  = A
+	calculated_order_params['M2_c']  = B
 
 	calculated_order_params['M1_f']  = 0
-	calculated_order_params['M2_f']  = A
+	calculated_order_params['M2_f']  = B
 	return calculated_order_params
 def print_params_search(gp, cp):
 	for each in gp.keys():
@@ -722,7 +724,7 @@ def hamiltonian_order_params(hamiltonian, order_params):
 
 	#H3 Block Begin ############################################################################## 
 	hamiltonian [4][0] = order_params['M2_f']
-	hamiltonian [5][1] =  -order_params['M2_f']
+	hamiltonian [5][1] = -order_params['M2_f']
 	hamiltonian [6][2] = -order_params['M2_c']
 	hamiltonian [7][3] =  order_params['M2_c']
 
