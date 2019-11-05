@@ -551,10 +551,10 @@ def update_guess_calc(calc_op, guess_op):
 		Uncomment, in case we want to change to
 		scaling each param individually
 	'''
-	guess_op['xi1_up'] = .2* (calc_op['xi1_up']) + .8*(guess_op['xi1_up'])
-	guess_op['xi1_down'] = .2* (calc_op['xi1_down']) + .8*(guess_op['xi1_down'])
-	guess_op['xi2_up'] = .2* (calc_op['xi2_up']) + .8*(guess_op['xi2_up'])
-	guess_op['xi2_down'] = .2* (calc_op['xi2_down']) + .8*(guess_op['xi2_down'])
+	guess_op['xi1_up'] = .1* (calc_op['xi1_up']) + .9*(guess_op['xi1_up'])
+	guess_op['xi1_down'] = .1* (calc_op['xi1_down']) + .9*(guess_op['xi1_down'])
+	guess_op['xi2_up'] = .1* (calc_op['xi2_up']) + .9*(guess_op['xi2_up'])
+	guess_op['xi2_down'] = .1* (calc_op['xi2_down']) + .9*(guess_op['xi2_down'])
 	# guess_op['M1_c'] = .2* (calc_op['M1_c']) + .8*(guess_op['M1_c'])
 	guess_op['M2_c'] = .1* (calc_op['M2_c']) + .9*(guess_op['M2_c'])
 	# guess_op['M1_f'] = .2* (calc_op['M1_f']) + .8*(guess_op['M1_f'])
