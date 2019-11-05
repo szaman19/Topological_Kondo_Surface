@@ -630,7 +630,7 @@ def self_consistent(j, K_POINTS):
 
 
 
-def gen_hamiltonian(kx,ky,mu_f, mu_c,  chiral, W = 0.3):
+def gen_hamiltonian(kx,ky,mu_f, mu_c,  chiral, W = 0):
 	
 	if(chiral):
 		epsilon_k = W * (np.sin(kx/2) **2 + np.sin(ky/2)**2)
@@ -747,7 +747,7 @@ def main():
 		results = [pool.apply_async(self_consistent, args=(.5 + 1.6 * j + .2*x, K_POINTS)) for x in range(NUM_PROCESS)]
 		output = [p.get() for p in results]
 		outputs.append(output)
-	log = open("chiral_afm_3.csv","w")
+	log = open("chiral_afm_0.csv","w")
 	string = ",".join([str(k) for k in sorted(outputs[0][0].keys())])
 	log.write(string)
 	log.write("\n")
