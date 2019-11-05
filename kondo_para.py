@@ -196,18 +196,18 @@ def calibrate_mu(op, params, K_POINTS):
 		is_equal_NF = util_equal(moment_number,1)
 
 		loop_condition = not (is_equal_NF and is_equal_NC)
-		if(counter % 400 == 0 and counter > 0):
-			print("j: {:2f} N_c: {:9f}, N_f: {:9f}".format( params['j'],conduction_number, moment_number))
-			print("mu_c: ", mu_c)
-			print("mu_f: ", mu_f)
-			print("dalta f", mu_f_data['mu_f_delta'])
-			print("delta c", mu_c_data['mu_c_delta'])
+		# if(counter % 400 == 0 and counter > 0):
+		# 	print("j: {:2f} N_c: {:9f}, N_f: {:9f}".format( params['j'],conduction_number, moment_number))
+		# 	print("mu_c: ", mu_c)
+		# 	print("mu_f: ", mu_f)
+		# 	print("dalta f", mu_f_data['mu_f_delta'])
+		# 	print("delta c", mu_c_data['mu_c_delta'])
 			
 		counter +=1
 	# print(util_equal(conduction_number,1))
 
-	print("Conduction Number: ", conduction_number)
-	print("Moment Number: ", moment_number)
+	# print("Conduction Number: ", conduction_number)
+	# print("Moment Number: ", moment_number)
 
 	params['mu_c'] = mu_c
 	params['mu_f'] = mu_f
@@ -556,9 +556,9 @@ def update_guess_calc(calc_op, guess_op):
 	guess_op['xi2_up'] = .2* (calc_op['xi2_up']) + .8*(guess_op['xi2_up'])
 	guess_op['xi2_down'] = .2* (calc_op['xi2_down']) + .8*(guess_op['xi2_down'])
 	# guess_op['M1_c'] = .2* (calc_op['M1_c']) + .8*(guess_op['M1_c'])
-	guess_op['M2_c'] = .2* (calc_op['M2_c']) + .8*(guess_op['M2_c'])
+	guess_op['M2_c'] = .1* (calc_op['M2_c']) + .9*(guess_op['M2_c'])
 	# guess_op['M1_f'] = .2* (calc_op['M1_f']) + .8*(guess_op['M1_f'])
-	guess_op['M2_f'] = .2* (calc_op['M2_f']) + .8*(guess_op['M2_f'])
+	guess_op['M2_f'] = .1* (calc_op['M2_f']) + .9*(guess_op['M2_f'])
 	
 	return guess_op
 
@@ -732,7 +732,7 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	return hamiltonian
 
 def main():
-	K_POINTS = gen_brillouin_zone(30)
+	K_POINTS = gen_brillouin_zone(20)
 	# points = gen_brillouin_zone()
 
 	# print(len(K_POINTS))	
