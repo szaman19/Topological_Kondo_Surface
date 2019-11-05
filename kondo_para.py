@@ -551,14 +551,14 @@ def update_guess_calc(calc_op, guess_op):
 		Uncomment, in case we want to change to
 		scaling each param individually
 	'''
-	guess_op['xi1_up'] = .05* (calc_op['xi1_up']) + .90*(guess_op['xi1_up'])
-	guess_op['xi1_down'] = .05* (calc_op['xi1_down']) + .90*(guess_op['xi1_down'])
-	guess_op['xi2_up'] = .05* (calc_op['xi2_up']) + .9*(guess_op['xi2_up'])
-	guess_op['xi2_down'] = .05* (calc_op['xi2_down']) + .9*(guess_op['xi2_down'])
+	guess_op['xi1_up'] = .1* (calc_op['xi1_up']) + .90*(guess_op['xi1_up'])
+	guess_op['xi1_down'] = .1* (calc_op['xi1_down']) + .90*(guess_op['xi1_down'])
+	guess_op['xi2_up'] = .1* (calc_op['xi2_up']) + .9*(guess_op['xi2_up'])
+	guess_op['xi2_down'] = .1* (calc_op['xi2_down']) + .9*(guess_op['xi2_down'])
 	# guess_op['M1_c'] = .2* (calc_op['M1_c']) + .8*(guess_op['M1_c'])
-	guess_op['M2_c'] = .05* (calc_op['M2_c']) + .9*(guess_op['M2_c'])
+	guess_op['M2_c'] = .1* (calc_op['M2_c']) + .9*(guess_op['M2_c'])
 	# guess_op['M1_f'] = .2* (calc_op['M1_f']) + .8*(guess_op['M1_f'])
-	guess_op['M2_f'] = .05* (calc_op['M2_f']) + .9*(guess_op['M2_f'])
+	guess_op['M2_f'] = .1* (calc_op['M2_f']) + .9*(guess_op['M2_f'])
 	
 	return guess_op
 
@@ -732,7 +732,7 @@ def hamiltonian_order_params(hamiltonian, order_params):
 	return hamiltonian
 
 def main():
-	K_POINTS = gen_brillouin_zone(20)
+	K_POINTS = gen_brillouin_zone(30)
 	# points = gen_brillouin_zone()
 
 	# print(len(K_POINTS))	
