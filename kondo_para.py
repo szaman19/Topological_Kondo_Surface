@@ -55,11 +55,6 @@ def fermi_function(energy,  beta=10000, mu=0):
 def generate_U(op, params, K_POINTS):
 	mu_f = params['mu_f']
 	mu_c = params['mu_c']
-
-	# print("*"*80)
-	# print("Generating U matrices")
-	# print("*"*80)
-
 	eigen_vals = []
 	U_dagger_list = []
 	for i in range(len(K_POINTS)):
@@ -67,7 +62,7 @@ def generate_U(op, params, K_POINTS):
 		ky = K_POINTS[i][1]
 
 		# print(kx,ky)
-		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, True)
+		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
 		ham  = hamiltonian_order_params(ham, op)
 		eigs, U_dagger = LA.eigh(ham)
 		U_dagger_list.append(U_dagger)
@@ -499,7 +494,7 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 		ky = K_POINTS[i][1]
 
 		# print(kx,ky)
-		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, True)
+		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
 		ham  = hamiltonian_order_params(ham, guess_op)
 		eigs, U_dagger = LA.eigh(ham)
 		U = LA.inv(U_dagger)
@@ -747,9 +742,9 @@ def main():
 	NUM_PROCESS = 8
 
 	outputs = []
-	for j in range(1):
+	for j in range(2):
 		pool = Pool(processes=NUM_PROCESS)
-		results = [pool.apply_async(self_consistent, args=(2 + 1.6 * j + .2*x, K_POINTS)) for x in range(NUM_PROCESS)]
+		results = [pool.apply_async(self_consistent, args=(1 + 1.6 * j + .2*x, K_POINTS)) for x in range(NUM_PROCESS)]
 		output = [p.get() for p in results]
 		outputs.append(output)
 	log = open("chiral_afm.csv","w")
