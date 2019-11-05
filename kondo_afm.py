@@ -593,21 +593,21 @@ def self_consistent(j, K_POINTS):
 	guess_order_params = {}
 	params = {}
 
-	params['mu_c'] = -.2
-	params['mu_f'] = -.2
+	params['mu_c'] = 0
+	params['mu_f'] = 0
 	params['j'] = j
 	
 	guess_order_params = order_param_init(guess_order_params, True)
 	# generate_U(guess_order_params, params, K_POINTS)
 	calculated_order_params = order_param_init(calculated_order_params)
-	params = calibrate_mu(guess_order_params, params, K_POINTS)
+	# params = calibrate_mu(guess_order_params, params, K_POINTS)
 
 	print("Params initalized")
 	counter = 0
 	while(not order_param_equal(calculated_order_params, guess_order_params)):
 		guess_order_params =  update_guess_calc(calculated_order_params, guess_order_params)
 		
-		params = calibrate_mu(guess_order_params, params, K_POINTS)
+		# params = calibrate_mu(guess_order_params, params, K_POINTS)
 		# print(guess_order_params)
 		# print(params)
 
