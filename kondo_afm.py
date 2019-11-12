@@ -32,10 +32,10 @@ def order_param_equal(calculated_order_params, guess_order_params ):
 			return False
 	return True
 
-def get_row(mat_U,column_num):
+def get_col(mat_U,column_num):
 	return mat_U[:,column_num]
 
-def get_col(mat_U, row_num):
+def get_row(mat_U, row_num):
 	return mat_U[row_num]
 
 
@@ -550,20 +550,21 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 
 
 def update_guess_calc(calc_op, guess_op):
-	# for param in guess_op.keys():
-	# 	guess_op[param] = .2* (calc_op[param]) + .80*(guess_op[param])
+	for param in guess_op.keys():
+		if(not (util_equal(calc_op[param], guess_op[param]))):
+			guess_op[param] = .2* (calc_op[param]) + .80*(guess_op[param])
 	'''
 		Uncomment, in case we want to change to
 		scaling each param individually
 	'''
-	guess_op['xi1_up'] = .2* (calc_op['xi1_up']) + .8*(guess_op['xi1_up'])
-	guess_op['xi1_down'] = .2* (calc_op['xi1_down']) + .8*(guess_op['xi1_down'])
-	guess_op['xi2_up'] = .2* (calc_op['xi2_up']) + .8*(guess_op['xi2_up'])
-	guess_op['xi2_down'] = .2* (calc_op['xi2_down']) + .8*(guess_op['xi2_down'])
+	# guess_op['xi1_up'] = .2* (calc_op['xi1_up']) + .8*(guess_op['xi1_up'])
+	# guess_op['xi1_down'] = .2* (calc_op['xi1_down']) + .8*(guess_op['xi1_down'])
+	# guess_op['xi2_up'] = .2* (calc_op['xi2_up']) + .8*(guess_op['xi2_up'])
+	# guess_op['xi2_down'] = .2* (calc_op['xi2_down']) + .8*(guess_op['xi2_down'])
 	# guess_op['M1_c'] = .2* (calc_op['M1_c']) + .8*(guess_op['M1_c'])
-	guess_op['M2_c'] = .2* (calc_op['M2_c']) + .8*(guess_op['M2_c'])
+	# guess_op['M2_c'] = .2* (calc_op['M2_c']) + .8*(guess_op['M2_c'])
 	# guess_op['M1_f'] = .2* (calc_op['M1_f']) + .8*(guess_op['M1_f'])
-	guess_op['M2_f'] = .2* (calc_op['M2_f']) + .8*(guess_op['M2_f'])
+	# guess_op['M2_f'] = .2* (calc_op['M2_f']) + .8*(guess_op['M2_f'])
 	
 	return guess_op
 
