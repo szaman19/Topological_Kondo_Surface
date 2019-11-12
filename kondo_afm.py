@@ -499,7 +499,7 @@ def order_params_calculations(calc_op, guess_op, params, K_POINTS):
 		ky = K_POINTS[i][1]
 
 		# print(kx,ky)
-		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, True)
+		ham = gen_hamiltonian(kx, ky, mu_f,mu_c, False)
 		ham  = hamiltonian_order_params(ham, guess_op)
 		eigs, U_dagger = LA.eigh(ham)
 		U = LA.inv(U_dagger)
